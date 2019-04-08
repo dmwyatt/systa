@@ -14,7 +14,7 @@ Following is some examples of where we're at on API development right
 now. This will be
 
 ### Closing a window
-```
+```pycon
 >>> from systa import CurrentWindows
 
 >>> current_windows = CurrentWindows('autoit')
@@ -33,28 +33,28 @@ False
 ```
 
 ### Oops, window doesn't exist!
-```
+```pycon
 >>> notepad = current_windows['Oops, spelled incorrectly!']
 ...
  KeyError: 'No windows found with title: Oops, spelled incorrectly!'
 ```
 
 ### Get window by substring of title
-```
+```pycon
 >>> from systa import CaseInsensitiveTitleSearch as icase
 >>> current_windows[icase('untitled - notepad')]
 [Window(handle=1643340, backend="autoit", title="Untitled - Notepad")]
 ```
 
 ### Get window by regex on title
-```
+```pycon
 >>> from systa import RegexTitleSearch as re_title
 >>> current_windows[re_title('.*[Nn]ote.*')]
 [Window(handle=1643340, backend="autoit", title="Untitled - Notepad")]
 ```
 
 ### Exists check
-```
+```pycon
 >>> 'Untitled - Notepad` in current_windows
 True
 >>> '🍔' in current_windows
