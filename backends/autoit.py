@@ -62,7 +62,7 @@ class WinAccess(WinAccessBase):
     """
 
     @cached_property
-    def _accessor(self):
+    def _autoit(self):
         ai = win32com.client.Dispatch("AutoItX3.Control")
         ai.Opt("WinTitleMatchMode", 3)
         ai.Opt("WinWaitDelay", 20)
@@ -70,11 +70,11 @@ class WinAccess(WinAccessBase):
 
     @cached_property
     def mouse(self) -> 'MouseControllerBase':
-        return AutoItMouseController(self._accessor)
+        return AutoItMouseController(self._autoit)
 
     @autoit_handle
     def get_title(self, handle: int) -> str:
-        title = self._accessor.WinGetTitle(handle)
+        title = self._autoit.WinGetTitle(handle)
 
         # AutoItX will return an empty string if the window does not exist and also for windows
         # that do not have a title.  So, if we get an empty string, we have to check if the
@@ -85,7 +85,7 @@ class WinAccess(WinAccessBase):
         return title
 
     def get_handle(self, title: str) -> List[int]:
-        value = list(iter_winlist(self._accessor.WinList(title)))
+        value = list(iter_winlist(self._autoit.WinList(title)))
 
         if not value:
             raise NoMatchingWindowError(f'No windows found with title: {title}')
@@ -94,59 +94,63 @@ class WinAccess(WinAccessBase):
 
     def get_titles_and_handles(self, selector: str = "[ALL]"
                                ) -> Iterator[Tuple[str, int]]:
-        return iter_winlist(self._accessor.WinList(selector))
+        return iter_winlist(self._autoit.WinList(selector))
 
     @autoit_handle
     def get_is_active(self, handle: int) -> bool:
-        return (self._accessor.WinGetState(handle) & WinState.ACTIVE) == WinState.ACTIVE
+        return (self._autoit.WinGetState(handle) & WinState.ACTIVE) == WinState.ACTIVE
 
     @autoit_handle
     def get_exists(self, handle: int) -> bool:
-        return self._accessor.WinExists(handle) == 1
+        return self._autoit.WinExists(handle) == 1
 
     @autoit_handle
     def get_is_visible(self, handle: int) -> bool:
-        return (self._accessor.WinGetState(handle) & WinState.VISIBLE) == WinState.VISIBLE
+        return (self._autoit.WinGetState(handle) & WinState.VISIBLE) == WinState.VISIBLE
 
     @autoit_handle
     def get_is_enabled(self, handle: int) -> bool:
-        return (self._accessor.WinGetState(handle) & WinState.ENABLED) == WinState.ENABLED
+        return (self._autoit.WinGetState(handle) & WinState.ENABLED) == WinState.ENABLED
 
     @autoit_handle
     def get_is_minimized(self, handle: int) -> bool:
-        return (self._accessor.WinGetState(handle) & WinState.MINIMIZED) == WinState.MINIMIZED
+        return (self._autoit.WinGetState(handle) & WinState.MINIMIZED) == WinState.MINIMIZED
 
     @autoit_handle
     def get_is_maximized(self, handle: int) -> bool:
-        return (self._accessor.WinGetState(handle) & WinState.MAXIMIZED) == WinState.MAXIMIZED
+        return (self._autoit.WinGetState(handle) & WinState.MAXIMIZED) == WinState.MAXIMIZED
 
     @autoit_handle
     def activate_window(self, handle: int) -> None:
-        self._accessor.WinActivate(handle)
+        self._autoit.WinActivate(handle)
 
     @autoit_handle
     def get_win_x_pos(self, handle: int) -> int:
-        return self._accessor.WinGetPosX(handle)
+        return self._autoit.WinGetPosX(handle)
 
     @autoit_handle
     def get_win_y_pos(self, handle: int) -> int:
-        return self._accessor.WinGetPosY(handle)
+        return self._autoit.WinGetPosY(handle)
 
     @autoit_handle
     def get_win_height(self, handle: int) -> int:
-        return self._accessor.WinGetPosHeight(handle)
+        return self._autoit.WinGetPosHeight(handle)
 
     @autoit_handle
     def get_win_width(self, handle: int) -> int:
-        return self._accessor.WinGetPosWidth(handle)
+        return self._autoit.WinGetPosWidth(handle)
 
     @autoit_handle
     def close_window(self, handle: int):
-        self._accessor.WinClose(handle)
+        self._autoit.WinClose(handle)
 
     @autoit_handle
     def get_process_id(self, handle: int) -> int:
-        return int(self._accessor.WinGetProcess(handle))
+        return int(self._autoit.WinGetProcess(handle))
+
+    @autoit_handle
+    def minimize_all_windows(self) -> None:
+        self._autoit.WinMimimizeAll()
 
 
 WinListReturnType = Tuple[Tuple[str, ...], Tuple[int, ...]]

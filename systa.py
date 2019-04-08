@@ -220,6 +220,9 @@ class CurrentWindows:
     def __init__(self, backend: Union[str, WinAccessBase] = None):
         self._backend = backend
 
+    def minimize_all(self):
+        self.backend.minimize_all_windows()
+
     @cached_property
     def backend(self) -> WinAccessBase:
         return get_backend(self._backend)
