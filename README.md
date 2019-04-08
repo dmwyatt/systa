@@ -58,4 +58,5 @@ False
 >>> 'Untitled - Notepad` in current_windows
 True
 >>> '🍔' in current_windows
+False
 ```
