@@ -76,6 +76,9 @@ class WinAccessBase(abc.ABC):
     def get_pid(self, handle: int):
         return self.get_process_id(handle)
 
+    @abc.abstractmethod
+    def minimize_all_windows(self) -> None: ...
+
 
 class MouseButton(Enum):
     primary = auto()
