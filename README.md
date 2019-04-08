@@ -11,7 +11,7 @@ about, and experimented on.
 Examples
 --------
 Following is some examples of where we're at on API development right
-now. This will be
+now.
 
 ### Closing a window
 ```pycon
