@@ -1,12 +1,13 @@
-from pprint import pprint
-
+"""A stupid script for pulling the event constants off of microsofts doc page
+so you can paste them into code."""
 import requests
 from bs4 import BeautifulSoup
 
-def parse():
-    response = requests.get("https://docs.microsoft.com/en-us/windows/desktop/WinAuto/event-constants")
-    soup = BeautifulSoup(response.text, 'html.parser')
 
+def parse():
+    response = requests.get(
+        "https://docs.microsoft.com/en-us/windows/desktop/WinAuto/event-constants")
+    soup = BeautifulSoup(response.text, 'html.parser')
 
     table = soup.find_all('table')[0]
 
@@ -20,7 +21,6 @@ def parse():
         event_name = dts[0].text.strip()
         event_value = dts[1].text.strip()
         print(f'{event_name} = {event_value}')
-
 
     #     cols = [ele.text.strip() for ele in cols]
     #     data.append(cols)
