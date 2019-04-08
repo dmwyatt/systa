@@ -36,24 +36,13 @@ def register(events: SingleOrMultipleEventFilters):
     return wrapper
 
 
-def test(hi: Literal[7]):
-    return hi
-
-
-def win_create(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 def windows_msg_handler_loop():
     user32 = ctypes.windll.user32
     ole32 = ctypes.windll.ole32
     ole32.CoInitialize(0)
 
     try:
+        # Function
         win_event_proc_type = ctypes.WINFUNCTYPE(
                 None,
                 ctypes.wintypes.HANDLE,
@@ -68,6 +57,8 @@ def windows_msg_handler_loop():
         def win_callback(hWinEventHook: int, event: int, hwnd: Union[int, None], idObject: int,
                          idChild: int, idEventThread: int, dwmsEventTime: int):
             """
+            This is the callback that Windows calls for each event we register it for.
+
             https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nc-winuser-wineventproc
 
             :param hWinEventHook: Handle to an event hook function. This value is returned by

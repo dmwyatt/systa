@@ -1,21 +1,16 @@
-import csv
-
-import io
 import abc
-import subprocess
 from enum import Enum, auto
 from typing import Iterator, Optional, Tuple
 
-from exceptions import SystaError
 from utils import import_string
 
 
 def import_backend(backend_name: str):
-    return import_string(f'{backend_name}.WinAccess')
+    return import_string(f'backends.{backend_name}.WinAccess')
 
 
 def class_path_to_backend_name(class_path: str) -> str:
-    return class_path.split('.')[0]
+    return class_path.replace('backends.', '').split('.')[0]
 
 
 class WinAccessBase(abc.ABC):
