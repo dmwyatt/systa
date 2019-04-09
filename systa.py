@@ -113,6 +113,17 @@ class Window:
     def active(self) -> bool:
         return self.backend.get_is_active(self.handle)
 
+    @active.setter
+    def active(self, value: bool) -> None:
+        if value:
+            self.activate()
+        else:
+            desktop_handle = self.backend.get_handle("Program Manager")
+            if len(desktop_handle) != 1:
+                raise NoMatchingWindowError('Cannot activate desktop to "deactivate" window.')
+
+            self.backend.activate_window(desktop_handle[0])
+
     @property
     def exists(self) -> bool:
         return self.backend.get_exists(self.handle)
