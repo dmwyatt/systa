@@ -4,18 +4,24 @@ import os
 import re
 import time
 from pprint import pprint
-from typing import Dict, Iterator, List, Optional, Pattern, Union
+from typing import Dict, Iterator, List, Optional, Pattern, TypeVar, Union
 
 import zmq
 
+from backends.win_access import WinAccessBase, class_path_to_backend_name, import_backend
 from exceptions import NoMatchingWindowError, SystaError
 from utils import cached_property, class_to_dotted, get_process_name, import_string
 
 SYSTA_BACKEND_ENV = 'SYSTA_BACKEND'
 
+Backend = TypeVar('Backend')
 
-def get_backend(backend: Optional[Union[str, WinAccessBase]] = None
-                ) -> WinAccessBase:
+
+def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
+    """ Helper function for getting a backend by name.
+
+    :param backend: The name of the backend to get and return an instance of.
+    """
     # We don't need to import anything, this is already an instance of the class...
     if isinstance(backend, WinAccessBase):
         return backend
@@ -57,6 +63,7 @@ class Window:
         self._title = title
 
         self._backend = backend
+        self._backend_name = backend if isinstance(backend, str) else None
 
     def __str__(self):
         return self.title
