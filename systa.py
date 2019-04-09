@@ -10,7 +10,6 @@ import zmq
 
 from exceptions import NoMatchingWindowError, SystaError
 from utils import cached_property, class_to_dotted, get_process_name, import_string
-from backends.win_access import WinAccessBase, class_path_to_backend_name, import_backend
 
 SYSTA_BACKEND_ENV = 'SYSTA_BACKEND'
 
@@ -37,11 +36,18 @@ def get_backend(backend: Optional[Union[str, WinAccessBase]] = None
 
 
 class Window:
+    """ The main class for handling windows.
+
+    Each window can be represented by this class.  Note that, just because you have an instance
+    of this class does not mean the window still exists!  You can use the `exists` property to
+    determine if the window is still around.
+    """
+
     def __init__(self, backend: Union[str, WinAccessBase],
                  handle: int, title: Optional[str] = None) -> None:
         """
-        :param backend: An instance of `win_access.WinAccessBase` or a dotted string indicating
-        the class to use as the backend.
+        :param backend: An instance of `win_access.WinAccessBase` or a string indicating which
+        backend to use (e.g. "autoit")
         :param handle:  The handle to the window.  This is the one source of truth linking this
         object to a real window.
         :param title: If you know the current title at time of creating this object, pass it in
@@ -56,25 +62,27 @@ class Window:
         return self.title
 
     def __repr__(self):
-        if not isinstance(self._backend, str):
-            backend = class_path_to_backend_name(
+        if self._backend_name is None:
+            self._backend_name = class_path_to_backend_name(
                     class_to_dotted(self._backend.__class__))
-        else:
-            backend = self._backend
         if self._title is not None:
             title = f'"{self.title}"'
         else:
             title = None
-        return f'Window(handle={self.handle}, backend="{backend}", title={title})'
+        return f'Window(handle={self.handle}, backend="{self._backend_name}", title={title})'
 
     @cached_property
     def backend(self) -> WinAccessBase:
+        """ A property giving you an instance of the window-handling backend.
+        """
         return get_backend(self._backend)
 
     @property
     def title(self):
-        """
-        We cache the title to save time-consuming requests for the title.
+        """ The title of the window.
+
+        Note that, unlike most other window attributes, we  cache the title to save
+        time-consuming requests for the title.
 
         Just re-instantiate if you want to see if title has changed:
 
@@ -86,10 +94,9 @@ class Window:
         >>> new_instance = current_windows.get(old_instance)
 
         We do this because during bulk operations like getting all windows, we often also already
-        have the title because it was given to us by the underlying Windows API.  When we're
-        doing operations on large collections of this class it's very time consuming to
-        constantly be re-retrieving the title, and since the title does not often change,
-        and it is commonly used, it seems best to just cache it.
+        have the title.  When we're doing operations on large collections of this class it's very
+        time consuming to constantly be re-retrieving the title, and since the title does not
+        often change, and it is commonly used, it seems best to just cache it.
         """
         if self._title is None:
             self._title = self.backend.get_title(self.handle)
