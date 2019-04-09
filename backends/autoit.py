@@ -46,6 +46,8 @@ def autoit_handle(func):
                 args = list(args)
                 args[pos] = convert_int_to_autoit_function_handle_format(args[pos])
                 break
+            if param == 'handle' and not isinstance(args[pos], int):
+                raise TypeError(f'Expected an int for `handle`, got a {type(args[pos])}. (value: {args[pos]}')
             pos += 1
 
         return func(*args, **kwargs)
@@ -64,7 +66,7 @@ class WinAccess(WinAccessBase):
     @cached_property
     def _autoit(self):
         ai = win32com.client.Dispatch("AutoItX3.Control")
-        ai.Opt("WinTitleMatchMode", 3)
+        ai.Opt("WinTitleMatchMode", 4)
         ai.Opt("WinWaitDelay", 20)
         return ai
 
@@ -79,7 +81,7 @@ class WinAccess(WinAccessBase):
         # AutoItX will return an empty string if the window does not exist and also for windows
         # that do not have a title.  So, if we get an empty string, we have to check if the
         # window exists before raising.
-        if title == "" and not self.get_exists(handle):
+        if (title == "" and not self.get_exists(handle)) or title == 0:
             raise NoMatchingWindowError(f'Window with this handle does not exist: {handle}')
 
         return title
@@ -197,3 +199,28 @@ class AutoItMouseController(MouseControllerBase):
     @property
     def y_pos(self) -> int:
         return self._controller.MouseGetPosY()
+
+
+if __name__ == '__main__':
+    from systa import *
+    # def wut():
+    #     import time
+    #     current_windows = CurrentWindows('autoit')
+    #     notepad = current_windows['Untitled - Notepad'][0]
+    #     notepad.active = True
+    #     time.sleep(3)
+    #     notepad.active = False
+
+    wa = WinAccess()
+    hwnd = wa.get_handle("Untitled - Notepad")
+    assert len(hwnd) == 1
+    hwnd = hwnd[0]
+    # raw_handle = wa._autoit.WinGetHandle("Untitled - Notepad")
+
+    # print('raw exists', wa._autoit.WinExists(f'[HANDLE:{raw_handle}]'))
+    # print('raw title', wa._autoit.WinGetTitle(f'[HANDLE:{raw_handle}]'))
+
+    print('fancy exists', wa.get_exists(hwnd))
+    # print(handle)
+    print('fancy title', wa.get_title(hwnd))
+
