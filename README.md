@@ -48,8 +48,8 @@ False
 
 ### Get window by substring of title
 ```pycon
->>> from systa import CaseInsensitiveTitleSearch as icase
->>> current_windows[icase('untitled - notepad')]
+>>> from systa import TitleSubStrSearch as substr
+>>> current_windows[substr('Notepad')]
 [Window(handle=1643340, backend="autoit", title="Untitled - Notepad")]
 ```
 
@@ -66,4 +66,10 @@ False
 True
 >>> '🍔' in current_windows
 False
+```
+
+### Hey do you really act like a dict?
+```pycon
+>>> current_windows.get('🍔')
+None
 ```
