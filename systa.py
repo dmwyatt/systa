@@ -22,6 +22,7 @@ def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
 
     :param backend: The name of the backend to get and return an instance of.
     """
+
     # We don't need to import anything, this is already an instance of the class...
     if isinstance(backend, WinAccessBase):
         return backend
@@ -49,15 +50,19 @@ class Window:
     determine if the window is still around.
     """
 
-    def __init__(self, backend: Union[str, WinAccessBase],
-                 handle: int, title: Optional[str] = None) -> None:
+    def __init__(self, handle: int, backend: Optional[Union[str, WinAccessBase]] = None,
+                 title: Optional[str] = None) -> None:
         """
-        :param backend: An instance of `win_access.WinAccessBase` or a string indicating which
-        backend to use (e.g. "autoit")
+        init
+
         :param handle:  The handle to the window.  This is the one source of truth linking this
-        object to a real window.
+            object to a real window.
+        :param backend: One of: an instance of :py:class:`backends.win_access.WinAccessBase`,
+            a string indicating which backend to use (e.g. "autoit"). If not provided, we'll get
+            it from the environment. See :py:func:`get_backend` for more details on how we get
+            the backend.
         :param title: If you know the current title at time of creating this object, pass it in
-        so we don't do time-consuming queries to get the window title later.
+            so we don't do time-consuming queries to get the window title later.
         """
         self.handle = handle
         self._title = title
@@ -70,16 +75,18 @@ class Window:
 
     def __repr__(self):
         if self._backend_name is None:
+            # We don't generate this unless we need it
             self._backend_name = class_path_to_backend_name(
                     class_to_dotted(self._backend.__class__))
         if self._title is not None:
             title = f'"{self.title}"'
         else:
+            # If we don't have a title, lets not do an expensive lookup to get it just for a repr
             title = None
         return f'Window(handle={self.handle}, backend="{self._backend_name}", title={title})'
 
     @cached_property
-    def backend(self) -> WinAccessBase:
+    def backend(self) -> Backend:
         """ A property giving you an instance of the window-handling backend.
         """
         return get_backend(self._backend)
@@ -93,8 +100,8 @@ class Window:
 
         Just re-instantiate if you want to see if title has changed:
 
-        >>> old_instance = Window('autoit', 123456)
-        >>> new_instance = Window(old_instance.backend, old_instance.handle)
+        >>> old_instance = Window(123456)
+        >>> new_instance = Window(old_instance.handle, backend=old_instance.backend)
 
         # Alternatively you could:
         >>> current_windows = CurrentWindows()
@@ -255,7 +262,7 @@ class CurrentWindows:
     @property
     def current_windows(self) -> Iterator[Window]:
         for title, handle in self.backend.get_titles_and_handles():
-            yield Window(self.backend, handle, title=title)
+            yield Window(handle, backend=self.backend, title=title)
 
     @property
     def current_handles(self) -> Dict[int, Window]:
@@ -297,14 +304,14 @@ class CurrentWindows:
                 handles = self.backend.get_handle(item)
             except NoMatchingWindowError as e:
                 raise KeyError(str(e))
-            return [Window(self.backend, handle, title=item) for handle in handles]
+            return [Window(handle, backend=self.backend, title=item) for handle in handles]
 
         elif isinstance(item, int):
             # an int is treated as a window handle
             if not self.backend.get_exists(item):
                 raise KeyError(f'Window with this handle does not exist: {item}')
 
-            return [Window(self.backend, item)]
+            return [Window(item, backend=self.backend)]
 
     def get(self, item: GetTypes,
             default: Optional[GetTypes] = None

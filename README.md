@@ -15,15 +15,22 @@ now.
 
 ### Closing a window
 ```pycon
->>> from systa import CurrentWindows
+>>> from systa import CurrentWindows, SYSTA_BACKEND_ENV
 
->>> current_windows = CurrentWindows('autoit')
+# we can get backend from the environment so I'm just doing that here
+# so we don't have to type it every time we instantiate a
+# backend-requiring class.
+>>> import os
+>>> os.environ.set(SYSTA_BACKEND_ENV, 'autoit')
+
+# Ok, so here we go!
+>>> current_windows = CurrentWindows()
 >>> notepad = current_windows['Untitled - Notepad']
 
->>> # Note how we got a list.  After all, we might
->>> # have multiple matching windows.
->>>
->>> # CurrentWindows always returns a list.
+# Note how we got a list.  After all, we might
+# have multiple matching windows.
+
+# CurrentWindows always returns a list.
 >>> notepad
 [Window(handle=1643340, backend="autoit", title="Untitled - Notepad")]
 
