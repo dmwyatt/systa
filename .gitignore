@@ -83,3 +83,4 @@ venv.bak/
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+/_build/

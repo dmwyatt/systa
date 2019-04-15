@@ -1,16 +1,24 @@
 import abc
+import inspect
 import json
 import os
 import re
 import time
 from pprint import pprint
-from typing import Dict, Iterator, List, Optional, Pattern, TypeVar, Union
+from typing import Dict, Iterator, List, Optional, Pattern, Tuple, TypeVar, Union
 
 import zmq
 
-from backends.win_access import WinAccessBase, class_path_to_backend_name, import_backend
-from exceptions import NoMatchingWindowError, SystaError
-from utils import cached_property, class_to_dotted, get_process_name, import_string
+from backends import class_path_to_backend_name, import_backend
+from backends.win_access import WinAccessBase
+from exceptions import MousePositionError, NoMatchingWindowError, SystaError
+from utils import (
+    cached_property,
+    class_to_dotted,
+    get_process_name,
+    import_string,
+    update_parameter_value,
+)
 
 SYSTA_BACKEND_ENV = 'SYSTA_BACKEND'
 
@@ -36,10 +44,12 @@ def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
         env = os.environ.get(SYSTA_BACKEND_ENV)
         if env is None:
             raise SystaError(f'If no backend is provided, the environment variable '
-                             f'{SYSTA_BACKEND_ENV} must be set to the dotted path of the backend '
-                             f'to use.')
+                             f'{SYSTA_BACKEND_ENV} must be set to the name of the backend to use.')
         else:
-            return import_string(env)()
+            try:
+                return import_string(env)()
+            except ImportError:
+                return import_string(f'backends.{env}.WinAccess')()
 
 
 class Window:
@@ -53,8 +63,6 @@ class Window:
     def __init__(self, handle: int, backend: Optional[Union[str, WinAccessBase]] = None,
                  title: Optional[str] = None) -> None:
         """
-        init
-
         :param handle:  The handle to the window.  This is the one source of truth linking this
             object to a real window.
         :param backend: One of: an instance of :py:class:`backends.win_access.WinAccessBase`,
@@ -86,8 +94,8 @@ class Window:
         return f'Window(handle={self.handle}, backend="{self._backend_name}", title={title})'
 
     @cached_property
-    def backend(self) -> Backend:
-        """ A property giving you an instance of the window-handling backend.
+    def backend(self) -> WinAccessBase:
+        """ The backend for communicating with windows of the window-handling backend.
         """
         return get_backend(self._backend)
 
@@ -98,12 +106,15 @@ class Window:
         Note that, unlike most other window attributes, we  cache the title to save
         time-consuming requests for the title.
 
-        Just re-instantiate if you want to see if title has changed:
+        Just re-instantiate if you want to see if title has changed.
+
+        Check for window title change:
 
         >>> old_instance = Window(123456)
         >>> new_instance = Window(old_instance.handle, backend=old_instance.backend)
 
-        # Alternatively you could:
+        Or we can do it this way:
+
         >>> current_windows = CurrentWindows()
         >>> new_instance = current_windows.get(old_instance)
 
@@ -116,8 +127,19 @@ class Window:
             self._title = self.backend.get_title(self.handle)
         return self._title
 
+    @title.setter
+    def title(self, value: str) -> None:
+        self.backend.set_title(self.handle, value)
+
     @property
     def active(self) -> bool:
+        """ Reports and controls if the window is active.
+
+        If :python:`True`, the window is active and if :python:`False`, the window is not active.
+
+        This property is also a setter.  Setting to :python:`False` deactivates the window by
+        activating the desktop "window".  Of course, setting to :python:`True` activates the window.
+        """
         return self.backend.get_is_active(self.handle)
 
     @active.setter
@@ -133,54 +155,155 @@ class Window:
 
     @property
     def exists(self) -> bool:
+        """Reports and controls if the window exists.
+
+        There is no real-time correspondence between a :class:`Window` object and a real Windows
+        window.  If you want to check if the window still exists, this will tell you.
+
+        Because we're crazy people you can also set this to :python:`False` to close a window.
+
+        Setting to :python:`True` has no effect.
+        """
         return self.backend.get_exists(self.handle)
+
+    @exists.setter
+    def exists(self, value: bool) -> None:
+        if not value:
+            self.close()
 
     @property
     def visible(self) -> bool:
+        """Reports and controls if the window is visible.
+
+        If set to :python:`True` sets the window to be visible. If set to :python:`False` sets
+        the window to be hidden.
+
+        .. warning:: This concept of visibility does not have to do with the window being hidden
+            by other windows. See here_ for more info.
+
+        .. _here: https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-features#window-visibility
+        """
         return self.backend.get_is_visible(self.handle)
+
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        if value:
+            self.show()
+        else:
+            self.hide()
 
     @property
     def enabled(self) -> bool:
+        """Reports and controls if the window is enabled.
+
+        If set to :python:`True`, the user can accept user input. If set to :python:`False` the
+        window will not accept user input.
+        """
         return self.backend.get_is_enabled(self.handle)
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        if value:
+            self.enable()
+        else:
+            self.disable()
 
     @property
     def minimized(self) -> bool:
+        """Reports and controls if the window is minimized.
+
+        IF set to :python:`True`, the window is minimized. If set to :python:`False`, the window
+        is restored.
+        """
         return self.backend.get_is_minimized(self.handle)
+
+    @minimized.setter
+    def minimized(self, value: bool) -> None:
+        if value:
+            self.backend.set_minimized(self.handle)
+        else:
+            self.backend.restore(self.handle)
 
     @property
     def maximized(self) -> bool:
+        """Reports and controls if the window is maximized.
+
+        IF set to :python:`True`, the window is maximized. If set to :python:`False`, the window
+        is restored.
+        """
         return self.backend.get_is_maximized(self.handle)
 
-    def activate(self) -> None:
-        self.backend.activate_window(self.handle)
-
-    def close(self) -> None:
-        self.backend.close_window(self.handle)
+    @maximized.setter
+    def maximized(self, value: bool) -> None:
+        if value:
+            self.backend.set_maximized(self.handle)
+        else:
+            self.backend.restore(self.handle)
 
     @property
     def x_pos(self) -> int:
+        """Reports and controls the windows origin coordinate X position.
+
+        If set to an integer the window is instantaneously moved on the x axis to that position.
+        """
         return self.backend.get_win_x_pos(self.handle)
+
+    @x_pos.setter
+    def x_pos(self, value: int) -> None:
+        self.backend.set_win_position(self.handle, value, self.y_pos)
 
     @property
     def y_pos(self) -> int:
+        """Reports and controls the windows origin coordinate Y position.
+
+        If set to an integer the window is instantaneously moved on the y axis to that position.
+        """
+
         return self.backend.get_win_y_pos(self.handle)
+
+    @y_pos.setter
+    def y_pos(self, value: int) -> None:
+        self.backend.set_win_position(self.handle, self.x_pos, value)
+
+    @property
+    def position(self) -> Tuple[int, int]:
+        """Reports and controls the windows origin coordinate X, Y position.
+
+        If set to a sequence containing two ints, the window is instantaneously moved to those
+        coordinates.
+        """
+        return self.x_pos, self.y_pos
+
+    @position.setter
+    def position(self, pos: Tuple[int, int]) -> None:
+        self.backend.set_win_position(self.handle, *pos)
 
     @property
     def width(self) -> int:
+        """Reports and controls the windows width in pixels."""
         return self.backend.get_win_width(self.handle)
+
+    @width.setter
+    def width(self, width: int) -> None:
+        self.backend.set_win_dimensions(self.handle, width, self.height)
 
     @property
     def height(self) -> int:
+        """Reports and controls the window's height in pixels."""
         return self.backend.get_win_height(self.handle)
+
+    @height.setter
+    def height(self, height: int) -> None:
+        self.backend.set_win_dimensions(self.handle, self.width, height)
 
     def bring_mouse_to(self, win_x: int = None, win_y: int = None):
         """
         Moves mouse into window area.  Does not activate window.
 
         :param win_x: Specify the X position for the mouse.  If not provided, centers the mouse
-        on the X-axis of the window.
+            on the X-axis of the window.
         :param win_y: Specify the Y position for the mouse.  If not provided, centers the mouse
-        on the Y-axis of the window.
+            on the Y-axis of the window.
         """
         if win_x is not None:
             x = self.x_pos + win_x
@@ -194,6 +317,22 @@ class Window:
 
         self.backend.mouse.move_to(x, y)
 
+    @property
+    def mouse_x_pos(self) -> int:
+        x_relative = self.backend.mouse.x_pos - self.x_pos
+        contained = (x_relative < self.x_pos + self.width) and x_relative > self.x_pos
+        if not contained:
+            raise MousePositionError('Mouse not located within window coordinates.')
+        return x_relative
+
+    @property
+    def mouse_y_pos(self) -> int:
+        y_relative = self.backend.mouse.y_pos - self.y_pos
+        contained = (y_relative < self.y_pos + self.height) and y_relative > self.y_pos
+        if not contained:
+            raise MousePositionError('Mouse not located within window coordinates.')
+        return y_relative
+
     @cached_property
     def process_id(self) -> int:
         return self.backend.get_process_id(self.handle)
@@ -205,6 +344,34 @@ class Window:
     @cached_property
     def process_name(self) -> str:
         return get_process_name(self.pid)
+
+    # //////////////
+    # Control methods
+    # ---------------
+    # The following methods offer an alternative API that uses callable methods rather than
+    # get/set properties.
+    # //////////////
+
+    def show(self) -> None:
+        self.backend.set_shown(self.handle)
+
+    def hide(self) -> None:
+        self.backend.set_hidden(self.handle)
+
+    def activate(self) -> None:
+        self.backend.activate_window(self.handle)
+
+    def close(self) -> None:
+        self.backend.close_window(self.handle)
+
+    def minimize(self) -> None:
+        self.backend.set_minimized(self.handle)
+
+    def enable(self) -> None:
+        self.backend.set_enabled(self.handle)
+
+    def disable(self) -> None:
+        self.backend.set_disabled(self.handle)
 
 
 class WindowSearchPredicate(abc.ABC):
@@ -253,7 +420,7 @@ class CurrentWindows:
         self._backend = backend
 
     def minimize_all(self):
-        self.backend.minimize_all_windows()
+        self.backend.set_all_windows_minimized()
 
     @cached_property
     def backend(self) -> WinAccessBase:
@@ -413,6 +580,9 @@ def window_event_client():
 
 
 if __name__ == '__main__':
+    os.environ[SYSTA_BACKEND_ENV] = 'autoit'
+
+
     # get_all_windows(100)
     # processes = [
     #     Process(target=window_event_server),
@@ -420,7 +590,7 @@ if __name__ == '__main__':
     # ]
     #
     # for process in processes:
-    #     process.daemon = True
+    #     process.daemon = `True`
     #     process.start()
     #
     # try:
@@ -430,4 +600,8 @@ if __name__ == '__main__':
     #     for process in processes:
     #         process.terminate()
 
-    print('hi')
+    windows = CurrentWindows()
+    notepad = windows['Untitled - Notepad'][0]
+    notepad.bring_mouse_to()
+    print(notepad.mouse_x_pos, notepad.mouse_y_pos)
+
