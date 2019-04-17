@@ -1,5 +1,4 @@
 import abc
-import inspect
 import json
 import os
 import re
@@ -9,7 +8,7 @@ from typing import Dict, Iterator, List, Optional, Pattern, Tuple, TypeVar, Unio
 
 import zmq
 
-from backends import class_path_to_backend_name, import_backend
+from backends.util import class_path_to_backend_name, import_backend
 from backends.win_access import WinAccessBase
 from exceptions import MousePositionError, NoMatchingWindowError, SystaError
 from utils import (
@@ -17,7 +16,6 @@ from utils import (
     class_to_dotted,
     get_process_name,
     import_string,
-    update_parameter_value,
 )
 
 SYSTA_BACKEND_ENV = 'SYSTA_BACKEND'
@@ -582,7 +580,6 @@ def window_event_client():
 if __name__ == '__main__':
     os.environ[SYSTA_BACKEND_ENV] = 'autoit'
 
-
     # get_all_windows(100)
     # processes = [
     #     Process(target=window_event_server),
@@ -604,4 +601,3 @@ if __name__ == '__main__':
     notepad = windows['Untitled - Notepad'][0]
     notepad.bring_mouse_to()
     print(notepad.mouse_x_pos, notepad.mouse_y_pos)
-

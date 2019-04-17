@@ -23,19 +23,19 @@ class WinState(IntEnum):
     MAXIMIZED = 32
 
 
+@lru_cache(maxsize=1000)
+def is_autoit_str_handle(val: str) -> bool:
+    if not isinstance(val, str):
+        return False
+    return val.startswith('[HANDLE:') and val.endswith(']')
+
+
 def auto_it_int_to_hex(val: int) -> str:
     return f'{val:#0{10}x}'.upper()
 
 
 def add_handle_str_params(val: str) -> str:
     return f'[HANDLE:{val}]'
-
-
-@lru_cache(maxsize=1000)
-def is_autoit_str_handle(val: str) -> bool:
-    if not isinstance(val, str):
-        return False
-    return val.startswith('[HANDLE:') and val.endswith(']')
 
 
 @lru_cache(maxsize=1000)
