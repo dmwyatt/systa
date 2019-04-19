@@ -2,15 +2,12 @@ import csv
 import inspect
 import io
 import subprocess
+import time
 from importlib import import_module
-from typing import (
-    Any,
-    Callable,
-    Optional,
-    Sequence,
-    TypeVar,
-)
+from typing import (Any, Callable, Mapping, Optional, Sequence, TypeVar)
 
+import wrapt
+from argupdate.argupdate import Args, Kwargs, iter_args
 from boltons.typeutils import make_sentinel
 
 from exceptions import SystaError
@@ -122,7 +119,7 @@ dontcheck = make_sentinel('dontcheck', 'dontcheck')
 def has_parameter(parameter_name: str,
                   annotation: Optional[type] = dontcheck
                   ) -> Callable[[AnyCallable], bool]:
-    """Creates a predicate that checks that a for an arg name in a function signature.
+    """Creates a predicate that checks for an arg name in a function signature.
 
     :param parameter_name: The name of the parameter we want to check for.
     :param annotation: If provided, checks that the annotation matches this.
@@ -140,3 +137,89 @@ def has_parameter(parameter_name: str,
         return parameter.annotation == annotation
 
     return predicate
+
+
+def get_value_by_arg_name(func: AnyCallable,
+                          arg_name: str,
+                          args: Sequence[Any],
+                          kwargs: Mapping[str, Any]
+                          ) -> Any:
+    """Get the value for a function's argument from the args and kwargs.
+
+    Given the args and kwargs destined for a function, returns the value matching the requested
+    name.
+
+    >>> def the_callable(arg1, arg2, arg3=False): ...
+    >>> args = ('one', 'two')
+    >>> kwargs = {'arg3': 'whoa'}
+    >>> get_value_by_arg_name(the_callable, 'arg3', args, kwargs)
+    'whoa'
+    >>> get_value_by_arg_name(the_callable, 'arg1', args, kwargs)
+    'one'
+    >>> get_value_by_arg_name(the_callable, 'notanargname', args, kwargs)
+    Traceback (most recent call last):
+        ...
+    ValueError: "notanargname" not found in signature for `the_callable()`.
+
+    :param func: The callable object that the `args` and `kwargs` are destined for.
+    :param arg_name: The name of the argument we're interested in getting the value for.
+    :param args: The sequence of positional arguments.
+    :param kwargs: The mapping of keyword arguments.
+
+    """
+    for name, value in iter_args(func, args, kwargs):
+        if name == arg_name:
+            return value
+    raise ValueError(f'"{arg_name}" not found in signature for `{func.__name__}()`.')
+
+
+ExcCallable = Callable[[
+                           AnyCallable,  # The decorated function
+                           Any,  # The decorated function's return value
+                           Args,  # The arguments for the decorated function
+                           Kwargs  # The kwargs for the decorated function
+                       ],
+                       Exception]
+T = TypeVar('T')
+
+
+def raise_on_return_value(exc: ExcCallable, return_value: T
+                          ) -> Callable[[AnyCallable, Any, Args, Kwargs], T]:
+    """Decorator that will raise an exception on a function if it returns a specific value.
+
+    :param exc: A callable that returns an exception for us to raise.
+    :param return_value: The return value that we will raise on.
+    """
+
+    @wrapt.decorator
+    def wrapper(wrapped, instance, args, kwargs):
+        result = wrapped(*args, **kwargs)
+        if result == return_value:
+            # For a decorated instance method, args does not contain `self`.  That's normally ok,
+            # because wrapt has already bound the method to the class instance.
+            # However, we're not passing the args and kwargs to the instance method.  We're passing
+            # it to a function that uses the `inspect` module to investigate the function signature
+            # and it requires the self parameter.  So, here we add the instance to the beginning of
+            # the args list.
+            if instance and not inspect.isclass(instance):
+                # only if instance is not None and instance is not a class can we be sure this is an
+                # instance method.
+                args = [instance] + list(args)
+
+            raise exc(wrapped, result, args, kwargs)
+        return result
+
+    return wrapper
+
+
+def timeit(method):
+    """Quick and dirty function timing decorator."""
+
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        print('%r  %2.2f ms' % (method.__name__, (te - ts) * 1000))
+        return result
+
+    return timed

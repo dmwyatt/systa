@@ -1,16 +1,11 @@
 import abc
-import json
 import os
 import re
-import time
-from pprint import pprint
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, TypeVar, Union
-
-import zmq
 
 from backends.util import class_path_to_backend_name, import_backend
 from backends.win_access import WinAccessBase
-from exceptions import MousePositionError, NoMatchingWindowError, SystaError
+from exceptions import NoMatchingWindowError, SystaError
 from utils import (
     cached_property,
     class_to_dotted,
@@ -306,30 +301,38 @@ class Window:
         if win_x is not None:
             x = self.x_pos + win_x
         else:
-            x = int(self.width / 2) + self.x_pos
+            x = self.center_x
 
         if win_y is not None:
             y = self.y_pos + win_y
         else:
-            y = int(self.height / 2) + self.y_pos
+            y = self.center_y
 
         self.backend.mouse.move_to(x, y)
 
     @property
+    def center_x(self) -> int:
+        return int(self.width / 2) + self.x_pos
+
+    @property
+    def center_y(self) -> int:
+        return int(self.height / 2) + self.y_pos
+
+    @property
     def mouse_x_pos(self) -> int:
-        x_relative = self.backend.mouse.x_pos - self.x_pos
-        contained = (x_relative < self.x_pos + self.width) and x_relative > self.x_pos
-        if not contained:
-            raise MousePositionError('Mouse not located within window coordinates.')
-        return x_relative
+        mouse_x = self.backend.mouse.x_pos
+        win_x = self.x_pos
+        assert mouse_x > win_x
+        assert mouse_x < win_x + self.width
+        return mouse_x - win_x
 
     @property
     def mouse_y_pos(self) -> int:
-        y_relative = self.backend.mouse.y_pos - self.y_pos
-        contained = (y_relative < self.y_pos + self.height) and y_relative > self.y_pos
-        if not contained:
-            raise MousePositionError('Mouse not located within window coordinates.')
-        return y_relative
+        mouse_y = self.backend.mouse.y_pos
+        win_y = self.y_pos
+        assert mouse_y > win_y
+        assert mouse_y < win_y + self.height
+        return mouse_y - win_y
 
     @cached_property
     def process_id(self) -> int:
@@ -490,114 +493,15 @@ class CurrentWindows:
         return iter(self.current_windows)
 
 
-def setup():
-    import win32com.client
-    ai = win32com.client.Dispatch("AutoItX3.Control")
-    ai.Opt("WinTitleMatchMode", 2)
-    ai.Opt("WinWaitDelay", 20)
-
-    title = "Untitled - Notepad"
-
-    return ai, title
-
-
-def timeit(method):
-    """Quick and dirty function timing decorator."""
-
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-        print('%r  %2.2f ms' % (method.__name__, (te - ts) * 1000))
-        return result
-
-    return timed
-
-
-@timeit
-def get_all_windows(number):
-    cw = CurrentWindows('autoit')
-    for i in range(number):
-        windows = [w for w in cw]
-
-
-def window_event_server():
-    cw = CurrentWindows('autoit')
-    old = cw.current_handles
-
-    context = zmq.Context()
-    socket = context.socket(zmq.PUB)
-    socket.bind('tcp://127.0.0.1:59123')
-    while True:
-        time.sleep(1)
-        new = cw.current_handles
-        if old.keys() != new.keys():
-            changes = {
-                'created': [(handle, new[handle].title) for handle in new if handle not in old],
-                'destroyed': [(handle, old[handle].title) for handle in old if handle not in new]
-            }
-            for key, value in changes.items():
-                socket.send_multipart(
-                        (bytes(key.encode('utf8')),
-                         bytes(json.dumps(value).encode('utf8'))
-                         )
-                )
-
-            # print('created:', changes['created'])
-            # print('destroyed:', changes['destroyed'])
-            # print('=' * 30)
-            old = new
-
-
-def window_event_client():
-    context = zmq.Context()
-    created_socket = context.socket(zmq.SUB)
-    created_socket.subscribe('created')
-    created_socket.connect('tcp://127.0.0.1:59123')
-
-    destroyed_socket = context.socket(zmq.SUB)
-    destroyed_socket.subscribe('destroyed')
-    destroyed_socket.connect('tcp://127.0.0.1:59123')
-
-    while True:
-        print('receiving...')
-
-        # our server always sends created and destroyed topics
-        # together even if one of them is empty
-        created = created_socket.recv_multipart()[1]
-        destroyed = destroyed_socket.recv_multipart()[1]
-        created = json.loads(created.decode('utf8'))
-        destroyed = json.loads(destroyed.decode('utf8'))
-
-        print('created')
-        pprint(created)
-        print('destroyed')
-        pprint(destroyed)
-
-        print('*' * 50)
-
-
 if __name__ == '__main__':
     os.environ[SYSTA_BACKEND_ENV] = 'autoit'
 
-    # get_all_windows(100)
-    # processes = [
-    #     Process(target=window_event_server),
-    #     Process(target=window_event_client)
-    # ]
-    #
-    # for process in processes:
-    #     process.daemon = `True`
-    #     process.start()
-    #
-    # try:
-    #     for process in processes:
-    #         process.join()
-    # except KeyboardInterrupt:
-    #     for process in processes:
-    #         process.terminate()
-
     windows = CurrentWindows()
     notepad = windows['Untitled - Notepad'][0]
+    notepad.activate()
     notepad.bring_mouse_to()
     print(notepad.mouse_x_pos, notepad.mouse_y_pos)
+
+    # from backends.autoit import WinAccess
+    # ai = WinAccess()
+    # ai.get_win_x_pos(69)

@@ -5,11 +5,19 @@ from functools import lru_cache, wraps
 from typing import Any, Iterator, List, Mapping, Optional, Sequence, Tuple
 
 import win32com.client
+import wrapt
 from argupdate import ValueUpdater, update_parameter_value
+from argupdate.argupdate import Args, Kwargs
 
 from backends.win_access import MouseButton, MouseControllerBase, WinAccessBase
 from exceptions import NoMatchingWindowError
-from utils import (cached_property, has_parameter, method_decorator)
+from utils import (
+    cached_property,
+    get_value_by_arg_name,
+    has_parameter,
+    method_decorator,
+    raise_on_return_value,
+)
 
 user32 = ctypes.windll.user32
 
@@ -65,6 +73,15 @@ def autoit_handle(func):
     return decorator
 
 
+def _get_no_matching_window_exc(wrapped, return_value: Any, args: Args, kwargs: Kwargs
+                                ) -> NoMatchingWindowError:
+    handle = get_value_by_arg_name(wrapped, 'handle', args, kwargs)
+    return NoMatchingWindowError(f'Cannot find window with handle: {handle}')
+
+
+raise_on_one = raise_on_return_value(exc=_get_no_matching_window_exc, return_value=1)
+
+
 @method_decorator(autoit_handle, [has_parameter('handle', int)])
 class WinAccess(WinAccessBase):
     """
@@ -76,9 +93,10 @@ class WinAccess(WinAccessBase):
 
     @cached_property
     def _autoit(self):
-        ai = win32com.client.Dispatch("AutoItX3.Control")
-        ai.Opt("WinTitleMatchMode", 4)
-        ai.Opt("WinWaitDelay", 20)
+        ai = win32com.client.Dispatch('AutoItX3.Control')
+        ai.Opt('WinTitleMatchMode', 4)
+        ai.Opt('WinWaitDelay', 20)
+        ai.Opt('MouseCoordMode', 1)
         return ai
 
     @cached_property
@@ -141,18 +159,23 @@ class WinAccess(WinAccessBase):
     def activate_window(self, handle: int) -> None:
         self._autoit.WinActivate(handle)
 
+    @raise_on_one
     def get_win_x_pos(self, handle: int) -> int:
-        return self._autoit.WinGetPosX(handle)
+        pos = self._autoit.WinGetPosX(handle)
+        return pos
 
+    @raise_on_one
     def get_win_y_pos(self, handle: int) -> int:
         return self._autoit.WinGetPosY(handle)
 
     def set_win_position(self, handle: int, x: int, y: int) -> None:
         return self._autoit.WinMove(handle, "", x, y)
 
+    @raise_on_one
     def get_win_height(self, handle: int) -> int:
         return self._autoit.WinGetPosHeight(handle)
 
+    @raise_on_one
     def get_win_width(self, handle: int) -> int:
         return self._autoit.WinGetPosWidth(handle)
 

@@ -13,5 +13,6 @@ class NoMatchingWindowError(SystaError):
 class WindowsMessageLoopError(SystaError):
     pass
 
+
 class MousePositionError(SystaError):
     pass
