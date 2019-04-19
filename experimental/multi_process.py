@@ -35,7 +35,6 @@ def window_event_server():
     socket = context.socket(zmq.PUB)
     socket.bind('tcp://127.0.0.1:59123')
     while True:
-        time.sleep(1)
         new = cw.current_handles
         if old.keys() != new.keys():
             changes = {
@@ -50,6 +49,7 @@ def window_event_server():
                 )
 
             old = new
+        time.sleep(1)
 
 
 def window_event_client():
