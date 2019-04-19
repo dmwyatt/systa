@@ -114,7 +114,7 @@ def windows_msg_handler_loop():
                 user32.DispatchMessageW(msg)
 
         finally:
-            if hook is not None:
+            if hook:
                 user32.UnhookWinEvent(hook)
 
     finally:
