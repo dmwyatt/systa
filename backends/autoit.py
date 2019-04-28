@@ -34,15 +34,15 @@ class WinState(IntEnum):
 def is_autoit_str_handle(val: str) -> bool:
     if not isinstance(val, str):
         return False
-    return val.startswith('[HANDLE:') and val.endswith(']')
+    return val.startswith("[HANDLE:") and val.endswith("]")
 
 
 def auto_it_int_to_hex(val: int) -> str:
-    return f'{val:#0{10}x}'.upper()
+    return f"{val:#0{10}x}".upper()
 
 
 def add_handle_str_params(val: str) -> str:
-    return f'[HANDLE:{val}]'
+    return f"[HANDLE:{val}]"
 
 
 @lru_cache(maxsize=1000)
@@ -52,17 +52,20 @@ def convert_int_to_autoit_function_handle_format(handle: int) -> str:
 
 def autoit_handle(func):
     class update_handle(ValueUpdater):
-        def __call__(self, original_value: Any, signature: inspect.Signature,
-                     orig_args: Sequence[Any], orig_kwargs: Mapping[str, Any]) -> Any:
+        def __call__(
+            self,
+            original_value: Any,
+            signature: inspect.Signature,
+            orig_args: Sequence[Any],
+            orig_kwargs: Mapping[str, Any],
+        ) -> Any:
             if isinstance(original_value, int):
                 return convert_int_to_autoit_function_handle_format(original_value)
             if is_autoit_str_handle(original_value):
                 return original_value
-            raise TypeError(f'Unexpected value `{original_value}` for handle.')
+            raise TypeError(f"Unexpected value `{original_value}` for handle.")
 
-    updated_values = {
-        'handle': update_handle
-    }
+    updated_values = {"handle": update_handle}
 
     @wraps(func)
     def decorator(*args, **kwargs):
@@ -72,17 +75,19 @@ def autoit_handle(func):
     return decorator
 
 
-def _get_no_matching_window_exc(wrapped, return_value: Any, args: Args, kwargs: Kwargs
-                                ) -> NoMatchingWindowError:
-    handle = get_value_by_arg_name(wrapped, 'handle', args, kwargs)
-    return NoMatchingWindowError(f'Cannot find window with handle: {handle}')
+def _get_no_matching_window_exc(
+    wrapped, return_value: Any, args: Args, kwargs: Kwargs
+) -> NoMatchingWindowError:
+    handle = get_value_by_arg_name(wrapped, "handle", args, kwargs)
+    return NoMatchingWindowError(f"Cannot find window with handle: {handle}")
 
 
 raise_on_one = raise_on_return_value(exc=_get_no_matching_window_exc, return_value=1)
 
 
-@method_decorator(autoit_handle, [has_parameter('handle', int), exclude_method_attribute(
-        'autoit')])
+@method_decorator(
+    autoit_handle, [has_parameter("handle", int), exclude_method_attribute("autoit")]
+)
 class WinAccess(WinAccessBase):
     """
     Low level access to windows.
@@ -93,14 +98,14 @@ class WinAccess(WinAccessBase):
 
     @cached_property
     def _autoit(self):
-        ai = win32com.client.Dispatch('AutoItX3.Control')
-        ai.Opt('WinTitleMatchMode', 4)
-        ai.Opt('WinWaitDelay', 20)
-        ai.Opt('MouseCoordMode', 1)
+        ai = win32com.client.Dispatch("AutoItX3.Control")
+        ai.Opt("WinTitleMatchMode", 4)
+        ai.Opt("WinWaitDelay", 20)
+        ai.Opt("MouseCoordMode", 1)
         return ai
 
     @cached_property
-    def mouse(self) -> 'MouseControllerBase':
+    def mouse(self) -> "MouseControllerBase":
         return AutoItMouseController(self._autoit)
 
     def get_title(self, handle: int) -> str:
@@ -110,7 +115,9 @@ class WinAccess(WinAccessBase):
         # that do not have a title.  So, if we get an empty string, we have to check if the
         # window exists before raising.
         if (title == "" and not self.get_exists(handle)) or title == 0:
-            raise NoMatchingWindowError(f'Window with this handle does not exist: {handle}')
+            raise NoMatchingWindowError(
+                f"Window with this handle does not exist: {handle}"
+            )
 
         return title
 
@@ -121,12 +128,13 @@ class WinAccess(WinAccessBase):
         value = list(iter_winlist(self._autoit.WinList(title)))
 
         if not value:
-            raise NoMatchingWindowError(f'No windows found with title: {title}')
+            raise NoMatchingWindowError(f"No windows found with title: {title}")
 
         return [x[1] for x in value]
 
-    def get_titles_and_handles(self, selector: str = "[ALL]"
-                               ) -> Iterator[Tuple[str, int]]:
+    def get_titles_and_handles(
+        self, selector: str = "[ALL]"
+    ) -> Iterator[Tuple[str, int]]:
         return iter_winlist(self._autoit.WinList(selector))
 
     def get_is_active(self, handle: int) -> bool:
@@ -142,13 +150,17 @@ class WinAccess(WinAccessBase):
         return (self._autoit.WinGetState(handle) & WinState.ENABLED) == WinState.ENABLED
 
     def get_is_minimized(self, handle: int) -> bool:
-        return (self._autoit.WinGetState(handle) & WinState.MINIMIZED) == WinState.MINIMIZED
+        return (
+            self._autoit.WinGetState(handle) & WinState.MINIMIZED
+        ) == WinState.MINIMIZED
 
     def set_minimized(self, handle: int) -> None:
         return self._autoit.WinSetState(handle, "", self._autoit.SW_MINIMIZE)
 
     def get_is_maximized(self, handle: int) -> bool:
-        return (self._autoit.WinGetState(handle) & WinState.MAXIMIZED) == WinState.MAXIMIZED
+        return (
+            self._autoit.WinGetState(handle) & WinState.MAXIMIZED
+        ) == WinState.MAXIMIZED
 
     def set_maximized(self, handle: int) -> None:
         return self._autoit.WinSetState(handle, "", self._autoit.SW_MAXIMIZE)
@@ -218,7 +230,7 @@ WinListReturnType = Tuple[Tuple[str, ...], Tuple[int, ...]]
 
 
 def iter_winlist(data: WinListReturnType) -> Iterator[Tuple[str, int]]:
-    handles: Tuple[int, ...] = tuple(int(f'0x{x}', 16) for x in data[1][1:])
+    handles: Tuple[int, ...] = tuple(int(f"0x{x}", 16) for x in data[1][1:])
     titles: Tuple[str, ...] = tuple(data[0][1:])
     assert len(handles) == len(titles)
 
@@ -232,10 +244,13 @@ class AutoItMouseController(MouseControllerBase):
     def move_to(self, x: int, y: int) -> None:
         self._controller.MouseMove(x, y, 0)
 
-    def click(self, x: Optional[int] = None,
-              y: Optional[int] = None,
-              button: Optional[MouseButton] = None,
-              click_count: int = 1) -> None:
+    def click(
+        self,
+        x: Optional[int] = None,
+        y: Optional[int] = None,
+        button: Optional[MouseButton] = None,
+        click_count: int = 1,
+    ) -> None:
         if button is None or button == MouseButton.primary:
             click_button = "primary"
         elif button == MouseButton.secondary:
@@ -243,12 +258,14 @@ class AutoItMouseController(MouseControllerBase):
         elif button == MouseButton.middle:
             click_button = "middle"
         else:
-            raise ValueError(f'{button} is not a valid value for the `button` parameter.')
+            raise ValueError(
+                f"{button} is not a valid value for the `button` parameter."
+            )
 
         if x is None and y is None:
             x, y = self.x_pos, self.y_pos
         if not all((x, y)):
-            raise ValueError(f'Must provide x AND y values.')
+            raise ValueError(f"Must provide x AND y values.")
         self._controller.MouseClick(click_button, x, y, click_count, 0)
 
     @property
@@ -260,5 +277,5 @@ class AutoItMouseController(MouseControllerBase):
         return self._controller.MouseGetPosY()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     WinAccess().boop(1)

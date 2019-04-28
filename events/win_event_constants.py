@@ -2,7 +2,7 @@ from typing import Union
 
 
 class _WinEvent:
-    _event_prefixes = ('EVENT_',)
+    _event_prefixes = ("EVENT_",)
     EVENT_AIA_START = 0xA000
     EVENT_AIA_END = 0xAFFF
     EVENT_MIN = 0x00000001
@@ -92,7 +92,9 @@ class _WinEvent:
         return self.values()
 
     def __init__(self):
-        is_event = lambda x: x.isupper() and any([x.startswith(y) for y in self._event_prefixes])
+        is_event = lambda x: x.isupper() and any(
+            [x.startswith(y) for y in self._event_prefixes]
+        )
         self.events = {k: v for k, v in vars(self.__class__).items() if is_event(k)}
 
     def __contains__(self, item: int) -> bool:
@@ -109,7 +111,6 @@ class _WinEvent:
             return {}[item]
         else:
             return self.events[item]
-
 
 
 WinEvents = _WinEvent()

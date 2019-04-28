@@ -22,30 +22,32 @@ def setup():
 
 @timeit
 def get_all_windows(number):
-    cw = CurrentWindows('autoit')
+    cw = CurrentWindows("autoit")
     for i in range(number):
         windows = [w for w in cw]
 
 
 def window_event_server():
-    cw = CurrentWindows('autoit')
+    cw = CurrentWindows("autoit")
     old = cw.current_handles
 
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.bind('tcp://127.0.0.1:59123')
+    socket.bind("tcp://127.0.0.1:59123")
     while True:
         new = cw.current_handles
         if old.keys() != new.keys():
             changes = {
-                'created': [(handle, new[handle].title) for handle in new if handle not in old],
-                'destroyed': [(handle, old[handle].title) for handle in old if handle not in new]
+                "created": [
+                    (handle, new[handle].title) for handle in new if handle not in old
+                ],
+                "destroyed": [
+                    (handle, old[handle].title) for handle in old if handle not in new
+                ],
             }
             for key, value in changes.items():
                 socket.send_multipart(
-                        (bytes(key.encode('utf8')),
-                         bytes(json.dumps(value).encode('utf8'))
-                         )
+                    (bytes(key.encode("utf8")), bytes(json.dumps(value).encode("utf8")))
                 )
 
             old = new
@@ -55,36 +57,36 @@ def window_event_server():
 def window_event_client():
     context = zmq.Context()
     created_socket = context.socket(zmq.SUB)
-    created_socket.subscribe('created')
-    created_socket.connect('tcp://127.0.0.1:59123')
+    created_socket.subscribe("created")
+    created_socket.connect("tcp://127.0.0.1:59123")
 
     destroyed_socket = context.socket(zmq.SUB)
-    destroyed_socket.subscribe('destroyed')
-    destroyed_socket.connect('tcp://127.0.0.1:59123')
+    destroyed_socket.subscribe("destroyed")
+    destroyed_socket.connect("tcp://127.0.0.1:59123")
 
     while True:
-        print('receiving...')
+        print("receiving...")
 
         # our server always sends created and destroyed topics
         # together even if one of them is empty
         created = created_socket.recv_multipart()[1]
         destroyed = destroyed_socket.recv_multipart()[1]
-        created = json.loads(created.decode('utf8'))
-        destroyed = json.loads(destroyed.decode('utf8'))
+        created = json.loads(created.decode("utf8"))
+        destroyed = json.loads(destroyed.decode("utf8"))
 
-        print('created')
+        print("created")
         pprint(created)
-        print('destroyed')
+        print("destroyed")
         pprint(destroyed)
 
-        print('*' * 50)
+        print("*" * 50)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_all_windows(100)
     processes = [
         Process(target=window_event_server),
-        Process(target=window_event_client)
+        Process(target=window_event_client),
     ]
 
     for process in processes:

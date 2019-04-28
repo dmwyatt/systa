@@ -6,7 +6,7 @@ user32 = ctypes.windll.user32
 
 
 def get_class_name(handle: int) -> str:
-    print('doingit', handle)
+    print("doingit", handle)
     buffer = ctypes.create_unicode_buffer(100)
     user32.GetClassNameW(handle, buffer, 99)
     return buffer.value
@@ -22,7 +22,7 @@ def set_disabled(handle: int) -> None:
 
 class WinAccess(WinAccessBase):
     def get_class_name(self, handle: int) -> str:
-        print('doingit', handle)
+        print("doingit", handle)
         buffer = ctypes.create_unicode_buffer(100)
         user32.GetClassNameW(handle, buffer, 99)
         return buffer.value

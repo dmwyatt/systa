@@ -14,7 +14,7 @@ from exceptions import WindowsMessageLoopError
 
 EVENT_CALLBACKS = {}
 
-EventFilter = Union[int, Literal['*']]
+EventFilter = Union[int, Literal["*"]]
 EventFilters = Iterable[EventFilter]
 SingleOrMultipleEventFilters = Union[EventFilter, EventFilters]
 
@@ -44,18 +44,25 @@ def windows_msg_handler_loop():
     try:
         # Function
         win_event_proc_type = ctypes.WINFUNCTYPE(
-                None,
-                ctypes.wintypes.HANDLE,
-                ctypes.wintypes.DWORD,
-                ctypes.wintypes.HWND,
-                ctypes.wintypes.LONG,
-                ctypes.wintypes.LONG,
-                ctypes.wintypes.DWORD,
-                ctypes.wintypes.DWORD
+            None,
+            ctypes.wintypes.HANDLE,
+            ctypes.wintypes.DWORD,
+            ctypes.wintypes.HWND,
+            ctypes.wintypes.LONG,
+            ctypes.wintypes.LONG,
+            ctypes.wintypes.DWORD,
+            ctypes.wintypes.DWORD,
         )
 
-        def win_callback(hWinEventHook: int, event: int, hwnd: Union[int, None], idObject: int,
-                         idChild: int, idEventThread: int, dwmsEventTime: int):
+        def win_callback(
+            hWinEventHook: int,
+            event: int,
+            hwnd: Union[int, None],
+            idObject: int,
+            idChild: int,
+            idEventThread: int,
+            dwmsEventTime: int,
+        ):
             """
             This is the callback that Windows calls for each event we register it for.
 
@@ -97,16 +104,16 @@ def windows_msg_handler_loop():
             #   events we support so that we use less CPU.
             #   We could maybe do multiple threads/processes if we need more event types?
             hook = user32.SetWinEventHook(
-                    WinEvents.EVENT_MIN,
-                    WinEvents.EVENT_MAX,
-                    0,
-                    win_event_proc,
-                    0,
-                    0,
-                    winevent_outofcontext
+                WinEvents.EVENT_MIN,
+                WinEvents.EVENT_MAX,
+                0,
+                win_event_proc,
+                0,
+                0,
+                winevent_outofcontext,
             )
             if hook == 0:
-                raise WindowsMessageLoopError('Unable to hook msg events.')
+                raise WindowsMessageLoopError("Unable to hook msg events.")
 
             msg = ctypes.wintypes.MSG()
             while user32.GetMessageW(ctypes.byref(msg), 0, 0, 0) != 0:
@@ -158,13 +165,13 @@ def on_window_title_appear(expected_title: str, case_sensitive=False, substring=
     return decorator
 
 
-@on_window_title_appear('Untitled - Notepad')
+@on_window_title_appear("Untitled - Notepad")
 def print_window(title, event, hwnd):
     print(title)
 
 
 def do_print_event_stream(title_substrings, print_delay=1):
-    EventData = namedtuple('EventData', ['time', 'event', 'title', 'id'])
+    EventData = namedtuple("EventData", ["time", "event", "title", "id"])
     event_buffer = {}
     printed_events = set()
 
@@ -172,7 +179,9 @@ def do_print_event_stream(title_substrings, print_delay=1):
     def print_event(event, hwnd):
         # clear out already printed events
         for h in event_buffer:
-            event_buffer[h] = [evt for evt in event_buffer[h] if evt.id not in printed_events]
+            event_buffer[h] = [
+                evt for evt in event_buffer[h] if evt.id not in printed_events
+            ]
 
         # add this new event to the event buffer
         data = EventData(time.time(), event, get_window_title(hwnd), uuid.uuid4().hex)
@@ -194,11 +203,13 @@ def do_print_event_stream(title_substrings, print_delay=1):
                         pprint([(x.title, WinEvents[x.event]) for x in event_datas])
                         print("=" * 50)
                         printed_events.add()
-                        event_buffer[h] = [EventData(x.time, x.event, x.title, True) for x in
-                                           event_buffer[h]]
+                        event_buffer[h] = [
+                            EventData(x.time, x.event, x.title, True)
+                            for x in event_buffer[h]
+                        ]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # do_print_event_stream(['firefox', 'explorer', 'notepad', 'settings', 'autoit'])
 
     windows_msg_handler_loop()
