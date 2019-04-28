@@ -6,16 +6,11 @@ from typing import Dict, Iterator, List, Optional, Pattern, Tuple, TypeVar, Unio
 from backends.util import class_path_to_backend_name, import_backend
 from backends.win_access import WinAccessBase
 from exceptions import NoMatchingWindowError, SystaError
-from utils import (
-    cached_property,
-    class_to_dotted,
-    get_process_name,
-    import_string,
-)
+from utils import cached_property, class_to_dotted, get_process_name, import_string
 
-SYSTA_BACKEND_ENV = 'SYSTA_BACKEND'
+SYSTA_BACKEND_ENV = "SYSTA_BACKEND"
 
-Backend = TypeVar('Backend')
+Backend = TypeVar("Backend")
 
 
 def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
@@ -36,13 +31,15 @@ def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
     elif backend is None:
         env = os.environ.get(SYSTA_BACKEND_ENV)
         if env is None:
-            raise SystaError(f'If no backend is provided, the environment variable '
-                             f'{SYSTA_BACKEND_ENV} must be set to the name of the backend to use.')
+            raise SystaError(
+                f"If no backend is provided, the environment variable "
+                f"{SYSTA_BACKEND_ENV} must be set to the name of the backend to use."
+            )
         else:
             try:
                 return import_string(env)()
             except ImportError:
-                return import_string(f'backends.{env}.WinAccess')()
+                return import_string(f"backends.{env}.WinAccess")()
 
 
 class Window:
@@ -53,8 +50,12 @@ class Window:
     determine if the window is still around.
     """
 
-    def __init__(self, handle: int, backend: Optional[Union[str, WinAccessBase]] = None,
-                 title: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        handle: int,
+        backend: Optional[Union[str, WinAccessBase]] = None,
+        title: Optional[str] = None,
+    ) -> None:
         """
         :param handle:  The handle to the window.  This is the one source of truth linking this
             object to a real window.
@@ -78,7 +79,8 @@ class Window:
         if self._backend_name is None:
             # We don't generate this unless we need it
             self._backend_name = class_path_to_backend_name(
-                    class_to_dotted(self._backend.__class__))
+                class_to_dotted(self._backend.__class__)
+            )
         if self._title is not None:
             title = f'"{self.title}"'
         else:
@@ -142,7 +144,9 @@ class Window:
         else:
             desktop_handle = self.backend.get_handle("Program Manager")
             if len(desktop_handle) != 1:
-                raise NoMatchingWindowError('Cannot activate desktop to "deactivate" window.')
+                raise NoMatchingWindowError(
+                    'Cannot activate desktop to "deactivate" window.'
+                )
 
             self.backend.activate_window(desktop_handle[0])
 
@@ -326,6 +330,10 @@ class Window:
         assert mouse_x < win_x + self.width
         return mouse_x - win_x
 
+    @mouse_x_pos.setter
+    def mouse_x_pos(self, value: int) -> None:
+        self.backend.mouse.move_to(self.x_pos + value, self.backend.mouse.y_pos)
+
     @property
     def mouse_y_pos(self) -> int:
         mouse_y = self.backend.mouse.y_pos
@@ -333,6 +341,10 @@ class Window:
         assert mouse_y > win_y
         assert mouse_y < win_y + self.height
         return mouse_y - win_y
+
+    @mouse_y_pos.setter
+    def mouse_y_pos(self, value: int) -> None:
+        self.backend.mouse.move_to(self.backend.mouse.x_pos, self.y_pos + value)
 
     @cached_property
     def process_id(self) -> int:
@@ -345,6 +357,10 @@ class Window:
     @cached_property
     def process_name(self) -> str:
         return get_process_name(self.pid)
+
+    @property
+    def classname(self) -> str:
+        return self.backend.get_class_name(self.handle)
 
     # //////////////
     # Control methods
@@ -377,7 +393,8 @@ class Window:
 
 class WindowSearchPredicate(abc.ABC):
     @abc.abstractmethod
-    def predicate(self, *args, **kwargs) -> bool: ...
+    def predicate(self, *args, **kwargs) -> bool:
+        ...
 
     def __call__(self, window: Window) -> bool:
         return self.predicate(window)
@@ -472,18 +489,20 @@ class CurrentWindows:
                 handles = self.backend.get_handle(item)
             except NoMatchingWindowError as e:
                 raise KeyError(str(e))
-            return [Window(handle, backend=self.backend, title=item) for handle in handles]
+            return [
+                Window(handle, backend=self.backend, title=item) for handle in handles
+            ]
 
         elif isinstance(item, int):
             # an int is treated as a window handle
             if not self.backend.get_exists(item):
-                raise KeyError(f'Window with this handle does not exist: {item}')
+                raise KeyError(f"Window with this handle does not exist: {item}")
 
             return [Window(item, backend=self.backend)]
 
-    def get(self, item: GetTypes,
-            default: Optional[GetTypes] = None
-            ) -> Optional[List[Window]]:
+    def get(
+        self, item: GetTypes, default: Optional[GetTypes] = None
+    ) -> Optional[List[Window]]:
         try:
             return self[item]
         except KeyError:
@@ -493,15 +512,18 @@ class CurrentWindows:
         return iter(self.current_windows)
 
 
-if __name__ == '__main__':
-    os.environ[SYSTA_BACKEND_ENV] = 'autoit'
+if __name__ == "__main__":
+    os.environ[SYSTA_BACKEND_ENV] = "autoit"
 
     windows = CurrentWindows()
-    notepad = windows['Untitled - Notepad'][0]
+    notepad = windows["Untitled - Notepad"][0]
     notepad.activate()
     notepad.bring_mouse_to()
     print(notepad.mouse_x_pos, notepad.mouse_y_pos)
-
+    notepad.mouse_x_pos = 500
+    notepad.mouse_y_pos = 100
+    print(notepad.mouse_x_pos, notepad.mouse_y_pos)
+    print(notepad.classname)
     # from backends.autoit import WinAccess
     # ai = WinAccess()
     # ai.get_win_x_pos(69)

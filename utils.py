@@ -103,14 +103,16 @@ def method_decorator(decorator: Callable[..., AnyCallable],
     :return: Returns the decorator we want to use on a class.
     """
 
-    # TODO: update this to work with decorator generators...aka, decorators that take arguments
-    def decorate(cls):
-        for name, fn in inspect.getmembers(cls, inspect.isfunction):
+    @wrapt.decorator
+    def wrapper(wrapped, instance, args, kwargs):
+        if not (instance is None and inspect.isclass(wrapped)):
+            raise TypeError('Use `method_decorator` on classes.')
+        for name, fn in inspect.getmembers(wrapped, inspect.isfunction):
             if all(predicate(fn) for predicate in predicates):
-                setattr(cls, name, decorator(fn))
-        return cls
+                setattr(wrapped, name, decorator(fn))
+        return wrapped(*args, **kwargs)
 
-    return decorate
+    return wrapper
 
 
 dontcheck = make_sentinel('dontcheck', 'dontcheck')
@@ -118,7 +120,7 @@ dontcheck = make_sentinel('dontcheck', 'dontcheck')
 
 def has_parameter(parameter_name: str,
                   annotation: Optional[type] = dontcheck
-                  ) -> Callable[[AnyCallable], bool]:
+                  ) -> PredicateCallable:
     """Creates a predicate that checks for an arg name in a function signature.
 
     :param parameter_name: The name of the parameter we want to check for.
@@ -135,6 +137,33 @@ def has_parameter(parameter_name: str,
             return True
 
         return parameter.annotation == annotation
+
+    return predicate
+
+
+def exclude_method_name(method_name: str) -> PredicateCallable:
+    """Creates a predicate that excludes methods with the provided name."""
+
+    def predicate(func: AnyCallable) -> bool:
+        return func.__name__ != method_name
+
+    return predicate
+
+
+def exclude_method_attribute(attribute: str, value: Any = False) -> PredicateCallable:
+    """Creates a predicate that excludes methods with an attribute set to a value"""
+
+    def predicate(func: AnyCallable) -> bool:
+        # Return true if has attribute `attribute` with value `value`.
+        if not hasattr(func, attribute):
+            # does not have the attribute, so we're not skipping it
+            return True
+        if getattr(func, attribute) == value:
+            # it does have the attribute and it equals the value, so skip it
+            print('skipping', func.__name__)
+            return False
+        # it has the attribute, but its not `value`, so don't skip it
+        return True
 
     return predicate
 

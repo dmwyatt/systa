@@ -93,11 +93,14 @@ class WinAccessBase(abc.ABC):
     @abc.abstractmethod
     def get_process_id(self, handle: int) -> int: ...
 
-    def get_pid(self, handle: int):
+    def get_pid(self, handle: int) -> int:
         return self.get_process_id(handle)
 
     @abc.abstractmethod
     def set_all_windows_minimized(self) -> None: ...
+
+    @abc.abstractmethod
+    def get_class_name(self, handle: int) -> str: ...
 
 
 class MouseButton(Enum):

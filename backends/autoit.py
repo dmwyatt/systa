@@ -1,25 +1,24 @@
-import ctypes
 import inspect
 from enum import IntEnum
 from functools import lru_cache, wraps
 from typing import Any, Iterator, List, Mapping, Optional, Sequence, Tuple
 
 import win32com.client
-import wrapt
 from argupdate import ValueUpdater, update_parameter_value
 from argupdate.argupdate import Args, Kwargs
 
+from backends import ctype
 from backends.win_access import MouseButton, MouseControllerBase, WinAccessBase
 from exceptions import NoMatchingWindowError
 from utils import (
     cached_property,
+    exclude_method_attribute,
     get_value_by_arg_name,
     has_parameter,
     method_decorator,
     raise_on_return_value,
+    method_decorator,
 )
-
-user32 = ctypes.windll.user32
 
 
 class WinState(IntEnum):
@@ -82,7 +81,8 @@ def _get_no_matching_window_exc(wrapped, return_value: Any, args: Args, kwargs: 
 raise_on_one = raise_on_return_value(exc=_get_no_matching_window_exc, return_value=1)
 
 
-@method_decorator(autoit_handle, [has_parameter('handle', int)])
+@method_decorator(autoit_handle, [has_parameter('handle', int), exclude_method_attribute(
+        'autoit')])
 class WinAccess(WinAccessBase):
     """
     Low level access to windows.
@@ -198,11 +198,20 @@ class WinAccess(WinAccessBase):
     def set_shown(self, handle: int) -> None:
         self._autoit.WinSetState(handle, "", self._autoit.SW_SHOW)
 
+    def get_class_name(self, handle: int) -> str:
+        return ctype.get_class_name(handle)
+
+    get_class_name.autoit = False
+
     def set_enabled(self, handle: int) -> None:
-        return user32.EnableWindow(handle, 1)
+        return ctype.set_enabled(handle)
+
+    set_enabled.autoit = False
 
     def set_disabled(self, handle: int) -> None:
-        return user32.EnableWindow(handle, 0)
+        return ctype.set_disabled(handle)
+
+    set_disabled.autoit = False
 
 
 WinListReturnType = Tuple[Tuple[str, ...], Tuple[int, ...]]
