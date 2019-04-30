@@ -305,8 +305,6 @@ class Window:
     def mouse_x_pos(self) -> int:
         mouse_x = self.backend.mouse.x_pos
         win_x = self.x_pos
-        assert mouse_x > win_x
-        assert mouse_x < win_x + self.width
         return mouse_x - win_x
 
     @mouse_x_pos.setter
@@ -317,8 +315,6 @@ class Window:
     def mouse_y_pos(self) -> int:
         mouse_y = self.backend.mouse.y_pos
         win_y = self.y_pos
-        assert mouse_y > win_y
-        assert mouse_y < win_y + self.height
         return mouse_y - win_y
 
     @mouse_y_pos.setter
@@ -499,7 +495,7 @@ if __name__ == "__main__":
     notepad.activate()
     notepad.bring_mouse_to()
     print(notepad.mouse_x_pos, notepad.mouse_y_pos)
-    notepad.mouse_x_pos = 500
+    notepad.mouse_x_pos = -500
     notepad.mouse_y_pos = 100
     print(notepad.mouse_x_pos, notepad.mouse_y_pos)
     print(notepad.classname)
