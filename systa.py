@@ -1,45 +1,12 @@
 import abc
 import os
 import re
-from typing import Dict, Iterator, List, Optional, Pattern, Tuple, TypeVar, Union
+from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
-from backends.util import class_path_to_backend_name, import_backend
+from backends.util import class_path_to_backend_name, get_backend, SYSTA_BACKEND_ENV
 from backends.win_access import WinAccessBase
-from exceptions import NoMatchingWindowError, SystaError
-from utils import cached_property, class_to_dotted, get_process_name, import_string
-
-SYSTA_BACKEND_ENV = "SYSTA_BACKEND"
-
-Backend = TypeVar("Backend")
-
-
-def get_backend(backend: Optional[Union[str, Backend]] = None) -> Backend:
-    """ Helper function for getting a backend by name.
-
-    :param backend: The name of the backend to get and return an instance of.
-    """
-
-    # We don't need to import anything, this is already an instance of the class...
-    if isinstance(backend, WinAccessBase):
-        return backend
-
-    # Attempt to import the provided string.
-    elif isinstance(backend, str):
-        return import_backend(backend)()
-
-    # Attempt to get the backend to use from the environment
-    elif backend is None:
-        env = os.environ.get(SYSTA_BACKEND_ENV)
-        if env is None:
-            raise SystaError(
-                f"If no backend is provided, the environment variable "
-                f"{SYSTA_BACKEND_ENV} must be set to the name of the backend to use."
-            )
-        else:
-            try:
-                return import_string(env)()
-            except ImportError:
-                return import_string(f"backends.{env}.WinAccess")()
+from exceptions import NoMatchingWindowError
+from utils import cached_property, class_to_dotted, get_process_name
 
 
 class Window:
