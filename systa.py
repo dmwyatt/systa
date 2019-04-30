@@ -12,9 +12,9 @@ from utils import cached_property, class_to_dotted, get_process_name
 class Window:
     """ The main class for handling windows.
 
-    Each window can be represented by this class.  Note that, just because you have an instance
-    of this class does not mean the window still exists!  You can use the `exists` property to
-    determine if the window is still around.
+    Each window can be represented by this class.  Note that, just because you have
+    an instance of this class does not mean the window still exists!  You can use the
+    `exists` property to determine if the window is still around.
     """
 
     def __init__(
@@ -24,14 +24,17 @@ class Window:
         title: Optional[str] = None,
     ) -> None:
         """
-        :param handle:  The handle to the window.  This is the one source of truth linking this
-            object to a real window.
-        :param backend: One of: an instance of :py:class:`backends.win_access.WinAccessBase`,
-            a string indicating which backend to use (e.g. "autoit"). If not provided, we'll get
-            it from the environment. See :py:func:`get_backend` for more details on how we get
-            the backend.
-        :param title: If you know the current title at time of creating this object, pass it in
-            so we don't do time-consuming queries to get the window title later.
+        :param handle:  The handle to the window.  This is the one source of truth
+            linking this object to a real window.
+
+        :param backend: One of: an instance of
+        :py:class:`backends.win_access.WinAccessBase`, a string indicating which
+        backend to use (e.g. "autoit"). If not provided, we'll get it from the
+        environment. See :py:func:`get_backend` for more details on how we get the
+        backend.
+
+        :param title: If you know the current title at time of creating this object,
+        pass it in so we don't do time-consuming queries to get the window title later.
         """
         self.handle = handle
         self._title = title
@@ -51,7 +54,8 @@ class Window:
         if self._title is not None:
             title = f'"{self.title}"'
         else:
-            # If we don't have a title, lets not do an expensive lookup to get it just for a repr
+            # If we don't have a title, lets not do an expensive lookup to get it
+            # just for a repr
             title = None
         return f'Window(handle={self.handle}, backend="{self._backend_name}", title={title})'
 
@@ -80,10 +84,11 @@ class Window:
         >>> current_windows = CurrentWindows()
         >>> new_instance = current_windows.get(old_instance)
 
-        We do this because during bulk operations like getting all windows, we often also already
-        have the title.  When we're doing operations on large collections of this class it's very
-        time consuming to constantly be re-retrieving the title, and since the title does not
-        often change, and it is commonly used, it seems best to just cache it.
+        We do this because during bulk operations like getting all windows, we often
+        also already have the title.  When we're doing operations on large
+        collections of this class it's very time consuming to constantly be
+        re-retrieving the title, and since the title does not often change, and it is
+        commonly used, it seems best to just cache it.
         """
         if self._title is None:
             self._title = self.backend.get_title(self.handle)
@@ -97,10 +102,12 @@ class Window:
     def active(self) -> bool:
         """ Reports and controls if the window is active.
 
-        If :python:`True`, the window is active and if :python:`False`, the window is not active.
+        If :python:`True`, the window is active and if :python:`False`, the window is
+        not active.
 
-        This property is also a setter.  Setting to :python:`False` deactivates the window by
-        activating the desktop "window".  Of course, setting to :python:`True` activates the window.
+        This property is also a setter.  Setting to :python:`False` deactivates the
+        window by activating the desktop "window".  Of course, setting to
+        :python:`True` activates the window.
         """
         return self.backend.get_is_active(self.handle)
 
@@ -121,10 +128,12 @@ class Window:
     def exists(self) -> bool:
         """Reports and controls if the window exists.
 
-        There is no real-time correspondence between a :class:`Window` object and a real Windows
-        window.  If you want to check if the window still exists, this will tell you.
+        There is no real-time correspondence between a :class:`Window` object and a
+        real Windows window.  If you want to check if the window still exists,
+        this will tell you.
 
-        Because we're crazy people you can also set this to :python:`False` to close a window.
+        Because we're crazy people you can also set this to :python:`False` to close
+        a window.
 
         Setting to :python:`True` has no effect.
         """
@@ -139,11 +148,11 @@ class Window:
     def visible(self) -> bool:
         """Reports and controls if the window is visible.
 
-        If set to :python:`True` sets the window to be visible. If set to :python:`False` sets
-        the window to be hidden.
+        If set to :python:`True` sets the window to be visible. If set to
+        :python:`False` sets the window to be hidden.
 
-        .. warning:: This concept of visibility does not have to do with the window being hidden
-            by other windows. See here_ for more info.
+        .. warning:: This concept of visibility does not have to do with the window
+        being hidden by other windows. See here_ for more info.
 
         .. _here: https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-features#window-visibility
         """
@@ -160,8 +169,8 @@ class Window:
     def enabled(self) -> bool:
         """Reports and controls if the window is enabled.
 
-        If set to :python:`True`, the user can accept user input. If set to :python:`False` the
-        window will not accept user input.
+        If set to :python:`True`, the user can accept user input. If set to
+        :python:`False` the window will not accept user input.
         """
         return self.backend.get_is_enabled(self.handle)
 
@@ -176,8 +185,8 @@ class Window:
     def minimized(self) -> bool:
         """Reports and controls if the window is minimized.
 
-        IF set to :python:`True`, the window is minimized. If set to :python:`False`, the window
-        is restored.
+        IF set to :python:`True`, the window is minimized. If set to :python:`False`,
+        the window is restored.
         """
         return self.backend.get_is_minimized(self.handle)
 
@@ -192,8 +201,8 @@ class Window:
     def maximized(self) -> bool:
         """Reports and controls if the window is maximized.
 
-        IF set to :python:`True`, the window is maximized. If set to :python:`False`, the window
-        is restored.
+        IF set to :python:`True`, the window is maximized. If set to :python:`False`,
+        the window is restored.
         """
         return self.backend.get_is_maximized(self.handle)
 
@@ -208,7 +217,8 @@ class Window:
     def x_pos(self) -> int:
         """Reports and controls the windows origin coordinate X position.
 
-        If set to an integer the window is instantaneously moved on the x axis to that position.
+        If set to an integer the window is instantaneously moved on the x axis to
+        that position.
         """
         return self.backend.get_win_x_pos(self.handle)
 
@@ -220,7 +230,8 @@ class Window:
     def y_pos(self) -> int:
         """Reports and controls the windows origin coordinate Y position.
 
-        If set to an integer the window is instantaneously moved on the y axis to that position.
+        If set to an integer the window is instantaneously moved on the y axis to
+        that position.
         """
 
         return self.backend.get_win_y_pos(self.handle)
@@ -233,8 +244,8 @@ class Window:
     def position(self) -> Tuple[int, int]:
         """Reports and controls the windows origin coordinate X, Y position.
 
-        If set to a sequence containing two ints, the window is instantaneously moved to those
-        coordinates.
+        If set to a sequence containing two ints, the window is instantaneously moved
+        to those coordinates.
         """
         return self.x_pos, self.y_pos
 
@@ -264,10 +275,11 @@ class Window:
         """
         Moves mouse into window area.  Does not activate window.
 
-        :param win_x: Specify the X position for the mouse.  If not provided, centers the mouse
-            on the X-axis of the window.
-        :param win_y: Specify the Y position for the mouse.  If not provided, centers the mouse
-            on the Y-axis of the window.
+        :param win_x: Specify the X position for the mouse.  If not provided, centers
+        the mouse on the X-axis of the window.
+
+        :param win_y: Specify the Y position for the mouse.  If not provided, centers
+        the mouse on the Y-axis of the window.
         """
         if win_x is not None:
             x = self.x_pos + win_x
@@ -332,8 +344,8 @@ class Window:
     # //////////////
     # Control methods
     # ---------------
-    # The following methods offer an alternative API that uses callable methods rather than
-    # get/set properties.
+    # The following methods offer an API that uses callable methods rather
+    # than get/set properties.  This should be the preferred API for actions on windows.
     # //////////////
 
     def show(self) -> None:
