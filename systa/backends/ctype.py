@@ -1,6 +1,6 @@
 import ctypes
 
-from backends.win_access import WinAccessBase
+from systa.backends.win_access import WinAccessBase
 
 user32 = ctypes.windll.user32
 

@@ -7,15 +7,14 @@ import win32com.client
 from argupdate import ValueUpdater, update_parameter_value
 from argupdate.argupdate import Args, Kwargs
 
-from backends import ctype
-from backends.win_access import MouseButton, MouseControllerBase, WinAccessBase
-from exceptions import NoMatchingWindowError
-from utils import (
+from systa.backends import ctype
+from systa.backends.win_access import WinAccessBase, MouseControllerBase, MouseButton
+from systa.exceptions import NoMatchingWindowError
+from systa.utils import (
     cached_property,
     exclude_method_attribute,
     get_value_by_arg_name,
     has_parameter,
-    method_decorator,
     raise_on_return_value,
     method_decorator,
 )

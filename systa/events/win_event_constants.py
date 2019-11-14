@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Iterator, Tuple
 
 
 class _WinEvent:
@@ -91,11 +91,18 @@ class _WinEvent:
     def event_values(self):
         return self.values()
 
+    def get_event_name(self, val: int) -> str:
+        return self.events_by_val.get(val, None)
+
+    def items(self) -> Iterator[Tuple[str, int]]:
+        return iter(self.events.items())
+
     def __init__(self):
         is_event = lambda x: x.isupper() and any(
             [x.startswith(y) for y in self._event_prefixes]
         )
         self.events = {k: v for k, v in vars(self.__class__).items() if is_event(k)}
+        self.events_by_val = {v: k for k, v in self.events.items()}
 
     def __contains__(self, item: int) -> bool:
         return item in self.values()

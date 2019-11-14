@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "systa"
+version = "0.1.0"
+description = "Windows GUI automation with a cool API."
+authors = ["Dustin Wyatt <dustin.wyatt@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pywin32 = "^226.0"
+typing-extensions = "^3.7"
+typing-inspect = "^0.5.0"
+pyzmq = "^18.1"
+wrapt = "^1.11"
+argupdate = {git = "https://github.com/dmwyatt/argupdate.git"}
+boltons = "^19.3"
+
+[tool.poetry.dev-dependencies]
+ipython = "^7.9"
+sphinx = "^2.2"
+sphinx-autodoc-typehints = "^1.10"
+beautifulsoup4 = "^4.8"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

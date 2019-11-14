@@ -3,14 +3,14 @@ import ctypes.wintypes
 import functools
 import time
 import uuid
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from pprint import pprint
-from typing import Iterable, Union
+from typing import Iterable, Union, Sequence
 
 from typing_extensions import Literal
 
-from events.win_event_constants import WinEvents
-from exceptions import WindowsMessageLoopError
+from systa.events.win_event_constants import WinEvents
+from systa.exceptions import WindowsMessageLoopError
 
 EVENT_CALLBACKS = {}
 
@@ -64,25 +64,34 @@ def windows_msg_handler_loop():
             dwmsEventTime: int,
         ):
             """
-            This is the callback that Windows calls for each event we register it for.
+            Handle window events and distribute them to registered callbacks.
 
             https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nc-winuser-wineventproc
 
-            :param hWinEventHook: Handle to an event hook function. This value is returned by
-            SetWinEventHook when the hook function is installed and is specific to each instance of
-            the hook function.
+            :param hWinEventHook: Handle to an event hook function. This value is
+                returned by SetWinEventHook when the hook function is installed and is
+                specific to each instance of the hook function.
+
             :param event: Specifies the event that occurred. This value is one of
-            the event constants specified in `win_event_constants.WinEvents`.
-            :param hwnd: Handle to the window that generates the event, or None if no window is
-            associated with the event. For example, the mouse pointer is not associated with a window.
-            :param idObject: Identifies the object associated with the event. This is one of the
-            object identifiers or a custom object ID.
-            (https://docs.microsoft.com/en-us/windows/desktop/WinAuto/object-identifiers)
-            :param idChild: Identifies whether the event was triggered by an object or a child
-            element of the object. If this value is CHILDID_SELF, the event was triggered by the
-            object; otherwise, this value is the child ID of the element that triggered the event.
+                the event constants specified in `win_event_constants.WinEvents`.
+
+            :param hwnd: Handle to the window that generates the event, or None if no
+                window is associated with the event. For example, the mouse pointer is
+                not associated with a window.
+
+            :param idObject: Identifies the object associated with the event. This is
+                one of the object identifiers or a custom object ID. (
+                https://docs.microsoft.com/en-us/windows/desktop/WinAuto/object-identifiers)
+
+            :param idChild: Identifies whether the event was triggered by an object
+                or a child element of the object. If this value is CHILDID_SELF,
+                the event was triggered by the object; otherwise, this value is the
+                child ID of the element that triggered the event.
+
             :param dwEventThread:
-            :param dwmsEventTime: Specifies the time, in milliseconds, that the event was generated.
+
+            :param dwmsEventTime: Specifies the time, in milliseconds, that the event
+                was generated.
             """
 
             if event in WinEvents:
@@ -93,16 +102,18 @@ def windows_msg_handler_loop():
                 for cb in EVENT_CALLBACKS.get("*", []):
                     cb(event, hwnd)
 
+        # Create win functype out of our python function `win_callback` so that our
+        # windows event hook knows how to call it
         win_event_proc = win_event_proc_type(win_callback)
 
         winevent_outofcontext = 0x0000
         user32.SetWinEventHook.restype = ctypes.wintypes.HANDLE
         hook = None
         try:
-            # TODO: We need to do some benchmarking on this.
-            #   It might be better to not use EVENT_MIN and EVENT_MAX and narrow down which
-            #   events we support so that we use less CPU.
-            #   We could maybe do multiple threads/processes if we need more event types?
+            # TODO: We need to do some benchmarking on this. It might be better to
+            #  not use EVENT_MIN and EVENT_MAX and narrow down which events we
+            #  support so that we use less CPU. We could maybe do multiple
+            #  threads/processes if we need more event types?
             hook = user32.SetWinEventHook(
                 WinEvents.EVENT_MIN,
                 WinEvents.EVENT_MAX,
@@ -165,34 +176,36 @@ def on_window_title_appear(expected_title: str, case_sensitive=False, substring=
     return decorator
 
 
-@on_window_title_appear("Untitled - Notepad")
-def print_window(title, event, hwnd):
-    print(title)
+def do_print_event_stream(
+    title_substrings: Sequence[str], print_delay: int = 1
+) -> None:
+    """
+    Batched printing of window events for specified windows.
 
-
-def do_print_event_stream(title_substrings, print_delay=1):
+    :param title_substrings: Iterable sequence of title substrings to look for.
+    :param print_delay: How often to print events for windows in seconds
+    """
     EventData = namedtuple("EventData", ["time", "event", "title", "id"])
-    event_buffer = {}
+    event_buffer = defaultdict(list)
     printed_events = set()
 
     @register("*")
     def print_event(event, hwnd):
         # clear out already printed events
-        for h in event_buffer:
-            event_buffer[h] = [
-                evt for evt in event_buffer[h] if evt.id not in printed_events
+        for buffered_hwnd in event_buffer:
+            event_buffer[buffered_hwnd] = [
+                evt
+                for evt in event_buffer[buffered_hwnd]
+                if evt.id not in printed_events
             ]
 
         # add this new event to the event buffer
         data = EventData(time.time(), event, get_window_title(hwnd), uuid.uuid4().hex)
-        if hwnd not in event_buffer:
-            event_buffer[hwnd] = [data]
-        else:
-            event_buffer[hwnd].append(data)
+        event_buffer[hwnd].append(data)
 
         # check if anything is ready to print
         now = time.time()
-        for h, event_datas in event_buffer.items():
+        for buffered_hwnd, event_datas in event_buffer.items():
             # check if any events we have for this window are older than our print delay
             should_print = any([x.time < (now - print_delay) for x in event_datas])
             if should_print:
@@ -202,14 +215,14 @@ def do_print_event_stream(title_substrings, print_delay=1):
                         print("=" * 50)
                         pprint([(x.title, WinEvents[x.event]) for x in event_datas])
                         print("=" * 50)
-                        printed_events.add()
-                        event_buffer[h] = [
-                            EventData(x.time, x.event, x.title, True)
-                            for x in event_buffer[h]
-                        ]
+                        for ed in event_datas:
+                            printed_events.add(ed.id)
 
 
 if __name__ == "__main__":
-    # do_print_event_stream(['firefox', 'explorer', 'notepad', 'settings', 'autoit'])
+    do_print_event_stream(["firefox", "explorer", "notepad", "settings", "autoit"])
+    # @on_window_title_appear("Untitled - Notepad")
+    # def print_window(title, event, hwnd):
+    #     print(title, WinEvents.get_event_name(event), event)
 
     windows_msg_handler_loop()

@@ -3,10 +3,14 @@ import os
 import re
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
-from backends.util import class_path_to_backend_name, get_backend, SYSTA_BACKEND_ENV
-from backends.win_access import WinAccessBase
-from exceptions import NoMatchingWindowError
-from utils import cached_property, class_to_dotted, get_process_name
+from systa.backends.util import (
+    class_path_to_backend_name,
+    get_backend,
+    SYSTA_BACKEND_ENV,
+)
+from systa.backends.win_access import WinAccessBase
+from systa.exceptions import NoMatchingWindowError
+from systa.utils import class_to_dotted, cached_property, get_process_name
 
 
 class Window:

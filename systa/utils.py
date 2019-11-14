@@ -10,7 +10,7 @@ import wrapt
 from argupdate.argupdate import Args, Kwargs, iter_args
 from boltons.typeutils import make_sentinel
 
-from exceptions import SystaError
+from systa.exceptions import SystaError
 
 
 class cached_property:

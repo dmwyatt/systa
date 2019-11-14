@@ -1,9 +1,9 @@
 import os
 from typing import Optional, Union, TypeVar
 
-from backends.win_access import WinAccessBase
-from exceptions import SystaError
-from utils import import_string
+from systa.backends.win_access import WinAccessBase
+from systa.exceptions import SystaError
+from systa.utils import import_string
 
 
 def import_backend(backend_name: str):
