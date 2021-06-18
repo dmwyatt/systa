@@ -1,0 +1,612 @@
+from __future__ import annotations
+
+import abc
+import re
+from collections import defaultdict
+from fnmatch import fnmatchcase
+from functools import cached_property
+from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
+
+import win32con
+from pynput.mouse._win32 import Button, Controller
+
+from systa.backend import WinAccess
+from systa.exceptions import NoMatchingWindowError
+from systa.types import Point, Rect
+from systa.utils import SystaMonitor, get_monitors
+
+
+class Window:
+    """The main class for getting info from and manipulating windows.
+
+    Each window can be represented by this class.  Note that, just because you have
+    an instance of this class does not mean the window still exists!  You can use the
+    `exists` property to determine if the window is still around.
+
+    :param ref:  The handle to the window.  This is the one source of truth
+            linking this object to a real window.
+
+    :param title: If you know the current title at time of creating this object,
+        pass it in so we don't do time-consuming queries to get the window title
+        later.
+
+        .. note:: Generally you can ignore this parameter.  It's mostly useful when
+            doing batch operations with dozens of windows.
+    """
+
+    def __init__(
+        self,
+        ref: Union[int, "WindowLookupType"],
+        title: Optional[str] = None,
+    ) -> None:
+        if isinstance(ref, int):
+            self.handle = ref
+        else:
+            matching_windows = current_windows[ref]
+
+            if not matching_windows:
+                raise ValueError("Cannot find matching window.")
+            elif len(matching_windows) == 1:
+                self.handle = matching_windows[0].handle
+            else:
+                raise ValueError("Too many matching windows.")
+        self._title = title
+
+        self.backend = WinAccess()
+
+    def __str__(self):
+        return self.title
+
+    def __repr__(self):
+        if self._title is not None:
+            return f'Window(handle={self.handle}, title="{self._title}")'
+        else:
+            # If we don't have a title, lets not do an expensive lookup to get it
+            # just for the repr
+            return f"Window(handle={self.handle})"
+
+    @cached_property
+    def mouse(self) -> "WindowRelativeMouseController":
+        """Returns a modified :class:`WindowRelativeMouseController` that operates
+        relative to the windows coordinates."""
+        return WindowRelativeMouseController(self)
+
+    @property
+    def title(self) -> Optional[str]:
+        """The title of the window.
+
+        Note that, unlike most other window attributes, we  cache the title to save
+        time-consuming requests for the title.
+
+        Just re-instantiate if you want to see if title has changed.
+
+        Check for window title change:
+
+        >>> from systa.windows import current_windows, Window
+        >>> old_instance = Window(123456)
+        >>> new_instance = Window(old_instance.handle)
+
+        Or we can do it this way:
+
+        >>> new_instance = current_windows[old_instance]
+
+        We do this because during bulk operations like getting all windows, we often
+        also already have the title.  When we're doing operations on large
+        collections of this class it's very time consuming to constantly be
+        re-retrieving the title, and since the title does not often change, and it is
+        commonly used, it seems best to just cache it.
+        """
+        if self._title is None:
+            self._title = self.backend.get_title(self.handle)
+        return self._title
+
+    @title.setter
+    def title(self, value: str) -> None:
+        self.backend.set_title(self.handle, value)
+
+    @property
+    def active(self) -> bool:
+        """Reports and controls if the window is active.
+
+        If ``True``, the window is active and if ``False``, the window is
+        not active.
+
+        Setting to ``False`` deactivates the window by activating the desktop
+        "window".  Of course, setting to ``True`` activates the window.
+        """
+        return self.backend.get_is_active(self.handle)
+
+    @active.setter
+    def active(self, value: bool) -> None:
+        if value:
+            self.backend.activate_window(self.handle)
+            if not self.active:
+                self.bring_mouse_to()
+                self.mouse.click(Button.left)
+        else:
+            desktop_handle = list(self.backend.get_handle("Program Manager"))
+            if len(desktop_handle) != 1:
+                raise NoMatchingWindowError(
+                    'Cannot activate desktop to "deactivate" window.'
+                )
+
+            self.backend.activate_window(desktop_handle[0])
+
+    @property
+    def exists(self) -> bool:
+        """Reports and controls if the window exists.
+
+        There is no real-time, live  correspondence between a :class:`Window` object
+        and a real Microsoft Windows window.  If you want to check if the window
+        still exists, this will tell you.
+
+        Because we're crazy you can also set this to ``False`` to close
+        a window.
+
+        Setting to ``True`` has no effect.
+        """
+        return self.backend.get_exists(self.handle)
+
+    @exists.setter
+    def exists(self, value: bool) -> None:
+        if not value:
+            self.backend.close_window(self.handle)
+
+    @property
+    def visible(self) -> bool:
+        """Reports and controls if the window is visible.
+
+        If set to ``True`` sets the window to be visible. If set to
+        ``False`` sets the window to be hidden.
+
+        .. warning:: This concept of visibility does not have to do with the window
+            being covered by other windows. See here_ for more info.
+
+        .. _here: https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-features#window-visibility
+
+        """
+        return self.backend.get_is_visible(self.handle)
+
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        if value:
+            self.backend.set_shown(self.handle)
+        else:
+            self.backend.set_hidden(self.handle)
+
+    @property
+    def enabled(self) -> bool:
+        """Reports and controls if the window is enabled.
+
+        If set to ``True``, the window can accept user input. If set to
+        ``False`` the window will not accept user input.
+        """
+        return self.backend.get_is_enabled(self.handle)
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        if value:
+            self.backend.set_enabled(self.handle)
+        else:
+            self.backend.set_disabled(self.handle)
+
+    @property
+    def minimized(self) -> bool:
+        """Reports and controls if the window is minimized.
+
+        IF set to ``True``, the window is minimized. If set to ``False``,
+        the window is restored.
+        """
+        return self.backend.get_is_minimized(self.handle)
+
+    @minimized.setter
+    def minimized(self, value: bool) -> None:
+        if value:
+            self.backend.set_minimized(self.handle)
+        else:
+            self.backend.restore(self.handle)
+
+    @property
+    def maximized(self) -> bool:
+        """Reports and controls if the window is maximized.
+
+        If set to ``True``, the window is maximized. If set to ``False``,
+        the window is restored.
+        """
+        return self.backend.get_is_maximized(self.handle)
+
+    @maximized.setter
+    def maximized(self, value: bool) -> None:
+        if value:
+            self.backend.set_maximized(self.handle)
+        else:
+            self.backend.restore(self.handle)
+
+    @property
+    def position(self) -> Point:
+        """Reports and controls the windows origin coordinate X, Y position.
+
+        If set to a tuple containing two ints or a :class:`Point`, the window is
+        instantaneously moved to those coordinates.
+
+        If set to a :class:`Rect`, the window is moved and sized accordingly.
+        """
+        pos = self.backend.get_position(self.handle)
+        return Point(*pos)
+
+    @position.setter
+    def position(self, pos: Union[Tuple[int, int], Point, Rect]) -> None:
+        if isinstance(pos, tuple):
+            self.backend.set_win_position(self.handle, *pos)
+        elif isinstance(pos, Point):
+            self.backend.set_win_position(self.handle, pos.x, pos.y)
+        elif isinstance(pos, Rect):
+            self.backend.set_win_position(self.handle, pos.origin.x, pos.origin.y)
+            self.width = pos.width
+            self.height = pos.height
+        else:
+            raise ValueError("Must provide a two-tuple, a Point, or a Rect.")
+
+    @property
+    def rectangle(self) -> Rect:
+        position = self.position
+        return Rect(
+            origin=Point(*position),
+            end=Point(x=position.x + self.width, y=position.y + self.height),
+        )
+
+    # nr end: 2694, 1181
+
+    @rectangle.setter
+    def rectangle(self, rect: Rect):
+        self.position = rect
+
+    @property
+    def width(self) -> int:
+        """Reports and controls the windows width in pixels."""
+        return self.backend.get_win_width(self.handle)
+
+    @width.setter
+    def width(self, width: int) -> None:
+        self.backend.set_win_dimensions(self.handle, width, self.height)
+
+    @property
+    def height(self) -> int:
+        """Reports and controls the window's height in pixels."""
+        return self.backend.get_win_height(self.handle)
+
+    @height.setter
+    def height(self, height: int) -> None:
+        self.backend.set_win_dimensions(self.handle, self.width, height)
+
+    def bring_mouse_to(self, win_x: int = None, win_y: int = None):
+        """
+        Moves mouse into window area.  Does not activate window.
+
+        :param win_x: Specify the X position for the mouse.  If not provided, centers
+            the mouse on the X-axis of the window.
+
+        :param win_y: Specify the Y position for the mouse.  If not provided, centers
+            the mouse on the Y-axis of the window.
+        """
+        center_x, center_y = self.relative_center_coords
+        if win_x is None:
+            win_x = center_x
+
+        if win_y is None:
+            win_y = center_y
+
+        self.mouse.position = (win_x, win_y)
+
+    def bring_to_mouse(self, center: bool = True) -> None:
+        """
+        Bring window to mouse's position.
+
+        :param center: If ``True``, then move so that center of window is at
+            mouse's position, otherwise it's the top left corner.  Defaults to ``True``.
+        """
+        if center:
+            self.absolute_center_coords = Controller().position
+            return
+        else:
+            new_position = Controller().position
+            self.position = new_position
+
+    @property
+    def absolute_center_coords(self) -> Tuple[int, int]:
+        """
+        The absolute coordinates of the center of the window.
+
+        Set to a ``(x, y)`` tuple to center window at the provided coords.
+        """
+        x, y = self.position
+        return int(self.width / 2) + x, int(self.height / 2) + y
+
+    @absolute_center_coords.setter
+    def absolute_center_coords(self, coords: Tuple[int, int]):
+        center_coords = self.relative_center_coords
+        self.position = coords[0] - center_coords[0], coords[1] - center_coords[1]
+
+    @property
+    def relative_center_coords(self):
+        """The coordinates of the window's center.
+
+        This is relative to the window's origin point.
+        """
+        return int(self.width / 2), int(self.height / 2)
+
+    @cached_property
+    def process_id(self) -> int:
+        """Return the PID of the window's process."""
+        return self.backend.get_process_id(self.handle)
+
+    @property
+    def pid(self) -> int:
+        """Alias for :attr:`process_id`."""
+        return self.process_id
+
+    @cached_property
+    def process_path(self) -> str:
+        """Full path to the process that this window belongs to."""
+        return self.backend.get_process_path(self.handle)
+
+    @property
+    def classname(self) -> str:
+        """Classname of the window."""
+        return self.backend.get_class_name(self.handle)
+
+    def flash(
+        self,
+        times: int = 4,
+        interval: int = 750,
+        flags: int = win32con.FLASHW_ALL | win32con.FLASHW_TIMERNOFG,
+    ):
+        """Flashes a window to get your attention.
+
+        :param times: The number of times to flash. Defaults to 4.
+        :param interval: The flash rate in milliseconds. Defaults to 750ms
+        :param flags: One or more of the ``win32con.FLASHW_*`` flags.  Combine with
+            the ``|`` operator. Defaults to ``win32con.FLASHW_ALL | win32con.FLASHW_TIMERNOFG``.
+
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | Constant              | Meaning                                                                                                                  |
+            +=======================+==========================================================================================================================+
+            | ``FLASHW_ALL``        | Flash both the window caption and taskbar button. This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.  |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | ``FLASHW_CAPTION``    | Flash the window caption.                                                                                                |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | ``FLASHW_STOP``       | Stop flashing. The system restores the window to its original state.                                                     |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | ``FLASHW_TIMER``      | Flash continuously, until the FLASHW_STOP flag is set.                                                                   |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | ``FLASHW_TIMERNOFG``  | Flash continuously until the window comes to the foreground.                                                             |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+            | ``FLASHW_TRAY``       | Flash the taskbar button.                                                                                                |
+            +-----------------------+--------------------------------------------------------------------------------------------------------------------------+
+
+
+        """
+        self.backend.flash_window(self.handle, flags, times, interval)
+
+    @property
+    def screens(self) -> List[SystaMonitor]:
+        windows_monitors = []
+
+        for monitor in get_monitors():
+            if self.rectangle.intersects_rect(monitor.rectangle):
+                windows_monitors.append(monitor)
+
+        return windows_monitors
+
+
+class WindowSearchPredicate(abc.ABC):
+    """Inherit from this class to make custom window searching logic.
+
+    At the minimum, you just inherit and override the predicate method with your
+    custom logic.
+
+
+    """
+
+    @abc.abstractmethod
+    def predicate(self, window: Window) -> bool:
+        """Do logic on the window object to determine if we want to match it.
+
+        :param window: The :class:`Window` we're checking.
+        :returns: ``True`` if the window matches, ``False`` if does not.
+        """
+        ...
+
+    def __call__(self, window: Window) -> bool:
+        return self.predicate(window)
+
+
+class regex_search(WindowSearchPredicate):
+    """Search windows with a regex. Provide a string or a compiled regex."""
+
+    def __init__(self, pattern: Union[Pattern, str]) -> None:
+        if isinstance(pattern, str):
+            self.pattern = re.compile(pattern)
+        elif isinstance(pattern, Pattern):
+            self.pattern = pattern
+        else:
+            raise TypeError("Expected a compiled regex or a string.")
+
+    def predicate(self, window: Window) -> bool:
+        if window.title is None:
+            return False
+        return bool(self.pattern.match(window.title))
+
+
+WindowLookupType = Union[Window, str, int, WindowSearchPredicate]
+"""The types you can use to lookup windows.
+
++------------------------------------------------+--------------------------------------------------+
+| Type                                           | Match method                                     |
++================================================+==================================================+
+| :class:`Window`                                | Compares handle to current windows handles       |
++------------------------------------------------+--------------------------------------------------+
+| ``str``                                        | Exact title match                                |
++------------------------------------------------+--------------------------------------------------+
+| ``int``                                        | Window with handle exists.                       |
++------------------------------------------------+--------------------------------------------------+
+| :class:`~systa.windows.WindowSearchPredicate`  | Matches windows with the logic of the predicate  |
++------------------------------------------------+--------------------------------------------------+
+"""
+
+
+class CurrentWindows:
+    """Represent all windows on a system as a dict-like object.
+
+    Behaves similar to  :class:`collections.defaultdict` with a :any:`list` default
+    factory. This means that if there are no matching windows, you'll get an empty
+    list. Otherwise you'll get a list of at least one :class:`Window` instance.
+    """
+
+    def minimize_all(self):
+        """Minimizes all windows."""
+        self.backend.set_all_windows_minimized()
+        x = defaultdict(list)
+
+    @cached_property
+    def backend(self) -> WinAccess:
+        """The backend for interacting with windows."""
+        return WinAccess()
+
+    @property
+    def current_windows(self) -> Iterator[Window]:
+        """Iterates over all current windows."""
+        for title, handle in self.backend.get_titles_and_handles():
+            yield Window(handle, title=title)
+
+    @property
+    def current_handles(self) -> Dict[int, Window]:
+        """A dictionary mapping window handles to their corresponding Window"""
+        return {x.handle: x for x in self.current_windows}
+
+    @property
+    def current_titles(self) -> Dict[str, List[Window]]:
+        """
+        A dictionary mapping title to lists of windows having that title.
+        """
+        by_title = {}
+        for window in self.current_windows:
+            if window.title in by_title:
+                by_title[window.title].append(window)
+            else:
+                by_title[window.title] = [window]
+        return by_title
+
+    def __contains__(self, item: WindowLookupType) -> bool:
+        """Membership checks with :const:`WindowLookupType`.
+
+        Using exact title:
+
+        >>> from systa.windows import current_windows
+        >>> "Untitled - Notepad" in current_windows
+        True
+
+        Using :class:`Window` instance:
+
+        >>> from systa.windows import Window
+        >>> np = Window("Untitled - Notepad")
+        >>> np in current_windows
+        True
+
+        Using handle:
+
+        >>> np.handle in current_windows
+        True
+
+        Using search predicate:
+
+        >>> from systa.windows import regex_search
+        >>> regex_search(".* - Notepad") in current_windows
+        True
+
+        :param: The window lookup you want to use.
+        """
+        return bool(self[item])
+
+    def __getitem__(self, item: WindowLookupType) -> List[Window]:
+        """Get a :class:`Window`.
+
+        See :meth:`~CurrentWindows.__contains__` for the types of values you can
+        use to look up windows.
+
+        >>> from systa.windows import current_windows
+        >>> current_windows['Untitled - Notepad']
+        [Window(handle=..., title="Untitled - Notepad")]
+
+        >>> from systa.windows import regex_search
+        >>> current_windows[regex_search(".* - Notepad")]
+        [Window(handle=..., title="Untitled - Notepad")]
+
+        :param: The window lookup you want to use.
+        """
+        if isinstance(item, WindowSearchPredicate):
+            return [window for window in self.current_windows if item(window)]
+
+        elif isinstance(item, Pattern):
+            return [
+                window for window in self.current_windows if item.match(window.title)
+            ]
+
+        # We'll just get by Window.handle in the case we pass a window in.
+        elif isinstance(item, Window):
+            if item.exists:
+                return [item]
+            else:
+                return []
+
+        elif isinstance(item, str):
+            # a string is treated as exact window title
+            return [
+                window
+                for window in self.current_windows
+                if fnmatchcase(window.title, item)
+            ]
+
+        elif isinstance(item, int):
+            # an int is treated as a window handle
+            if not self.backend.get_exists(item):
+                return []
+
+            return [Window(item)]
+
+    def __iter__(self):
+        return iter(self.current_windows)
+
+
+current_windows = CurrentWindows()
+"""A representation of all windows on the system.  
+
+An instance of :class:`CurrentWindows`. 
+
+.. warning:: Prefer this over your own instantiation of ``CurrentWindows``."""
+
+
+class WindowRelativeMouseController(Controller):
+    """A version of :class:`pynput.mouse.Controller` operating  relative to window.
+
+    See the `pynput docs <https://pynput.readthedocs.io/en/latest/mouse.html>`_ for
+    more information. The only difference is that moves and positioning are relative
+    to the :class:`Window` provided.
+    """
+
+    def __init__(self, window: Window):
+        """
+        :param window: The :class:`Window` we're operating relative to.
+        """
+        self.window = window
+        super().__init__()
+
+    def _position_get(self):
+        x, y = super()._position_get()
+        win_x, win_y = self.window.position
+        return x - win_x, y - win_y
+
+    def _position_set(self, pos):
+        x, y = pos
+        win_x, win_y = self.window.position
+        super()._position_set((win_x + x, win_y + y))
