@@ -40,7 +40,7 @@ def make_filter(test_func: Callable[[EventData], bool]):
     """Create your own event filter.
 
     To make your own `filter_by` decorator, write a function that takes one
-    :any:`EventData` argument and decorate it with this function.
+    :class:`~systa.events.types.EventData` argument and decorate it with this function.
 
     :param test_func: The function you're decorating.
     """
@@ -178,7 +178,29 @@ def require_window(data: EventData):
 
 
 def touches_monitors(*monitor_numbers):
-    """Window touches all the provided monitors"""
+    """Window touches all the provided monitors.
+
+    .. note:: Provide just one monitor number to test if window is on just that monitor.
+    .. note:: Combine with :func:`any_filter` to test if a window is fully contained
+        on any single monitor:
+
+        .. code-block::
+
+            from systa.events.decorators import filter_by, listen_to
+
+            @filter_by.any_filter(
+                [
+                    filter_by.touches_monitors(1),
+                    filter_by.touches_monitors(2),
+                    filter_by.touches_monitors(3),
+                ]
+            )
+            @listen_to.location_change
+            def my_func(data: EventData):
+                # window moved to a new location that was on just one of 3 monitors.
+                # AKA, it didn't span across any of the monitors
+                pass
+    """
 
     @make_filter
     def _touches_monitors(data: EventData):
