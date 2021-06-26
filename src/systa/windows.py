@@ -13,7 +13,7 @@ from pynput.mouse._win32 import Button, Controller
 from systa.backend import WinAccess
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, get_monitors
+from systa.utils import SystaMonitor, get_monitors, wait_for_it
 
 
 class Window:
@@ -64,6 +64,23 @@ class Window:
             # If we don't have a title, lets not do an expensive lookup to get it
             # just for the repr
             return f"Window(handle={self.handle})"
+
+    def __eq__(self, other: Window):
+        """Window equality is determined by the window's handle."""
+        return isinstance(other, Window) and other.handle == self.handle
+
+    @staticmethod
+    def wait_for_window(lookup: "WindowLookupType", max_wait: float = 5):
+        """Waits for a lookup to return a window.
+
+
+        :param lookup:  The lookup to use to find a window.
+        :param max_wait: Wait for up to this many seconds.
+        :return: The Window for the lookup.
+        :raises ValueError: If the window is not found within ``max_wait`` seconds.
+        """
+        wait_for_it(lambda: lookup in current_windows, max_wait)
+        return Window(lookup)
 
     @cached_property
     def mouse(self) -> "WindowRelativeMouseController":
