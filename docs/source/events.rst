@@ -282,7 +282,8 @@ to make it so that any single filter passing will run your function.
   from systa.events.types import EventData
 
   @filter_by.any_filter(
-      filter_by.require_title("*Notepad"), filter_by.require_size_is_less_than(200, 200)
+      filter_by.require_title("*Notepad"),
+      filter_by.require_size_is_less_than(200, 200),
   )
   @listen_to.move_or_sizing_ended
   def some_func(event_data: EventData):

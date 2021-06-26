@@ -1,9 +1,9 @@
 Doing Stuff to Windows
 ======================
 
-Windows in Windows are represented a Window. 💩
-
-Confused yet?
+`Windows <https://en.wikipedia.org/wiki/Window_(computing)>`_ in `Windows <https://en
+.wikipedia.org/wiki/Microsoft_Windows>`_ are represented as a
+:class:`~systa.windows.Window`. 💩
 
 In ``systa`` the various windows on your system are represented and controlled by
 instances of the :class:`~systa.windows.Window` class.
