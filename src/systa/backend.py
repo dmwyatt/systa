@@ -179,7 +179,7 @@ class WinAccess:
     def set_win_position(handle: int, x: int, y: int) -> None:
         win32gui.SetWindowPos(
             handle,
-            win32con.HWND_NOTOPMOST,  # ignored
+            win32con.HWND_TOP,  # ignored
             x,
             y,
             4000,  # ignored
@@ -199,7 +199,7 @@ class WinAccess:
     def set_win_dimensions(handle: int, width: int, height: int) -> None:
         win32gui.SetWindowPos(
             handle,
-            win32con.HWND_NOTOPMOST,
+            win32con.HWND_TOP,
             0,
             0,
             width,
