@@ -71,3 +71,11 @@ class SystaMonitor(Monitor):
             return int(match.group())
         else:
             raise ValueError(f"Cannot find number of monitor: {self.name}")
+
+
+def wait_for_it(condition: Callable[..., bool], max_wait=5):
+    """Waits for up to ``max_wait`` seconds for ``condition`` to be truthy."""
+    start = time.time()
+    while not condition() and (time.time() - start) <= max_wait:
+        time.sleep(0.1)
+    return condition()
