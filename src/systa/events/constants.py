@@ -373,7 +373,8 @@ class _WinEvent:
         }
         self.events_by_val = {v: k for k, v in self.events.items()}
 
-    def is_windows_internal_title(self, title: str) -> bool:
+    @classmethod
+    def is_windows_internal_title(cls, title: str) -> bool:
         """
         Check if the provided title is for a Windows "internal" window.
 
