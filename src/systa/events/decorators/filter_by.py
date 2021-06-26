@@ -177,7 +177,7 @@ def require_window(data: EventData):
     return bool(data.window)
 
 
-def touches_monitors(*monitor_numbers):
+def touches_monitors(*monitor_numbers: int):
     """Window touches all the provided monitors.
 
     .. note:: Provide just one monitor number to test if window is on just that monitor.
@@ -197,9 +197,11 @@ def touches_monitors(*monitor_numbers):
             )
             @listen_to.location_change
             def my_func(data: EventData):
-                # window moved to a new location that was on just one of 3 monitors.
-                # AKA, it didn't span across any of the monitors
+                # window moved to a new location that was on just one of 3
+                # monitors.
                 pass
+
+    :param monitor_numbers: Provide the number of each monitor you want to check.
     """
 
     @make_filter
@@ -208,8 +210,6 @@ def touches_monitors(*monitor_numbers):
             return False
         screens = data.window.screens
 
-        if len(screens) != len(monitor_numbers):
-            return False
-        return set(monitor_numbers) == set([screen.number for screen in screens])
+        return set(monitor_numbers) == set(screen.number for screen in screens)
 
     return _touches_monitors
