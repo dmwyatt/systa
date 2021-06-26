@@ -29,6 +29,7 @@ Controlling windows
 
 .. autoclass:: Window
   :members:
+  :special-members: __eq__
 
 .. autoclass:: WindowRelativeMouseController
 
