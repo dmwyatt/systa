@@ -94,7 +94,20 @@ class Store:
 
     def update_callable(
         self, cb: UserEventCallableType, new_cb: EventFilterCallableType
-    ):
+    ) -> None:
+        """
+        Updates the callable that gets called by Windows.
+
+        Registration and filtering functions (like
+        :func:`systa.events.decorators.filter_by.make_filter` or anything in
+        :mod:`filter_by`) need to be able to wrap the users function even after it
+        has been registered.  This method allows updating the actual function that
+        gets called for each of the users registered functions.
+
+        :param cb: The user's function.
+        :param new_cb: What actually gets called by Windows (which is usually a
+            function that wraps the user's function).
+        """
         self._derived_callback[cb] = new_cb
 
     def _init_store(self) -> None:
