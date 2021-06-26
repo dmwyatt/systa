@@ -317,12 +317,13 @@ class Window:
 
         self.mouse.position = (win_x, win_y)
 
-    def bring_to_mouse(self, center: bool = True) -> None:
+    def bring_to_mouse(self, center: bool = False) -> None:
         """
         Bring window to mouse's position.
 
         :param center: If ``True``, then move so that center of window is at
-            mouse's position, otherwise it's the top left corner.  Defaults to ``True``.
+            mouse's position, otherwise it's the top left corner.  Defaults to
+            ``False``.
         """
         if center:
             self.absolute_center_coords = Controller().position
