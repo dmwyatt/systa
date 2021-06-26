@@ -333,27 +333,30 @@ class Window:
             self.position = new_position
 
     @property
-    def absolute_center_coords(self) -> Tuple[int, int]:
+    def absolute_center_coords(self) -> Point:
         """
         The absolute coordinates of the center of the window.
 
         Set to a ``(x, y)`` tuple to center window at the provided coords.
         """
         x, y = self.position
-        return int(self.width / 2) + x, int(self.height / 2) + y
+        return Point(int(self.width / 2) + x, int(self.height / 2) + y)
 
     @absolute_center_coords.setter
-    def absolute_center_coords(self, coords: Tuple[int, int]):
+    def absolute_center_coords(self, coords: Union[Tuple[int, int], Point]):
+        if not isinstance(coords, Point):
+            coords = Point(*coords)
+
         center_coords = self.relative_center_coords
-        self.position = coords[0] - center_coords[0], coords[1] - center_coords[1]
+        self.position = coords.x - center_coords.x, coords.y - center_coords.y
 
     @property
-    def relative_center_coords(self):
+    def relative_center_coords(self) -> Point:
         """The coordinates of the window's center.
 
         This is relative to the window's origin point.
         """
-        return int(self.width / 2), int(self.height / 2)
+        return Point(int(self.width / 2), int(self.height / 2))
 
     @cached_property
     def process_id(self) -> int:
