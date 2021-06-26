@@ -8,12 +8,16 @@ Basic Usage
 -----------
 
 >>> from systa.windows import current_windows
->>> "Untitled - Notepad" in current_windows True
->>> "🍔" in current_windows False
+>>> "Untitled - Notepad" in current_windows
+True
+>>> "🍔" in current_windows
+False
 >>> notepad = current_windows["Untitled - Notepad"][0]
->>> notepad.maximized False
+>>> notepad.maximized
+False
 >>> notepad.maximized = True # it's now maximized
->>> notepad.maximized True
+>>> notepad.maximized
+True
 
 Events
 ------
