@@ -51,6 +51,8 @@ logger = logging.getLogger(__name__)
 
 
 class Store:
+    msg_loop_timeout = 75
+
     def __init__(self):
         self._init_store()
 
@@ -148,7 +150,7 @@ class Store:
                 rc = win32event.MsgWaitForMultipleObjects(
                     (STOP_EVENT,),
                     0,
-                    200,
+                    self.msg_loop_timeout,
                     win32event.QS_ALLEVENTS,
                 )
 
