@@ -5,6 +5,7 @@ import win32api
 import win32con
 import win32gui
 import win32process
+from pynput.keyboard import Controller, Key
 
 from systa.exceptions import NoMatchingWindowError
 
@@ -131,33 +132,36 @@ class WinAccess:
     @staticmethod
     def bring_to_top(handle: int):
         win32gui.ShowWindow(handle, win32con.SW_RESTORE)
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_NOTOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_TOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_NOTOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
+        Controller().press(Key.alt)
+        win32gui.SetForegroundWindow(handle)
+        Controller().release(Key.alt)
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_NOTOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_TOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_NOTOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
 
     @staticmethod
     def close_window(handle: int) -> None:
