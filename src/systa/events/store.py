@@ -7,6 +7,7 @@ import logging
 import time
 from _ctypes import CFuncPtr
 from collections import defaultdict
+from functools import wraps
 from itertools import chain
 from typing import Dict, List, Optional, Union
 
@@ -276,6 +277,7 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     :param func: The function we want to compatible-ize.
     """
 
+    @wraps(func)
     def _hook_cb(
         hook_handle: int,
         event: int,
