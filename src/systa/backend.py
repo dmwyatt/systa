@@ -121,11 +121,12 @@ class WinAccess:
     def restore(handle: int) -> None:
         win32gui.ShowWindow(handle, win32con.SW_RESTORE)
 
-    def activate_window(self, handle: int) -> None:
+    def activate_window(self, handle: int, force_focus_attempt: bool = True) -> None:
         """Activate/focus a window.  Doesn't always work!"""
         self.bring_to_top(handle)
 
-        force_focus(handle)
+        if force_focus_attempt:
+            force_focus(handle)
 
     @staticmethod
     def bring_to_top(handle: int):
