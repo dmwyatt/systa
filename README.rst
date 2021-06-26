@@ -22,18 +22,18 @@ run code when things happen to windows on the system.
 
 .. code-block:: python
 
-from systa.events.decorators import listen_to, filter_by
-from systa.events.store import callback_store
-from systa.events.types import EventData
+  from systa.events.decorators import listen_to, filter_by
+  from systa.events.store import callback_store
+  from systa.events.types import EventData
 
-@filter_by.require_size_is_less_than(200, 200)
-@filter_by.require_title("*Notepad")
-@listen_to.restore
-@listen_to.create
-def a_func_to_do_the_thing(event_data: EventData):
-    print(f"Notepad restored or created! ({event_data.window.width}, {event_data.window.height})")
+  @filter_by.require_size_is_less_than(200, 200)
+  @filter_by.require_title("*Notepad")
+  @listen_to.restore
+  @listen_to.create
+  def a_func_to_do_the_thing(event_data: EventData):
+      print(f"Notepad restored or created! ({event_data.window.width}, {event_data.window.height})")
 
-callback_store.run()
+  callback_store.run()
 
 The above code prints a message when:
 
