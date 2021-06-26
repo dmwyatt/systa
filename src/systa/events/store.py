@@ -71,7 +71,8 @@ class Store:
             tuples indicating multiple ranges.
         :return: A dict indicating which event ranges were or were not added.
         """
-        events = handle_multiple_event_types(events)
+        events = coerce_event_types(events)
+        assert all(r[0] <= r[1] for r in events), f"{events} are invalid"
         logger.debug("Attempting to register %s to %s.", cb, events)
         results = {}
         for event_range in events:
@@ -293,11 +294,7 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     return _hook_cb
 
 
-def get_dummy_filter(data: EventData) -> True:
-    return True
-
-
-def handle_multiple_event_types(
+def coerce_event_types(
     events: Union[EventRangesType, EventRangeType, EventType]
 ) -> EventRangesType:
     if isinstance(events, int):
