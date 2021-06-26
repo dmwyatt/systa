@@ -575,7 +575,6 @@ class CurrentWindows:
                 window for window in self.current_windows if item.match(window.title)
             ]
 
-        # We'll just get by Window.handle in the case we pass a window in.
         elif isinstance(item, Window):
             if item.exists:
                 return [item]
@@ -583,7 +582,7 @@ class CurrentWindows:
                 return []
 
         elif isinstance(item, str):
-            # a string is treated as exact window title
+            # a string is treated as an fnmatch pattern
             return [
                 window
                 for window in self.current_windows
