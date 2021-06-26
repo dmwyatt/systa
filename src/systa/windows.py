@@ -36,7 +36,7 @@ class Window:
 
     def __init__(
         self,
-        ref: Union[int, "WindowLookupType"],
+        ref: "WindowLookupType",
         title: Optional[str] = None,
     ) -> None:
         if isinstance(ref, int):
