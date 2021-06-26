@@ -141,13 +141,15 @@ class Window:
                 self.bring_mouse_to()
                 self.mouse.click(Button.left)
         else:
+            # The One Weird Trick to "unfocus" a window is to focus the window called
+            # "Program Manager"
             desktop_handle = list(self.backend.get_handle("Program Manager"))
             if len(desktop_handle) != 1:
                 raise NoMatchingWindowError(
                     'Cannot activate desktop to "deactivate" window.'
                 )
 
-            self.backend.activate_window(desktop_handle[0])
+            self.backend.activate_window(desktop_handle[0], force_focus_attempt=False)
 
     @property
     def exists(self) -> bool:
