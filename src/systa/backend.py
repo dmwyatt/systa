@@ -232,7 +232,6 @@ class WinAccess:
 
     @staticmethod
     def get_class_name(handle: int) -> str:
-        print("doingit", handle)
         buffer = ctypes.create_unicode_buffer(100)
         user32.GetClassNameW(handle, buffer, 99)
         return buffer.value
