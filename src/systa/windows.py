@@ -8,6 +8,7 @@ from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
 import win32con
+from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
 from systa.backend import WinAccess
@@ -255,16 +256,15 @@ class Window:
 
     @position.setter
     def position(self, pos: Union[Tuple[int, int], Point, Rect]) -> None:
-        if isinstance(pos, tuple):
+        if is_collection(pos) and not isinstance(pos, Rect):
+            # Point is a collection because it has __iter__
             self.backend.set_win_position(self.handle, *pos)
-        elif isinstance(pos, Point):
-            self.backend.set_win_position(self.handle, pos.x, pos.y)
         elif isinstance(pos, Rect):
-            self.backend.set_win_position(self.handle, pos.origin.x, pos.origin.y)
+            self.backend.set_win_position(self.handle, *pos.origin)
             self.width = pos.width
             self.height = pos.height
         else:
-            raise ValueError("Must provide a two-tuple, a Point, or a Rect.")
+            raise TypeError("Must provide a 2-element collection, a Point, or a Rect.")
 
     @property
     def rectangle(self) -> Rect:
