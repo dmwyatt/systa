@@ -171,11 +171,6 @@ class Store:
                     logger.debug(f"Message loop ending because of user time limit.")
                     break
 
-                if rc != 258:
-                    # 258 gets fired every 200ms because of our timeout. Let's not
-                    # spam the logs.
-                    logger.debug(f"{rc=}")
-
                 if rc == win32event.WAIT_OBJECT_0:
                     logger.debug("all done")
                     break
@@ -196,6 +191,7 @@ class Store:
                     logger.error("Error in message loop.  Unexpected win32wait error.")
 
         finally:
+            self._running = False
             self.unregister_all_hooks()
 
     def unregister_all_hooks(self):
