@@ -1,4 +1,4 @@
-Systa: Windows Automation for Sentient Entities™
+Systa: A Window for windows on Windows 
 ================================================
 
 **Systa** is a Microsoft Windows automation library, built for people who aren't Microsoft
