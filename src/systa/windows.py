@@ -8,12 +8,13 @@ from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
 import win32con
+from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
 from systa.backend import WinAccess
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, get_monitors
+from systa.utils import SystaMonitor, get_monitors, wait_for_it
 
 
 class Window:
@@ -36,7 +37,7 @@ class Window:
 
     def __init__(
         self,
-        ref: Union[int, "WindowLookupType"],
+        ref: "WindowLookupType",
         title: Optional[str] = None,
     ) -> None:
         if isinstance(ref, int):
@@ -64,6 +65,23 @@ class Window:
             # If we don't have a title, lets not do an expensive lookup to get it
             # just for the repr
             return f"Window(handle={self.handle})"
+
+    def __eq__(self, other: Window):
+        """Window equality is determined by the window's handle."""
+        return isinstance(other, Window) and other.handle == self.handle
+
+    @staticmethod
+    def wait_for_window(lookup: "WindowLookupType", max_wait: float = 5):
+        """Waits for a lookup to return a window.
+
+
+        :param lookup:  The lookup to use to find a window.
+        :param max_wait: Wait for up to this many seconds.
+        :return: The Window for the lookup.
+        :raises ValueError: If the window is not found within ``max_wait`` seconds.
+        """
+        wait_for_it(lambda: lookup in current_windows, max_wait)
+        return Window(lookup)
 
     @cached_property
     def mouse(self) -> "WindowRelativeMouseController":
@@ -124,13 +142,15 @@ class Window:
                 self.bring_mouse_to()
                 self.mouse.click(Button.left)
         else:
+            # The One Weird Trick to "unfocus" a window is to focus the window called
+            # "Program Manager"
             desktop_handle = list(self.backend.get_handle("Program Manager"))
             if len(desktop_handle) != 1:
                 raise NoMatchingWindowError(
                     'Cannot activate desktop to "deactivate" window.'
                 )
 
-            self.backend.activate_window(desktop_handle[0])
+            self.backend.activate_window(desktop_handle[0], force_focus_attempt=False)
 
     @property
     def exists(self) -> bool:
@@ -236,16 +256,15 @@ class Window:
 
     @position.setter
     def position(self, pos: Union[Tuple[int, int], Point, Rect]) -> None:
-        if isinstance(pos, tuple):
+        if is_collection(pos) and not isinstance(pos, Rect):
+            # Point is a collection because it has __iter__
             self.backend.set_win_position(self.handle, *pos)
-        elif isinstance(pos, Point):
-            self.backend.set_win_position(self.handle, pos.x, pos.y)
         elif isinstance(pos, Rect):
-            self.backend.set_win_position(self.handle, pos.origin.x, pos.origin.y)
+            self.backend.set_win_position(self.handle, *pos.origin)
             self.width = pos.width
             self.height = pos.height
         else:
-            raise ValueError("Must provide a two-tuple, a Point, or a Rect.")
+            raise TypeError("Must provide a 2-element collection, a Point, or a Rect.")
 
     @property
     def rectangle(self) -> Rect:
@@ -298,12 +317,13 @@ class Window:
 
         self.mouse.position = (win_x, win_y)
 
-    def bring_to_mouse(self, center: bool = True) -> None:
+    def bring_to_mouse(self, center: bool = False) -> None:
         """
         Bring window to mouse's position.
 
         :param center: If ``True``, then move so that center of window is at
-            mouse's position, otherwise it's the top left corner.  Defaults to ``True``.
+            mouse's position, otherwise it's the top left corner.  Defaults to
+            ``False``.
         """
         if center:
             self.absolute_center_coords = Controller().position
@@ -313,27 +333,30 @@ class Window:
             self.position = new_position
 
     @property
-    def absolute_center_coords(self) -> Tuple[int, int]:
+    def absolute_center_coords(self) -> Point:
         """
         The absolute coordinates of the center of the window.
 
         Set to a ``(x, y)`` tuple to center window at the provided coords.
         """
         x, y = self.position
-        return int(self.width / 2) + x, int(self.height / 2) + y
+        return Point(int(self.width / 2) + x, int(self.height / 2) + y)
 
     @absolute_center_coords.setter
-    def absolute_center_coords(self, coords: Tuple[int, int]):
+    def absolute_center_coords(self, coords: Union[Tuple[int, int], Point]):
+        if not isinstance(coords, Point):
+            coords = Point(*coords)
+
         center_coords = self.relative_center_coords
-        self.position = coords[0] - center_coords[0], coords[1] - center_coords[1]
+        self.position = coords.x - center_coords.x, coords.y - center_coords.y
 
     @property
-    def relative_center_coords(self):
+    def relative_center_coords(self) -> Point:
         """The coordinates of the window's center.
 
         This is relative to the window's origin point.
         """
-        return int(self.width / 2), int(self.height / 2)
+        return Point(int(self.width / 2), int(self.height / 2))
 
     @cached_property
     def process_id(self) -> int:
@@ -552,7 +575,6 @@ class CurrentWindows:
                 window for window in self.current_windows if item.match(window.title)
             ]
 
-        # We'll just get by Window.handle in the case we pass a window in.
         elif isinstance(item, Window):
             if item.exists:
                 return [item]
@@ -560,7 +582,7 @@ class CurrentWindows:
                 return []
 
         elif isinstance(item, str):
-            # a string is treated as exact window title
+            # a string is treated as an fnmatch pattern
             return [
                 window
                 for window in self.current_windows

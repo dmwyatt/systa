@@ -9,27 +9,27 @@ readme = "README.md"
 [tool.poetry.dependencies]
 argupdate = { git = "https://github.com/dmwyatt/argupdate.git" }
 boltons = "^21.0.0"
-python = "^3.7"
-pywin32 = "^300"
-typing-inspect = "^0.6.0"
-wrapt = "^1.11"
-pynput = "^1.7.3"
 commonmark = "^0.9.1"
-typeguard = "^2.12.0"
-sphinx-book-theme = "^0.1.0"
+pynput = "^1.7.3"
+python = "^3.7"
+pywin32 = "^301"
 screeninfo = "^0.6.7"
+sphinx-book-theme = "^0.1.0"
+typeguard = "^2.12.0"
+typing-inspect = "^0.7.1"
+wrapt = "^1.11"
 
 [tool.poetry.dev-dependencies]
 beautifulsoup4 = "^4.8"
 ipython = "^7.9"
+myst-parser = "^0.15.1"
 pytest = "^6.2.4"
+pytest-mock = "^3.6.1"
 pyzmq = "^22.0.3"
 Sphinx = "<4"
 sphinx-autodoc-typehints = "^1.12.0"
-myst-parser = "^0.14.0"
 sphinx-prompt = "^1.4.0"
 vulture = "^2.3"
-
 
 [tool.dephell.main]
 from = { format = "poetry", path = "pyproject.toml" }

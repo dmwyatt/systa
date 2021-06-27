@@ -29,11 +29,18 @@ Controlling windows
 
 .. autoclass:: Window
   :members:
+  :special-members: __eq__
 
 .. autoclass:: WindowRelativeMouseController
 
 Events
 ------
+
+The user's function will be called with one argument whose value is an instance of the
+``EventData`` :func:`~dataclasses.dataclass`.
+
+.. autoclass:: systa.events.types.EventData
+  :members:
 
 ``listen_to`` decorators
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -48,3 +55,4 @@ Events
 
 .. automodule:: systa.events.decorators.filter_by
   :members:
+

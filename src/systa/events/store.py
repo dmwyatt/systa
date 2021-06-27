@@ -7,6 +7,7 @@ import logging
 import time
 from _ctypes import CFuncPtr
 from collections import defaultdict
+from functools import wraps
 from itertools import chain
 from typing import Dict, List, Optional, Union
 
@@ -51,6 +52,8 @@ logger = logging.getLogger(__name__)
 
 
 class Store:
+    msg_loop_timeout = 75
+
     def __init__(self):
         self._init_store()
 
@@ -71,7 +74,8 @@ class Store:
             tuples indicating multiple ranges.
         :return: A dict indicating which event ranges were or were not added.
         """
-        events = handle_multiple_event_types(events)
+        events = coerce_event_types(events)
+        assert all(r[0] <= r[1] for r in events), f"{events} are invalid"
         logger.debug("Attempting to register %s to %s.", cb, events)
         results = {}
         for event_range in events:
@@ -91,7 +95,20 @@ class Store:
 
     def update_callable(
         self, cb: UserEventCallableType, new_cb: EventFilterCallableType
-    ):
+    ) -> None:
+        """
+        Updates the callable that gets called by Windows.
+
+        Registration and filtering functions (like
+        :func:`systa.events.decorators.filter_by.make_filter` or anything in
+        :mod:`filter_by`) need to be able to wrap the users function even after it
+        has been registered.  This method allows updating the actual function that
+        gets called for each of the users registered functions.
+
+        :param cb: The user's function.
+        :param new_cb: What actually gets called by Windows (which is usually a
+            function that wraps the user's function).
+        """
         self._derived_callback[cb] = new_cb
 
     def _init_store(self) -> None:
@@ -147,18 +164,13 @@ class Store:
                 rc = win32event.MsgWaitForMultipleObjects(
                     (STOP_EVENT,),
                     0,
-                    200,
+                    self.msg_loop_timeout,
                     win32event.QS_ALLEVENTS,
                 )
 
                 if stop_in is not None and (time.time() - started_at) > stop_in:
                     logger.debug(f"Message loop ending because of user time limit.")
                     break
-
-                if rc != 258:
-                    # 258 gets fired every 200ms because of our timeout. Let's not
-                    # spam the logs.
-                    logger.debug(f"{rc=}")
 
                 if rc == win32event.WAIT_OBJECT_0:
                     logger.debug("all done")
@@ -180,6 +192,7 @@ class Store:
                     logger.error("Error in message loop.  Unexpected win32wait error.")
 
         finally:
+            self._running = False
             self.unregister_all_hooks()
 
     def unregister_all_hooks(self):
@@ -264,6 +277,7 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     :param func: The function we want to compatible-ize.
     """
 
+    @wraps(func)
     def _hook_cb(
         hook_handle: int,
         event: int,
@@ -293,11 +307,7 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     return _hook_cb
 
 
-def get_dummy_filter(data: EventData) -> True:
-    return True
-
-
-def handle_multiple_event_types(
+def coerce_event_types(
     events: Union[EventRangesType, EventRangeType, EventType]
 ) -> EventRangesType:
     if isinstance(events, int):

@@ -4,7 +4,7 @@ from functools import wraps
 from inspect import unwrap
 
 from systa.events.constants import win_events
-from systa.events.store import callback_store, handle_multiple_event_types
+from systa.events.store import callback_store, coerce_event_types
 from systa.events.types import (
     EventData,
     EventsTypes,
@@ -22,7 +22,7 @@ class specified_events:
         :param events: The event(s) to listen to.
         """
 
-        self.ranges = handle_multiple_event_types(events)
+        self.ranges = coerce_event_types(events)
 
     def __call__(self, func: UserEventCallableType) -> UserEventCallableType:
         callback_store.add_user_func(unwrap(func), self.ranges)

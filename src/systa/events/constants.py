@@ -360,7 +360,12 @@ class _WinEvent:
 
     @classmethod
     def _is_event_attr(cls, attr: str) -> bool:
-        return attr.isupper() and any(attr.startswith(y) for y in cls._event_prefixes)
+        exclude = ["EVENT_MIN", "EVENT_MAX"]
+        return (
+            attr not in exclude
+            and attr.isupper()
+            and any(attr.startswith(y) for y in cls._event_prefixes)
+        )
 
     def __init__(self):
         self.events: Dict[EventTypeNamesType, EventType] = {
@@ -368,7 +373,8 @@ class _WinEvent:
         }
         self.events_by_val = {v: k for k, v in self.events.items()}
 
-    def is_windows_internal_title(self, title: str) -> bool:
+    @classmethod
+    def is_windows_internal_title(cls, title: str) -> bool:
         """
         Check if the provided title is for a Windows "internal" window.
 
@@ -381,7 +387,7 @@ class _WinEvent:
 
         return any(
             fnmatchcase(title, internal_title)
-            for internal_title in self.WINDOWS_INTERNALS_TITLES
+            for internal_title in cls.WINDOWS_INTERNALS_TITLES
         )
 
     def values(self) -> ValuesView[EventType]:

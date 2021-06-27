@@ -5,6 +5,7 @@ import win32api
 import win32con
 import win32gui
 import win32process
+from pynput.keyboard import Controller, Key
 
 from systa.exceptions import NoMatchingWindowError
 
@@ -121,42 +122,46 @@ class WinAccess:
     def restore(handle: int) -> None:
         win32gui.ShowWindow(handle, win32con.SW_RESTORE)
 
-    def activate_window(self, handle: int) -> None:
+    def activate_window(self, handle: int, force_focus_attempt: bool = True) -> None:
         """Activate/focus a window.  Doesn't always work!"""
         self.bring_to_top(handle)
 
-        force_focus(handle)
+        if force_focus_attempt:
+            force_focus(handle)
 
     @staticmethod
     def bring_to_top(handle: int):
         win32gui.ShowWindow(handle, win32con.SW_RESTORE)
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_NOTOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_TOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
-        win32gui.SetWindowPos(
-            handle,
-            win32con.HWND_NOTOPMOST,
-            0,
-            0,
-            0,
-            0,
-            win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
-        )
+        Controller().press(Key.alt)
+        win32gui.SetForegroundWindow(handle)
+        Controller().release(Key.alt)
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_NOTOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_TOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
+        # win32gui.SetWindowPos(
+        #     handle,
+        #     win32con.HWND_NOTOPMOST,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE,
+        # )
 
     @staticmethod
     def close_window(handle: int) -> None:
@@ -174,7 +179,7 @@ class WinAccess:
     def set_win_position(handle: int, x: int, y: int) -> None:
         win32gui.SetWindowPos(
             handle,
-            win32con.HWND_NOTOPMOST,  # ignored
+            win32con.HWND_TOP,  # ignored
             x,
             y,
             4000,  # ignored
@@ -194,7 +199,7 @@ class WinAccess:
     def set_win_dimensions(handle: int, width: int, height: int) -> None:
         win32gui.SetWindowPos(
             handle,
-            win32con.HWND_NOTOPMOST,
+            win32con.HWND_TOP,
             0,
             0,
             width,
@@ -227,7 +232,6 @@ class WinAccess:
 
     @staticmethod
     def get_class_name(handle: int) -> str:
-        print("doingit", handle)
         buffer = ctypes.create_unicode_buffer(100)
         user32.GetClassNameW(handle, buffer, 99)
         return buffer.value

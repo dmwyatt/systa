@@ -25,8 +25,12 @@ class CallbackReturn:
 
 @dataclass
 class EventData:
+    """The data structure returned to the user's function."""
+
     window: Optional[Window]
+    """A :class:`Window` instance associated with the event."""
     event_info: CallbackReturn
+    """The raw data provided to us by Windows when the event fired."""
 
     def pformat(self, **kwargs):
         return pformat(asdict(self), **kwargs)

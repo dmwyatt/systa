@@ -1,7 +1,7 @@
 Systa: Windows Automation for Sentient Entities™
 ================================================
 
-**Systa** is a Microsoft Windows automation library, built for people who aren't MS
+**Systa** is a Microsoft Windows automation library, built for people who aren't Microsoft
 Windows programming gurus.
 
 **Basic Usage**
