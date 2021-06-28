@@ -10,9 +10,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: ammaraskar/sphinx-action@master
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          docs-folder: "docs/"
+          python-version: '3.8'
+          architecture: 'x64'
 
-
+      - run: python
