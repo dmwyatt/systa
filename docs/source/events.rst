@@ -10,11 +10,10 @@ Listening
 
 Each user function *requires* registration with a function from the
 :mod:`~systa.events.decorators.listen_to` module to listen to a range of events called
-`WinEvents
-<https://docs.microsoft.com/en-us/windows/win32/winauto/winevents-infrastructure>`_. We
-call the user's function with a single argument providing an :class:`~systa
-.events.types.EventData` dataclass containing information about the event and the
-window. The function can then do *stuff* with the data we provide it.
+`WinEvents <https://docs.microsoft.com/en-us/windows/win32/winauto/winevents-infrastructure>`_
+. We call the user's function with a single argument providing an :class:`~systa.events
+.types.EventData` dataclass containing information about the event and the window. The
+function can then do *stuff* with the data we provide it.
 
 .. testsetup:: basic-listen-to
 

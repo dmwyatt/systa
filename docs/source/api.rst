@@ -39,9 +39,6 @@ Events
 The user's function will be called with one argument whose value is an instance of the
 ``EventData`` :func:`~dataclasses.dataclass`.
 
-.. autoclass:: systa.events.types.EventData
-  :members:
-
 ``listen_to`` decorators
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -56,3 +53,16 @@ The user's function will be called with one argument whose value is an instance 
 .. automodule:: systa.events.decorators.filter_by
   :members:
 
+Event types
+^^^^^^^^^^^
+
+.. autoclass:: systa.events.types.EventData
+  :members:
+
+.. autoclass:: systa.events.types.CallbackReturn
+  :members:
+
+.. autoclass:: systa.events.types.EventType
+  :members:
+
+.. autoclass:: systa.events.types.EventTypeNamesType

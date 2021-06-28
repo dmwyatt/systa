@@ -1,5 +1,5 @@
-Systa: A :class:`~systa.windows.Window` for `windows <https://en.wikipedia.org/wiki/Window_(computing)>`_ on `Windows <https://en.wikipedia.org/wiki/Microsoft_Windows>`_.
-==========================================================================================================================================================
+A :class:`~systa.windows.Window` for `windows <https://en.wikipedia.org/wiki/Window_(computing)>`_ on `Windows™ <https://en.wikipedia.org/wiki/Microsoft_Windows>`_.
+====================================================================================================================================================================
 
 **Systa** is a Microsoft Windows automation library, built for people who aren't Microsoft
 Windows programming gurus.

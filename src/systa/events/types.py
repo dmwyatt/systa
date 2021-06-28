@@ -10,6 +10,7 @@ from systa.windows import Window
 
 @dataclass
 class CallbackReturn:
+    """The data given to us by Windows when it calls our callback."""
     hook_handle: int
     event: EventType
     event_name: EventTypeNamesType
@@ -28,7 +29,7 @@ class EventData:
     """The data structure returned to the user's function."""
 
     window: Optional[Window]
-    """A :class:`Window` instance associated with the event."""
+    """A :class:`systa.windows.Window` instance associated with the event."""
     event_info: CallbackReturn
     """The raw data provided to us by Windows when the event fired."""
 
