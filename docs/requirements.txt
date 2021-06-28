@@ -1,0 +1,3 @@
+sphinx-book-theme==0.1.0; python_version >= "3.6" \
+    --hash=sha256:b2db884eb9a843f7864a5660322ac7b0b9cd762f31341dedb4530f1546675bbd \
+    --hash=sha256:182e57262e76c657a8f3082b0922f3617c8b0cb3e4c4079fa6b2ae9b2a5d3ae9
