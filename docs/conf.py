@@ -37,7 +37,6 @@ release = "0.0.1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
-    "myst_parser",
     "sphinx-prompt",
     "sphinx.ext.doctest",
     "sphinx.ext.autosectionlabel",
@@ -81,9 +80,6 @@ autodoc_type_aliases = {
     "EventsTypes": "systa.events.types.EventsType",
     "WindowLookupType": "systa.windows.WindowLookupType",
 }
-
-myst_enable_extensions = ["colon_fence"]
-myst_heading_anchors = 3
 
 doctest_global_setup = """
 import subprocess

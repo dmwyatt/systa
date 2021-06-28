@@ -1,8 +1,8 @@
 Doing Stuff to Windows
 ======================
 
-`Windows <https://en.wikipedia.org/wiki/Window_(computing)>`_ in `Windows <https://en
-.wikipedia.org/wiki/Microsoft_Windows>`_ are represented as a
+`Windows <https://en.wikipedia.org/wiki/Window_(computing)>`__ in
+`Windows <https://en.wikipedia.org/wiki/Microsoft_Windows>`__ are represented as a
 :class:`~systa.windows.Window`. 💩
 
 In ``systa`` the various windows on your system are represented and controlled by
