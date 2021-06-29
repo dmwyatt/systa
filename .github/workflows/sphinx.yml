@@ -1,0 +1,51 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: install wheel
+        run: pip install wheel
+
+      - uses: abatilo/actions-poetry@v2.0.0
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Test docs
+        run: |
+          cd docs
+          poetry run sphinx-build -M doctest source build -c .\
+
+      - name: Build docs
+        run: |
+          cd docs
+          poetry run sphinx-build -M html source build -c .\
+          New-Item build/html/.nojekyll
+
+      - name: Check GitHub Pages status
+        uses: crazy-max/ghaction-github-status@v2
+        with:
+          pages_threshold: major_outage
+
+      - name: Deploy
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: docs/build/html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

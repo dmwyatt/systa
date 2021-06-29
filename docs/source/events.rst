@@ -232,7 +232,7 @@ Combine as many filters as you want
 .. testoutput:: stacked-filters
   :hide:
 
-  Notepad moved to Point(x=250, y=250)!
+  ...Notepad moved to Point(x=250, y=250)!
 
 
 .. warning:: If your filters aren't behaving as you expect, remember that
