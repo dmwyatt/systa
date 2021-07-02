@@ -352,6 +352,9 @@ class _WinEvent:
         "System Promoted Notification Area",
         "Tray Input Indicator",
         "Action Center, *",
+        "Backstop Window",
+        "Input Occlusion Window",
+        "Windows Default Lock Screen",
     ]
 
     @classmethod

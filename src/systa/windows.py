@@ -11,10 +11,11 @@ import win32con
 from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
-from systa.backend import WinAccess
+from systa.backend.access import WinAccess
+from systa.backend.monitors import SystaMonitor, enumerate_monitors
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, get_monitors, wait_for_it
+from systa.utils import wait_for_it
 
 
 class Window:
@@ -415,11 +416,16 @@ class Window:
     def screens(self) -> List[SystaMonitor]:
         windows_monitors = []
 
-        for monitor in get_monitors():
+        for monitor in enumerate_monitors():
             if self.rectangle.intersects_rect(monitor.rectangle):
                 windows_monitors.append(monitor)
 
         return windows_monitors
+
+    def get_monitor(self, number: int) -> Optional[SystaMonitor]:
+        for screen in self.screens:
+            if screen.number == number:
+                return screen
 
 
 class WindowSearchPredicate(abc.ABC):
@@ -469,7 +475,7 @@ WindowLookupType = Union[Window, str, int, WindowSearchPredicate]
 +================================================+==================================================+
 | :class:`Window`                                | Compares handle to current windows handles       |
 +------------------------------------------------+--------------------------------------------------+
-| ``str``                                        | Exact title match                                |
+| ``str``                                        | Wildcard-accepting title match.                  |
 +------------------------------------------------+--------------------------------------------------+
 | ``int``                                        | Window with handle exists.                       |
 +------------------------------------------------+--------------------------------------------------+

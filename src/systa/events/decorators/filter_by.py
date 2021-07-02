@@ -1,8 +1,10 @@
 import abc
 from fnmatch import fnmatch, fnmatchcase
-from functools import wraps
+from functools import partial, wraps
 from inspect import unwrap
 from typing import Callable, List, Optional, Tuple
+
+import pywintypes
 
 from systa.events.constants import EventType, win_events
 from systa.events.store import callback_store
@@ -36,24 +38,94 @@ class EventTesterBase(abc.ABC):
         return wrapper
 
 
-def make_filter(test_func: Callable[[EventData], bool]):
-    """Create your own event filter.
+FilterFunctionType = Callable[[EventData], bool]
 
-    To make your own `filter_by` decorator, write a function that takes one
-    :class:`~systa.events.types.EventData` argument and decorate it with this function.
 
-    :param test_func: The function you're decorating.
-    """
-
+def _make_filter(
+    test_func: FilterFunctionType,
+    require_existing_window: bool,
+    exclude_sys_windows: bool,
+    capture_invalid_window_handle: bool,
+) -> FilterFunctionType:
     @wraps(test_func)
-    def decorator(func):
+    def decorator(func: FilterFunctionType) -> FilterFunctionType:
         class _tester(EventTesterBase):
-            def event_test(self, event_data) -> bool:
-                return test_func(event_data)
+            def event_test(self, event_data: EventData) -> bool:
+                if (
+                    require_existing_window
+                    and event_data.window
+                    and not event_data.window.exists
+                ) or (
+                    exclude_sys_windows
+                    and not apply_filter(exclude_system_windows, event_data)
+                ):
+                    return False
+
+                try:
+                    return test_func(event_data)
+                except pywintypes.error as e:
+                    if capture_invalid_window_handle and e.winerror == 1400:
+                        return False
+                    else:
+                        raise
 
         return _tester()(func)
 
     return decorator
+
+
+def make_filter(
+    test_func=None,
+    *,
+    exclude_sys_windows=True,
+    require_existing_window=True,
+    capture_invalid_window_handle_error=True,
+) -> FilterFunctionType:
+    """
+    Decorator to make a function into a filter on an event's data.
+
+    Using the default values for the arguments:
+
+    >>> @make_filter
+    ... def some_func(data: EventData):
+    ...     pass
+
+    Changing argument values:
+
+    >>> @make_filter(capture_invalid_window_handle_error=False)
+    ... def some_other_func(data: EventData):
+    ...     pass
+
+    :param test_func: The decorated function.
+    :param exclude_sys_windows: If ``True``, will use built-in heuristics to filter
+        out events for windows used by Windows internally. Defaults to ``True``.
+    :param require_existing_window:  If ``True``, will filter out events for windows
+        that no longer exist. Note that this *doesn't* guarantee that the window
+        doesn't disappear between the time your function starts and you want to do
+        something with the window in your function. It *does* guarantees your function
+        won't get called if the window disappears between the time the event happens and
+        Windows calls our code...which is what seems to be the most likely case.
+        Defaults to ``True``.
+    :param capture_invalid_window_handle_error:  If a window disappears by the time
+        you try to do something with it, we'll automatically handle the error for
+        you.  Note that if you need to do some sort of cleanup action in your
+        function, you want to set this option to ``False`` and handle the error
+        yourself.  Defaults to ``True``..
+    """
+    if test_func is None:
+        return partial(
+            make_filter,
+            exclude_sys_windows=exclude_sys_windows,
+            require_existing_window=require_existing_window,
+            capture_invalid_window_handle_error=capture_invalid_window_handle_error,
+        )
+
+    return _make_filter(
+        test_func,
+        require_existing_window,
+        exclude_sys_windows,
+        capture_invalid_window_handle_error,
+    )
 
 
 @make_filter
@@ -69,7 +141,11 @@ def exclude_system_windows(data: EventData):
     There's a lot of windows like "OleMainThreadWndName" or "Default IME" that you
     likely you don't care about.  Use this filter to exclude them.
     """
-    return data.window and not win_events.is_windows_internal_title(data.window.title)
+    return (
+        data.window
+        and data.window.title
+        and not win_events.is_windows_internal_title(data.window.title)
+    )
 
 
 def require_title(title: str, case_sensitive=True):
@@ -178,7 +254,7 @@ def require_window(data: EventData):
 
 
 def touches_monitors(*monitor_numbers: int):
-    """Window touches all the provided monitors.
+    """Window touches at least all the provided monitors.
 
     .. note:: Provide just one monitor number to test if window is on just that monitor.
     .. note:: Combine with :func:`any_filter` to test if a window is fully contained
@@ -209,7 +285,20 @@ def touches_monitors(*monitor_numbers: int):
         if not data.window:
             return False
         screens = data.window.screens
-
-        return set(monitor_numbers) == set(screen.number for screen in screens)
+        return set(monitor_numbers) <= set(screen.number for screen in screens)
 
     return _touches_monitors
+
+
+def apply_filter(f: FilterFunctionType, data: EventData):
+    """Use a filter as a simple boolean test function.
+
+    If you want to use one of the filters in the
+    :mod:`~systa.events.decorators.filter_by` module as a simple boolean test of a
+    :class:`~systa.types.EventData` object, you can use this function.
+
+    >>>
+    >> apply_filter(require_size_is_less_than, your_data_object)
+
+    """
+    return unwrap(f)(data)

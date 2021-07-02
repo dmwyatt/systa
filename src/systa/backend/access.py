@@ -9,7 +9,6 @@ from pynput.keyboard import Controller, Key
 
 from systa.exceptions import NoMatchingWindowError
 
-# user32 = ctypes.WinDLL("user32", use_last_error=True)
 user32 = ctypes.windll.user32
 
 MIN_ALL = 419

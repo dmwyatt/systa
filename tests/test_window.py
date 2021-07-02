@@ -3,14 +3,17 @@ import re
 import pytest
 from pynput.mouse import Controller
 
+from systa.backend.monitors import SystaMonitor
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, wait_for_it
+from systa.utils import wait_for_it
 from systa.windows import (
     Window,
     WindowRelativeMouseController,
     current_windows,
     regex_search,
 )
+# noinspection PyUnresolvedReferences
+from .fixtures import mouse, notepad
 
 
 def test_create_with_title(notepad: Window):
