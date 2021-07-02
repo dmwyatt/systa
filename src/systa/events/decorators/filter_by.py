@@ -214,6 +214,19 @@ def any_filter(*filters: EventFilterCallableType):
     return _any_filter
 
 
+def all_filters(*filters: EventFilterCallableType):
+    """Given a list of filters, pass if all of them pass
+
+    :param filters: Provide all the filters you want to check the event with.
+    """
+
+    @make_filter
+    def _all_filters(data: EventData):
+        return all(apply_filter(f, data) for f in filters)
+
+    return _all_filters
+
+
 def require_origin_within(rect: Rect):
     """
     Require window's origin (upper left corner) to be within rectangle.
