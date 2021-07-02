@@ -299,6 +299,6 @@ def apply_filter(f: FilterFunctionType, data: EventData):
 
     >>>
     >> apply_filter(require_size_is_less_than, your_data_object)
-
+    True
     """
     return unwrap(f)(data)
