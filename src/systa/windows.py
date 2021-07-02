@@ -574,7 +574,15 @@ class CurrentWindows:
 
         :param: The window lookup you want to use.
         """
-        if isinstance(item, WindowSearchPredicate):
+        if isinstance(item, str):
+            # a string is treated as an fnmatch pattern
+            return [
+                window
+                for window in self.current_windows
+                if fnmatchcase(window.title, item)
+            ]
+
+        elif isinstance(item, WindowSearchPredicate):
             return [window for window in self.current_windows if item(window)]
 
         elif isinstance(item, Pattern):
@@ -587,14 +595,6 @@ class CurrentWindows:
                 return [item]
             else:
                 return []
-
-        elif isinstance(item, str):
-            # a string is treated as an fnmatch pattern
-            return [
-                window
-                for window in self.current_windows
-                if fnmatchcase(window.title, item)
-            ]
 
         elif isinstance(item, int):
             # an int is treated as a window handle
