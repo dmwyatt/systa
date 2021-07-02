@@ -495,6 +495,9 @@ class CurrentWindows:
         """Minimizes all windows."""
         self.backend.set_all_windows_minimized()
 
+    def undo_minimize_all(self):
+        self.backend.undo_set_all_windows_minimized()
+
     @cached_property
     def backend(self) -> WinAccess:
         """The backend for interacting with windows."""
