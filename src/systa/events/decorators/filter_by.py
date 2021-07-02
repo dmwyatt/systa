@@ -209,7 +209,7 @@ def any_filter(*filters: EventFilterCallableType):
 
     @make_filter
     def _any_filter(data: EventData):
-        return any(unwrap(f)(data) for f in filters)
+        return any(apply_filter(f, data) for f in filters)
 
     return _any_filter
 
