@@ -19,6 +19,7 @@ class EventTesterBase(abc.ABC):
     subclassing this class.
     """
 
+    # TODO: Probably just replace this class with a Protocol and maybe runtime_checkable
     @abc.abstractmethod
     def event_test(self, event_data):
         ...
