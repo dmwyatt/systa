@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import abc
 import re
-from collections import defaultdict
 from fnmatch import fnmatchcase
 from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
@@ -495,7 +494,6 @@ class CurrentWindows:
     def minimize_all(self):
         """Minimizes all windows."""
         self.backend.set_all_windows_minimized()
-        x = defaultdict(list)
 
     @cached_property
     def backend(self) -> WinAccess:
