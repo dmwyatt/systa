@@ -6,8 +6,6 @@ from systa.events.constants import win_events
 from systa.events.decorators import listen_to
 from systa.events.store import Store, make_func_hookable
 from systa.events.types import EventData
-# noinspection PyUnresolvedReferences
-from ..fixtures import cb_store, move_np_thread, notepad
 
 
 def test_can_add_function(cb_store: Store):

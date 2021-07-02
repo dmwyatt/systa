@@ -6,8 +6,6 @@ import win32gui
 
 from systa.backend.access import MIN_ALL_UNDO
 from systa.windows import Window, current_windows, regex_search
-# noinspection PyUnresolvedReferences
-from .fixtures import notepad
 
 
 @pytest.fixture

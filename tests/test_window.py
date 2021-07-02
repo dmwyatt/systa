@@ -12,8 +12,6 @@ from systa.windows import (
     current_windows,
     regex_search,
 )
-# noinspection PyUnresolvedReferences
-from .fixtures import mouse, notepad
 
 
 def test_create_with_title(notepad: Window):
