@@ -86,15 +86,19 @@ def make_filter(
 
     Using the default values for the arguments:
 
-    >>> @make_filter
-    ... def some_func(data: EventData):
-    ...     pass
+    .. code-block:: python
+
+        @make_filter
+        def some_func(data: eventData)
 
     Changing argument values:
 
-    >>> @make_filter(capture_invalid_window_handle_error=False)
-    ... def some_other_func(data: EventData):
-    ...     pass
+    .. code-block:: python
+
+        @make_filter(capture_invalid_window_handle_error=False)
+        def some_other_func(data: EventData):
+            pass
+
 
     :param test_func: The decorated function.
     :param exclude_sys_windows: If ``True``, will use built-in heuristics to filter
