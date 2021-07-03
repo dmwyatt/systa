@@ -80,7 +80,8 @@ class Window:
         :return: The Window for the lookup.
         :raises ValueError: If the window is not found within ``max_wait`` seconds.
         """
-        wait_for_it(lambda: lookup in current_windows, max_wait)
+        if not wait_for_it(lambda: lookup in current_windows, max_wait):
+            raise ValueError(f"Cannot find window with lookup: {lookup}")
         return Window(lookup)
 
     @cached_property
