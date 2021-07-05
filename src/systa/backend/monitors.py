@@ -1,7 +1,7 @@
 import dataclasses
 import re
 from dataclasses import dataclass
-from typing import Any, Iterable, Optional
+from typing import Any, Iterator, Optional
 
 import win32con
 from screeninfo.common import Monitor
@@ -36,7 +36,7 @@ class SystaMonitor(Monitor):
 
 
 # noinspection PyPep8Naming
-def enumerate_monitors() -> Iterable[SystaMonitor]:
+def enumerate_monitors() -> Iterator[SystaMonitor]:
     """
     Get all the monitors on the system.
 
