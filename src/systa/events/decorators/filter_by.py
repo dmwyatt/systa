@@ -47,7 +47,7 @@ def _make_filter(
     require_existing_window: bool,
     exclude_sys_windows: bool,
     capture_invalid_window_handle: bool,
-) -> FilterFunctionType:
+) -> Callable[[FilterFunctionType], FilterFunctionType]:
     @wraps(test_func)
     def decorator(func: FilterFunctionType) -> FilterFunctionType:
         class _tester(EventTesterBase):
