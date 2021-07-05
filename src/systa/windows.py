@@ -10,7 +10,7 @@ import win32con
 from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
-from systa.backend.access import WinAccess
+from systa.backend import access
 from systa.backend.monitors import SystaMonitor, enumerate_monitors
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
@@ -53,7 +53,7 @@ class Window:
                 raise ValueError("Too many matching windows.")
         self._title = title
 
-        self.backend = WinAccess()
+        self.backend = access
 
     def __str__(self):
         return self.title
@@ -139,7 +139,7 @@ class Window:
     def active(self, value: bool) -> None:
         if value:
             self.backend.activate_window(self.handle)
-            if not self.active:
+            if not wait_for_it(lambda: self.active, max_wait=1):
                 self.bring_mouse_to()
                 self.mouse.click(Button.left)
         else:
@@ -151,7 +151,7 @@ class Window:
                     'Cannot activate desktop to "deactivate" window.'
                 )
 
-            self.backend.activate_window(desktop_handle[0], force_focus_attempt=False)
+            self.backend.activate_window(desktop_handle[0])
 
     @property
     def exists(self) -> bool:
@@ -492,22 +492,19 @@ class CurrentWindows:
     list. Otherwise you'll get a list of at least one :class:`Window` instance.
     """
 
-    def minimize_all(self):
+    @classmethod
+    def minimize_all(cls):
         """Minimizes all windows."""
-        self.backend.set_all_windows_minimized()
+        access.set_all_windows_minimized()
 
-    def undo_minimize_all(self):
-        self.backend.undo_set_all_windows_minimized()
-
-    @cached_property
-    def backend(self) -> WinAccess:
-        """The backend for interacting with windows."""
-        return WinAccess()
+    @classmethod
+    def undo_minimize_all(cls):
+        access.undo_set_all_windows_minimized()
 
     @property
     def current_windows(self) -> Iterator[Window]:
         """Iterates over all current windows."""
-        for title, handle in self.backend.get_titles_and_handles():
+        for title, handle in access.get_titles_and_handles():
             yield Window(handle, title=title)
 
     @property
@@ -599,7 +596,7 @@ class CurrentWindows:
 
         elif isinstance(item, int):
             # an int is treated as a window handle
-            if not self.backend.get_exists(item):
+            if not access.get_exists(item):
                 return []
 
             return [Window(item)]

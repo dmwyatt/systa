@@ -79,7 +79,7 @@ def test_active_is_changeable(notepad: Window):
 
 def test_exists(notepad: Window):
     assert notepad.exists
-    notepad.backend.close_window(notepad.handle)
+    close_window(notepad.handle)
     assert wait_for_it(lambda: not notepad.exists)
 
 
@@ -91,7 +91,7 @@ def test_exists_closes(notepad: Window):
 
 def test_visible(notepad: Window):
     assert notepad.visible
-    notepad.backend.set_hidden(notepad.handle)
+    set_hidden(notepad.handle)
     assert not notepad.visible
 
 

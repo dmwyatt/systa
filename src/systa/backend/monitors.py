@@ -1,7 +1,7 @@
 import dataclasses
 import re
-import typing as T
 from dataclasses import dataclass
+from typing import Any, Iterable, Optional
 
 import win32con
 from screeninfo.common import Monitor
@@ -36,10 +36,11 @@ class SystaMonitor(Monitor):
 
 
 # noinspection PyPep8Naming
-def enumerate_monitors() -> T.Iterable[SystaMonitor]:
+def enumerate_monitors() -> Iterable[SystaMonitor]:
     """
-    Slightly modified from screeninfo_ to return work area.
+    Get all the monitors on the system.
 
+    Slightly modified from screeninfo_ to return work area.
 
     .. _screeninfo: https://github.com/rr-/screeninfo/blob/ba870d067f8acf5943b58898c7e3199819092731/screeninfo/enumerators/windows.py
     """
@@ -65,7 +66,7 @@ def enumerate_monitors() -> T.Iterable[SystaMonitor]:
 
     monitors = []
 
-    def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
+    def callback(monitor: Any, dc: Any, rect: Any, _: Any) -> int:
         info = MONITORINFOEXW()
         info.cbSize = ctypes.sizeof(MONITORINFOEXW)
         if ctypes.windll.user32.GetMonitorInfoW(monitor, ctypes.byref(info)):
@@ -129,7 +130,7 @@ def enumerate_monitors() -> T.Iterable[SystaMonitor]:
     yield from monitors
 
 
-def get_monitor(number: int) -> T.Optional[SystaMonitor]:
+def get_monitor(number: int) -> Optional[SystaMonitor]:
     for monitor in enumerate_monitors():
         if monitor.number == number:
             return monitor

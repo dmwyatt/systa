@@ -39,9 +39,12 @@ def is_collection_of_collection_of_ints(val):
     return is_collection(val) and all(is_collection_of_ints(v) for v in val)
 
 
-def wait_for_it(condition: Callable[..., bool], max_wait=5):
-    """Waits for up to ``max_wait`` seconds for ``condition`` to be truthy."""
+def wait_for_it(condition: Callable[..., bool], max_wait=5) -> bool:
+    """Waits for up to ``max_wait`` seconds for ``condition`` to be truthy.
+
+    :returns: ``True`` if condition, else ``False``
+    """
     start = time.time()
     while not condition() and (time.time() - start) <= max_wait:
         time.sleep(0.1)
-    return condition()
+    return bool(condition())

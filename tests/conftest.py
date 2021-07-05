@@ -8,11 +8,19 @@ from pynput.mouse import Controller
 from systa.events.constants import win_events
 from systa.events.store import callback_store
 from systa.events.types import CallbackReturn, EventData
-from systa.windows import Window
+from systa.utils import wait_for_it
+from systa.windows import Window, current_windows
 
 
 @pytest.fixture
 def notepad():
+    for np in current_windows["Untitled - Notepad"]:
+        np.exists = False
+
+    assert wait_for_it(
+        lambda: not current_windows["Untitled - Notepad"]
+    ), "Make sure all instances of Notepad are closed before tests are run."
+
     notepad_process = subprocess.Popen(["notepad.exe"])
 
     notepad = Window.wait_for_window("Untitled - Notepad")
