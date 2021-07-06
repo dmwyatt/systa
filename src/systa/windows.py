@@ -11,7 +11,7 @@ from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
 from systa.backend import access
-from systa.backend.monitors import SystaMonitor, enumerate_monitors
+from systa.backend.monitors import SystaMonitor, enumerate_monitors, get_monitor
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
 from systa.utils import wait_for_it
@@ -426,6 +426,13 @@ class Window:
         for screen in self.screens:
             if screen.number == number:
                 return screen
+
+    def send_to_monitor(self, number: int) -> bool:
+        monitor = get_monitor(number)
+        if monitor is None:
+            return False
+        self.position = monitor.x, monitor.y
+        return bool(self.get_monitor(number))
 
 
 class WindowSearchPredicate(abc.ABC):
