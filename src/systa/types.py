@@ -18,6 +18,15 @@ class Rect:
     origin: Point
     end: Point
 
+    @staticmethod
+    def from_coords(
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+    ) -> "Rect":
+        return Rect(Point(x1, y1), Point(x2, y2))
+
     @property
     def upper_rect(self) -> "Rect":
         """
