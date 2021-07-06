@@ -2,7 +2,7 @@ import abc
 from fnmatch import fnmatch, fnmatchcase
 from functools import partial, wraps
 from inspect import unwrap
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Iterable, Literal, Optional, Tuple, overload
 
 import pywintypes
 
@@ -24,7 +24,17 @@ class EventTesterBase(abc.ABC):
     def event_test(self, event_data):
         ...
 
-    def __call__(self, func):
+    def __call__(self, func) -> Callable[[EventData], Optional[EventData]]:
+        """
+        Instances can be used as decorators.
+
+        The decorator returns a function that returns ``None`` if the
+        :meth:`event_test` method returns False, or  returns the return value of the
+        wrapped function.
+
+        :param func:
+        :return:
+        """
         unwrapped_func = unwrap(func)
 
         @wraps(func)
@@ -40,6 +50,7 @@ class EventTesterBase(abc.ABC):
 
 
 FilterFunctionType = Callable[[EventData], bool]
+FilterFunctionDecoratorType = Callable[[FilterFunctionType], FilterFunctionType]
 
 
 def _make_filter(
@@ -47,7 +58,7 @@ def _make_filter(
     require_existing_window: bool,
     exclude_sys_windows: bool,
     capture_invalid_window_handle: bool,
-) -> Callable[[FilterFunctionType], FilterFunctionType]:
+) -> FilterFunctionDecoratorType:
     @wraps(test_func)
     def decorator(func: FilterFunctionType) -> FilterFunctionType:
         class _tester(EventTesterBase):
@@ -81,7 +92,7 @@ def make_filter(
     exclude_sys_windows=True,
     require_existing_window=True,
     capture_invalid_window_handle_error=True,
-) -> FilterFunctionType:
+) -> FilterFunctionDecoratorType:
     """
     Decorator to make a function into a filter on an event's data.
 
@@ -185,17 +196,56 @@ def require_title(title: str, case_sensitive=True):
     return _include_only_titled
 
 
-def require_size_is_less_than(x: int, y: int):
-    """
-    Filter to include only windows with x and y dimensions lower than x, y.
+@overload
+def require_size_is_less_than(
+    x: int = None,
+    y: int = None,
+    area: Literal[None] = None,
+):
+    # case providing x and y
+    ...
 
+
+@overload
+def require_size_is_less_than(
+    x: Literal[None] = None,
+    y: Literal[None] = None,
+    area: int = None,
+):
+    # case providing area
+    ...
+
+
+def require_size_is_less_than(
+    x: int = None,
+    y: int = None,
+    area: int = None,
+):
+    """
+    Include only windows of x, y dimensions or area less than provided.
+
+    If area is provided, x and y are ignored and are not needed.  You can just do:
+
+    .. code-block:: python
+
+        @filter_by.require_size_is_less_than(area=250000)
+        def f(data: EventData):
+            ...
+
+    :param area: Total area in pixels.
     :param x: Width
     :param y: Height
     """
+    if area is None:
+        assert x is not None and y is not None
 
     @make_filter
     def _size_is_less_than(data: EventData):
-        return data.window and (data.window.width < x and data.window.height < y)
+        if data.window:
+            if area:
+                return (data.window.width * data.window.height) < area
+            elif x and y:
+                return data.window.width < x and data.window.height < y
 
     return _size_is_less_than
 
@@ -247,10 +297,8 @@ def is_maximized(data: EventData):
     return data.window.maximized
 
 
-def exclude_window_events(window_events: Optional[List[Tuple[str, EventType]]] = None):
+def exclude_window_events(window_events: Iterable[Tuple[str, EventType]]):
     """Given a list of title/event pairs, excludes those events from those windows."""
-    if window_events is None:
-        window_events = []
 
     @make_filter
     def _exclude_window_events(data: EventData):
@@ -267,7 +315,12 @@ def exclude_window_events(window_events: Optional[List[Tuple[str, EventType]]] =
 
 @make_filter
 def require_window(data: EventData):
-    """Exclude events that do not have a window."""
+    """Exclude events that do not have a window.
+
+    Most likely you won't need this since the default :func:`make_filter` decorator
+    already does this check, but this is provided for cases when not using that
+    decorator.
+    """
     return bool(data.window)
 
 
