@@ -6,9 +6,9 @@ from typing import Callable, Iterable, Literal, Optional, Tuple, overload
 
 import pywintypes
 
-from systa.events.constants import EventType, win_events
+from systa.events.constants import win_events
 from systa.events.store import callback_store
-from systa.events.types import EventData, EventFilterCallableType
+from systa.events.types import EventData, EventFilterCallableType, EventType
 from systa.types import Rect
 
 

@@ -87,7 +87,9 @@ autodoc_type_aliases = {
     "EventRangeType": "systa.events.types.EventRangeType",
     "EventType": "systa.events.types.EventType",
     "EventsTypes": "systa.events.types.EventsType",
+    "EventTypeNamesType": "systa.events.types.EventTypeNamesType",
     "WindowLookupType": "systa.windows.WindowLookupType",
+    "ObjIdType": "systa.events.types.ObjIdType",
 }
 
 doctest_global_setup = """
