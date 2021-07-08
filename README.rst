@@ -4,6 +4,8 @@ Systa: A ``Window`` for `windows <https://en.wikipedia.org/wiki/Window_(computin
 **Systa** is a Microsoft Windows automation library, built for people who aren't Microsoft
 Windows programming gurus.
 
+`Documentation. <https://dmwyatt.github.io/systa/>`_
+
 Basic Usage
 -----------
 
