@@ -5,12 +5,22 @@ import time
 import pytest
 from pynput.mouse import Controller
 
+from systa.events.constants import win_events
 from systa.events.store import callback_store
-from systa.windows import Window
+from systa.events.types import CallbackReturn, EventData
+from systa.utils import wait_for_it
+from systa.windows import Window, current_windows
 
 
 @pytest.fixture
 def notepad():
+    for np in current_windows["Untitled - Notepad"]:
+        np.exists = False
+
+    assert wait_for_it(
+        lambda: not current_windows["Untitled - Notepad"]
+    ), "Make sure all instances of Notepad are closed before tests are run."
+
     notepad_process = subprocess.Popen(["notepad.exe"])
 
     notepad = Window.wait_for_window("Untitled - Notepad")
@@ -59,3 +69,22 @@ def move_np_thread(notepad):
         notepad.width = notepad.width + 10
 
     return notepad, threading.Thread(target=move_notepad, daemon=True)
+
+
+@pytest.fixture
+def callback_return(notepad):
+    return CallbackReturn(
+        hook_handle=1234,
+        event=win_events.EVENT_SYSTEM_MOVESIZEEND,
+        event_name="EVENT_SYSTEM_MOVESIZEEND",
+        window_handle=notepad.handle,
+        object_id=65551,
+        child_id=1234,
+        thread=1234,
+        time_ms=1234,
+    )
+
+
+@pytest.fixture
+def event_data(notepad, callback_return):
+    return EventData(window=notepad, event_info=callback_return)

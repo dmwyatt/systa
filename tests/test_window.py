@@ -3,8 +3,10 @@ import re
 import pytest
 from pynput.mouse import Controller
 
+from systa.backend.access import close_window, set_hidden
+from systa.backend.monitors import SystaMonitor, enumerate_monitors
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, wait_for_it
+from systa.utils import wait_for_it
 from systa.windows import (
     Window,
     WindowRelativeMouseController,
@@ -78,7 +80,7 @@ def test_active_is_changeable(notepad: Window):
 
 def test_exists(notepad: Window):
     assert notepad.exists
-    notepad.backend.close_window(notepad.handle)
+    close_window(notepad.handle)
     assert wait_for_it(lambda: not notepad.exists)
 
 
@@ -90,7 +92,7 @@ def test_exists_closes(notepad: Window):
 
 def test_visible(notepad: Window):
     assert notepad.visible
-    notepad.backend.set_hidden(notepad.handle)
+    set_hidden(notepad.handle)
     assert not notepad.visible
 
 
@@ -247,3 +249,10 @@ def test_screens(notepad: Window):
     # TODO: come up with better test for this that works on different systems with
     #    different number of screens
     assert all(isinstance(s, SystaMonitor) for s in notepad.screens)
+
+
+def test_send_to_monitor(notepad: Window):
+    monitor_numbers = [m.number for m in enumerate_monitors()]
+
+    for monitor_number in monitor_numbers:
+        assert notepad.send_to_monitor(monitor_number)

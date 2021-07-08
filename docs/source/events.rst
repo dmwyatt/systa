@@ -328,3 +328,27 @@ filtering into your own code.
       # do something else here
       pass
     # do whatever you want here
+
+
+
+
+
+examples
+--------
+
+Here we change monitor #3 to always tile any window moved onto it.
+
+.. raw:: html
+
+  <video
+    draggable="false"
+    playsinline=""
+    autoplay=""
+    loop=""
+    class="align-left"
+    style="width: 960px; height: 306px;"
+  >
+    <source type="video/mp4" src="https://i.imgur.com/MHtMxZq.mp4">
+  </video>
+
+.. literalinclude:: ../../src/examples/tiled_monitor.py

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import abc
 import re
-from collections import defaultdict
 from fnmatch import fnmatchcase
 from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
@@ -11,10 +10,11 @@ import win32con
 from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
 
-from systa.backend import WinAccess
+from systa.backend import access
+from systa.backend.monitors import SystaMonitor, enumerate_monitors, get_monitor
 from systa.exceptions import NoMatchingWindowError
 from systa.types import Point, Rect
-from systa.utils import SystaMonitor, get_monitors, wait_for_it
+from systa.utils import wait_for_it
 
 
 class Window:
@@ -53,7 +53,7 @@ class Window:
                 raise ValueError("Too many matching windows.")
         self._title = title
 
-        self.backend = WinAccess()
+        self.backend = access
 
     def __str__(self):
         return self.title
@@ -80,7 +80,8 @@ class Window:
         :return: The Window for the lookup.
         :raises ValueError: If the window is not found within ``max_wait`` seconds.
         """
-        wait_for_it(lambda: lookup in current_windows, max_wait)
+        if not wait_for_it(lambda: lookup in current_windows, max_wait):
+            raise ValueError(f"Cannot find window with lookup: {lookup}")
         return Window(lookup)
 
     @cached_property
@@ -138,7 +139,7 @@ class Window:
     def active(self, value: bool) -> None:
         if value:
             self.backend.activate_window(self.handle)
-            if not self.active:
+            if not wait_for_it(lambda: self.active, max_wait=1):
                 self.bring_mouse_to()
                 self.mouse.click(Button.left)
         else:
@@ -150,7 +151,7 @@ class Window:
                     'Cannot activate desktop to "deactivate" window.'
                 )
 
-            self.backend.activate_window(desktop_handle[0], force_focus_attempt=False)
+            self.backend.activate_window(desktop_handle[0])
 
     @property
     def exists(self) -> bool:
@@ -415,11 +416,23 @@ class Window:
     def screens(self) -> List[SystaMonitor]:
         windows_monitors = []
 
-        for monitor in get_monitors():
+        for monitor in enumerate_monitors():
             if self.rectangle.intersects_rect(monitor.rectangle):
                 windows_monitors.append(monitor)
 
         return windows_monitors
+
+    def get_monitor(self, number: int) -> Optional[SystaMonitor]:
+        for screen in self.screens:
+            if screen.number == number:
+                return screen
+
+    def send_to_monitor(self, number: int) -> bool:
+        monitor = get_monitor(number)
+        if monitor is None:
+            return False
+        self.position = monitor.x, monitor.y
+        return bool(self.get_monitor(number))
 
 
 class WindowSearchPredicate(abc.ABC):
@@ -469,7 +482,7 @@ WindowLookupType = Union[Window, str, int, WindowSearchPredicate]
 +================================================+==================================================+
 | :class:`Window`                                | Compares handle to current windows handles       |
 +------------------------------------------------+--------------------------------------------------+
-| ``str``                                        | Exact title match                                |
+| ``str``                                        | Wildcard-accepting title match.                  |
 +------------------------------------------------+--------------------------------------------------+
 | ``int``                                        | Window with handle exists.                       |
 +------------------------------------------------+--------------------------------------------------+
@@ -486,20 +499,19 @@ class CurrentWindows:
     list. Otherwise you'll get a list of at least one :class:`Window` instance.
     """
 
-    def minimize_all(self):
+    @classmethod
+    def minimize_all(cls):
         """Minimizes all windows."""
-        self.backend.set_all_windows_minimized()
-        x = defaultdict(list)
+        access.set_all_windows_minimized()
 
-    @cached_property
-    def backend(self) -> WinAccess:
-        """The backend for interacting with windows."""
-        return WinAccess()
+    @classmethod
+    def undo_minimize_all(cls):
+        access.undo_set_all_windows_minimized()
 
     @property
     def current_windows(self) -> Iterator[Window]:
         """Iterates over all current windows."""
-        for title, handle in self.backend.get_titles_and_handles():
+        for title, handle in access.get_titles_and_handles():
             yield Window(handle, title=title)
 
     @property
@@ -567,7 +579,15 @@ class CurrentWindows:
 
         :param: The window lookup you want to use.
         """
-        if isinstance(item, WindowSearchPredicate):
+        if isinstance(item, str):
+            # a string is treated as an fnmatch pattern
+            return [
+                window
+                for window in self.current_windows
+                if fnmatchcase(window.title, item)
+            ]
+
+        elif isinstance(item, WindowSearchPredicate):
             return [window for window in self.current_windows if item(window)]
 
         elif isinstance(item, Pattern):
@@ -581,17 +601,9 @@ class CurrentWindows:
             else:
                 return []
 
-        elif isinstance(item, str):
-            # a string is treated as an fnmatch pattern
-            return [
-                window
-                for window in self.current_windows
-                if fnmatchcase(window.title, item)
-            ]
-
         elif isinstance(item, int):
             # an int is treated as a window handle
-            if not self.backend.get_exists(item):
+            if not access.get_exists(item):
                 return []
 
             return [Window(item)]

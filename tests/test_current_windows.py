@@ -4,7 +4,7 @@ import pytest
 import win32con
 import win32gui
 
-from systa.backend import MIN_ALL_UNDO
+from systa.backend.access import MIN_ALL_UNDO
 from systa.windows import Window, current_windows, regex_search
 
 

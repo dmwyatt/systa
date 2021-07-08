@@ -129,5 +129,16 @@ def lost_mouse_capture(func: UserEventCallableType):
 
 
 def move_or_sizing_ended(func: UserEventCallableType):
-    """A window has been resized."""
+    """A window has been resized.
+
+    .. seealso:: :func:`move_or_sizing_started`
+    """
     return specified_events(win_events.EVENT_SYSTEM_MOVESIZEEND)(func)
+
+
+def move_or_sizing_started(func: UserEventCallableType):
+    """A window is getting resized.
+
+    .. seealso:: :func:`move_or_sizing_ended`
+    """
+    return specified_events(win_events.EVENT_SYSTEM_MOVESIZESTART)(func)

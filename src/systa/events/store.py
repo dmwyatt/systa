@@ -22,11 +22,12 @@ from systa.events.types import (
     EventFilterCallableType,
     EventRangeType,
     EventRangesType,
+    EventType,
     HookType,
     UserEventCallableType,
     WinEventHookCallbackType,
 )
-from .constants import EventType, win_events
+from .constants import win_events
 from ..utils import is_collection_of_collection_of_ints, is_collection_of_ints
 from ..windows import Window
 

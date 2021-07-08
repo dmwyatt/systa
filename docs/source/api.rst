@@ -62,7 +62,7 @@ Event types
 .. autoclass:: systa.events.types.CallbackReturn
   :members:
 
-.. autoclass:: systa.events.types.EventType
-  :members:
+.. autodata:: systa.events.types.EventType
+  :annotation:
 
-.. autoclass:: systa.events.types.EventTypeNamesType
+.. autodata:: systa.events.types.EventTypeNamesType
