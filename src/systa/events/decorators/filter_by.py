@@ -324,30 +324,12 @@ def require_window(data: EventData):
     return bool(data.window)
 
 
-def touches_monitors(*monitor_numbers: int):
+def touches_monitors(*monitor_numbers: int, exclusive: bool = False):
     """Window touches at least all the provided monitors.
 
-    .. note:: Provide just one monitor number to test if window is on just that monitor.
-    .. note:: Combine with :func:`any_filter` to test if a window is fully contained
-        on any single monitor:
 
-        .. code-block::
-
-            from systa.events.decorators import filter_by, listen_to
-
-            @filter_by.any_filter(
-                [
-                    filter_by.touches_monitors(1),
-                    filter_by.touches_monitors(2),
-                    filter_by.touches_monitors(3),
-                ]
-            )
-            @listen_to.location_change
-            def my_func(data: EventData):
-                # window moved to a new location that was on just one of 3
-                # monitors.
-                pass
-
+    :param exclusive: If ``True`` require window to be *only* on those monitors,
+        otherwise window can be on other monitors in addition to ``monitor_numbers``.
     :param monitor_numbers: Provide the number of each monitor you want to check.
     """
 
@@ -356,6 +338,10 @@ def touches_monitors(*monitor_numbers: int):
         if not data.window:
             return False
         screens = data.window.screens
+
+        if exclusive:
+            return set(monitor_numbers) == set(screen.number for screen in screens)
+
         return set(monitor_numbers) <= set(screen.number for screen in screens)
 
     return _touches_monitors

@@ -310,8 +310,8 @@ def test_require_window_no_pass(event_data):
 
 
 def test_touches_monitors(event_data):
-    # TODO: This test isn't great.  What if only one monitor? What if window already
-    #  on monitor? What if system has no monitors?
+    # TODO: This test isn't good. What if testing system has only one monitor? What
+    #  if window already on monitor? What if system has no monitors?
     func_ran = False
 
     system_monitors = [m.number for m in enumerate_monitors()]
