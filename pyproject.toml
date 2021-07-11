@@ -5,6 +5,28 @@ description = "Windows GUI automation with a cool API."
 authors = ["Dustin Wyatt <dustin.wyatt@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
+homepage = "https://github.com/dmwyatt/systa"
+repository = "https://github.com/dmwyatt/systa"
+keywords = ["automation", "windows"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Environment :: Win32 (MS Windows)",
+    "Operating System :: Microsoft :: Windows",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Desktop Environment :: Window Managers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Systems Administration",
+    ]
+include =["LICENSE"]
 
 [tool.poetry.dependencies]
 boltons = "^21.0.0"
