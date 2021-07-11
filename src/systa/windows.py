@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import abc
 import re
+from collections import defaultdict
 from fnmatch import fnmatchcase
 from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
@@ -524,12 +525,9 @@ class CurrentWindows:
         """
         A dictionary mapping title to lists of windows having that title.
         """
-        by_title = {}
+        by_title = defaultdict(list)
         for window in self.current_windows:
-            if window.title in by_title:
-                by_title[window.title].append(window)
-            else:
-                by_title[window.title] = [window]
+            by_title[window.title].append(window)
         return by_title
 
     def __contains__(self, item: WindowLookupType) -> bool:
