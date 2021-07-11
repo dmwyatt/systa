@@ -330,6 +330,32 @@ filtering into your own code.
     # do whatever you want here
 
 
+Combining decorators
+^^^^^^^^^^^^^^^^^^^^
+
+Combine multiple filters into one with :func:`~systa.events.filter_by.all_filters` or
+:func:`~systa.events.filter_by.any_filter` and use the resulting decorator in multiple
+places.
+
+.. testcode:: combine-filters
+
+  from systa.events.decorators import filter_by
+  from systa.events.types import EventData
+
+  small_notepad_on_right_monitor = filter_by.all_filters(
+    filter_by.require_title("*Notepad"),
+    filter_by.require_size_is_less_than(200, 200),
+    filter_by.touches_monitor(3, exclusive=True)
+  )
+
+  @small_notepad_on_right_monitor
+  def make_tall_notepad(event_data: EventData):
+    event_data.window.height = 1000
+
+
+  @small_notepad_on_right_monitor
+  def make_wide_notepad(event_data: EventData):
+    event_data.window.width = 1000
 
 
 
