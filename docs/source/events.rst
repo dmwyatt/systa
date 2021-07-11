@@ -295,8 +295,8 @@ to make it so that any single filter passing will run your function.
 
   Notepad resized or small window moved.
 
-lol, decorators
----------------
+My god, it's full of decorators
+-------------------------------
 
 If you have a lot of filtering or events to capture, your code can get pretty ugly and
 hard to reason about as the decorators stack up.  Decorators only aid readability to a
