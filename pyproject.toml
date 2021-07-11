@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "systa"
-version = "0.1.0"
+version = "0.1.1"
 description = "Windows GUI automation with a cool API."
 authors = ["Dustin Wyatt <dustin.wyatt@gmail.com>"]
 license = "MIT"
