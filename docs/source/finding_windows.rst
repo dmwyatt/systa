@@ -6,8 +6,8 @@ windows on the system.  You can index into this object as if it was a dictionary
 is the recommended way to get a :class:`~systa.windows.Window` instance if you're not
 using the :doc:`events API <events>`.
 
-``current_windows`` *always* returns a list since there can be multiple windows
-matching your query.
+:attr:`~systa.windows.current_windows` *always* returns a list since there can be
+multiple windows matching your query.
 
 Basic Usage
 -----------
