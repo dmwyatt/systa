@@ -1,24 +1,41 @@
-import dataclasses
 import re
 from dataclasses import dataclass
 from typing import Any, Iterator, Optional
 
 import win32con
-from screeninfo.common import Monitor
 
 from systa.types import Point, Rect
 
 
 @dataclass
-class SystaMonitor(Monitor):
-    """Wraps a :class:`screeninfo.Monitor` and add some features we need."""
+class SystaMonitor:
+    """Info about a monitor.
 
-    work_area: Rect = None
-    """This will usually be the desktop coordinates *excluding the taskbar*."""
+    Lifted and modified from screeninfo_.
 
-    @staticmethod
-    def from_monitor(monitor: Monitor) -> "SystaMonitor":
-        return SystaMonitor(**dataclasses.asdict(monitor))
+    .. _screeninfo: https://github.com/rr-/screeninfo/blob/ba870d067f8acf5943b58898c7e3199819092731/screeninfo/common.py#L7
+    """
+
+    x: int
+    y: int
+    width: int
+    height: int
+    width_mm: Optional[int] = None
+    height_mm: Optional[int] = None
+    name: Optional[str] = None
+
+    work_area: Optional[Rect] = None
+    """This should be the desktop coordinates *excluding the taskbar*."""
+
+    def __repr__(self) -> str:
+        return (
+            f"Monitor("
+            f"x={self.x}, y={self.y}, "
+            f"width={self.width}, height={self.height}, "
+            f"width_mm={self.width_mm}, height_mm={self.height_mm}, "
+            f"name={self.name!r}"
+            f")"
+        )
 
     @property
     def rectangle(self) -> Rect:
