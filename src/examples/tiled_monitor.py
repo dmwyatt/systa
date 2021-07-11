@@ -17,8 +17,8 @@ MONITOR_OF_INTEREST: Final = 3
 @listen_to.create
 @listen_to.move_or_sizing_ended
 def tile_monitor(event_data: EventData):
-    # We know we've got a window because of @filter_by.required_titled_window. (Not
-    # all events have an associated window)..
+    # We know we've got a window because most @filter_by decorators don't pass if
+    # there is not a window object. (Not all events have an associated window).
     window = event_data.window
 
     # get the monitor object
