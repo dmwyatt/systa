@@ -29,18 +29,18 @@ boltons = "^21.0.0"
 pynput = "^1.7.3"
 python = "^3.8"
 pywin32 = "^301"
-sphinx-book-theme = "^0.1.0"
 typeguard = "^2.12.0"
 typing-inspect = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
-Sphinx = "<4"
 beautifulsoup4 = "^4.8"
 commonmark = "^0.9.1"
 ipython = "^7.9"
 pytest = "^6.2.4"
 pytest-mock = "^3.6.1"
+Sphinx = "<4"
 sphinx-autodoc-typehints = "^1.12.0"
+sphinx-book-theme = "^0.1.0"
 sphinx-prompt = "^1.4.0"
 
 [build-system]
