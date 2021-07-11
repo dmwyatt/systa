@@ -43,7 +43,7 @@ function can then do *stuff* with the data we provide it.
   from systa.events.types import EventData
 
 
-  @listen_to.any_event # not a good idea, see next example
+  @listen_to.any_event # often not a good idea, see next example
   def user_function(data: EventData) -> None:
       if data.window and "Notepad" in data.window.title:
           print(f"It's a Notepad event! ({data.event_info.event_name})")
@@ -56,7 +56,7 @@ function can then do *stuff* with the data we provide it.
 
   It's a Notepad event! (...
 
-Ideally, you won't listen to every event.  There are a LOT of events fired on a modern
+Ideally, you won't listen to every event.  There are a *lot* of events fired on a modern
 Windows system, and it consumes OS resources to call your functions.  Luckily, we can
 listen to only the events we care about.
 
@@ -101,7 +101,7 @@ listen to only the events we care about.
 
   Notepad moved!...
 
-.. note:: There are many more ``listen_to`` event decorators you can use in the
+.. note:: There are many more event decorators you can use in the
   :mod:`~systa.events.decorators.listen_to` module.
 
 Other events
@@ -139,8 +139,8 @@ Listening to specific events will probably still give us too many events.  For e
 you might just be interested in running your code when Notepad is moved to a new
 location.  However, Windows will call your code whenever *any* window is moved.
 
-You can handle this with `if` branching in your function as in the above examples
-wherein we check if the window title has the word "Notepad".
+One option to handle this is branching in your function as in the
+above examples wherein we check if the window title has the word "Notepad".
 
 Or, you can get fancy and use some decorators from
 :mod:`~systa.events.decorators.filter_by`:
