@@ -1,8 +1,8 @@
 import subprocess
 import threading
-import time
 
 import pytest
+import pywintypes
 from pynput.mouse import Controller
 
 from systa.events.constants import win_events
@@ -15,7 +15,10 @@ from systa.windows import Window, current_windows
 @pytest.fixture
 def notepad():
     for np in current_windows["Untitled - Notepad"]:
-        np.exists = False
+        try:
+            np.exists = False
+        except pywintypes.error as e:
+            pass
 
     assert wait_for_it(
         lambda: not current_windows["Untitled - Notepad"]
@@ -40,8 +43,7 @@ def mouse():
 def notepad_mover(notepad):
     def start():
         def move_notepad():
-            # waits a bit to let the main testcode block start up the callback store
-            time.sleep(0.3)
+            wait_for_it(callback_store.is_running)
             # this will make the window fire some events
             np = Window("Untitled - Notepad")
             pos = np.position

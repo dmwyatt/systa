@@ -56,6 +56,7 @@ class Store:
     msg_loop_timeout = 75
 
     def __init__(self):
+        self._running = False
         self._init_store()
 
     AddUserFuncResultsType = Dict[EventRangeType, bool]
@@ -154,7 +155,6 @@ class Store:
 
     def msg_loop(self, stop_in: Optional[float] = None):
         logger.info("Starting message loop...")
-        self._running = True
 
         # if stop_in is not None:
         #     threading.Thread(target=self._stop, args=(stop_in,), daemon=True).start()
@@ -193,7 +193,6 @@ class Store:
                     logger.error("Error in message loop.  Unexpected win32wait error.")
 
         finally:
-            self._running = False
             self.unregister_all_hooks()
 
     def unregister_all_hooks(self):
@@ -213,29 +212,38 @@ class Store:
         :param stop_in: If provided, will stop message loop in this many seconds.
             Approximately.
         """
+        if self._running:
+            raise RuntimeError("Store is already running.")
+        self._running = True
         logger.info(
             "Hooking %s callbacks to %s event ranges.",
             len(self._cb_ranges),
             len(list(chain.from_iterable(self._cb_ranges.values()))),
         )
 
-        for callback in self._cb_ranges:
-            for event_range in self._cb_ranges[callback]:
-                logger.debug("Hooking '%s' to %s.", callback.__name__, event_range)
-                hookable_callback = self.get_hookable(callback)
-                win_event_proc = WIN_EVENT_PROC_TYPE(hookable_callback)
-                self._ctype_procedure_cache.append(win_event_proc)
-                hook = user32.SetWinEventHook(
-                    event_range[0],
-                    event_range[1],
-                    0,
-                    win_event_proc,
-                    0,
-                    0,
-                    WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS,
-                )
-                self._callback_hooks_handles[callback].append(hook)
-        self.msg_loop(stop_in)
+        try:
+            for callback in self._cb_ranges:
+                for event_range in self._cb_ranges[callback]:
+                    logger.debug("Hooking '%s' to %s.", callback.__name__, event_range)
+                    hookable_callback = self.get_hookable(callback)
+                    win_event_proc = WIN_EVENT_PROC_TYPE(hookable_callback)
+                    self._ctype_procedure_cache.append(win_event_proc)
+                    hook = user32.SetWinEventHook(
+                        event_range[0],
+                        event_range[1],
+                        0,
+                        win_event_proc,
+                        0,
+                        0,
+                        WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS,
+                    )
+                    self._callback_hooks_handles[callback].append(hook)
+            self.msg_loop(stop_in)
+        finally:
+            self._running = False
+
+    def is_running(self):
+        return self._running
 
 
 callback_store = Store()

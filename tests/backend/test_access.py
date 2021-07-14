@@ -150,7 +150,7 @@ def test_bring_to_top(notepad):
     activate_window(next(get_handle("Program Manager")))
     assert not notepad.active
     activate_window(notepad.handle)
-    assert notepad.active
+    assert wait_for_it(lambda: notepad.active)
 
 
 def test_close_window(notepad):

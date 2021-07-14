@@ -17,14 +17,17 @@ function can then do *stuff* with the data we provide it.
 
 .. testsetup:: basic-listen-to
 
-  import time
   import threading
   import random
   from systa.windows import Window
+  from systa.events.store import callback_store
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
+
 
   def move_notepad():
-      # waits a bit to let the main testcode block start up the callback store
-      time.sleep(.3)
+      wait_for_it(callback_store.is_running)
       # this will make the window fire some events
       np = Window("Untitled - Notepad")
       pos = np.position
@@ -62,15 +65,16 @@ listen to only the events we care about.
 
 .. testsetup:: basic-choose-events
 
-  import time
   import threading
   import random
   from systa.windows import Window
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
 
 
   def move_notepad():
-      # waits a bit to let the main testcode block start up the callback store
-      time.sleep(.3)
+      wait_for_it(callback_store.is_running)
       # this'll make the window fire some events
       np = Window("Untitled - Notepad")
       pos = np.position
@@ -150,14 +154,16 @@ Ignore events that aren't for a specific window
 
 .. testsetup:: filter-by-basic
 
-  import time
   import threading
   import random
   from systa.windows import Window
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
+
 
   def move_notepad():
-      # waits a bit to let the main testcode block start up the callback store
-      time.sleep(.3)
+      wait_for_it(callback_store.is_running)
       # this'll make the window fire some events
       np = Window("Untitled - Notepad")
       pos = np.position
@@ -194,14 +200,15 @@ Combine as many filters as you want
 
 .. testsetup:: stacked-filters
 
-  import time
   import threading
   import random
   from systa.windows import Window
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
 
   def move_notepad():
-      # waits a bit to let the main testcode block start up the callback store
-      time.sleep(.3)
+      wait_for_it(callback_store.is_running)
       # this'll make the window fire some events
       np = Window("Untitled - Notepad")
       pos = np.position
@@ -254,11 +261,13 @@ to make it so that any single filter passing will run your function.
   import time
   import threading
   from systa.windows import Window
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
+
 
   def move_notepad():
-    # waits a bit to let the main testcode block start up the callback store
-    time.sleep(.1)
-
+    wait_for_it(callback_store.is_running)
     mouse = Controller()
 
     np = Window("Untitled - Notepad")
@@ -345,7 +354,7 @@ places.
   small_notepad_on_right_monitor = filter_by.all_filters(
     filter_by.require_title("*Notepad"),
     filter_by.require_size_is_less_than(200, 200),
-    filter_by.touches_monitor(3, exclusive=True)
+    filter_by.touches_monitors(3, exclusive=True)
   )
 
   @small_notepad_on_right_monitor
