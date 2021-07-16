@@ -1,4 +1,5 @@
 import re
+import subprocess
 
 import pytest
 from pynput.mouse import Controller
@@ -88,6 +89,13 @@ def test_exists_closes(notepad: Window):
     assert notepad.exists
     notepad.exists = False
     assert wait_for_it(lambda: not notepad.exists)
+
+
+def test_exists_does_not_raise_on_closed_window():
+    notepad_process = subprocess.Popen(["notepad.exe"])
+    np = Window.wait_for_window("Untitled - Notepad")
+    notepad_process.kill()
+    assert wait_for_it(lambda: not np.exists)
 
 
 def test_visible(notepad: Window):

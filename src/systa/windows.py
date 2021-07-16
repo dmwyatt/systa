@@ -7,6 +7,7 @@ from fnmatch import fnmatchcase
 from functools import cached_property
 from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
 
+import pywintypes
 import win32con
 from boltons.iterutils import is_collection
 from pynput.mouse._win32 import Button, Controller
@@ -171,8 +172,16 @@ class Window:
 
     @exists.setter
     def exists(self, value: bool) -> None:
-        if not value:
-            self.backend.close_window(self.handle)
+        try:
+            if not value:
+                self.backend.close_window(self.handle)
+        except pywintypes.error as e:
+            # ignore error about window not existing if we were attempting to close
+            # it anyway.
+            if e.winerror == 1400 and not value:
+                pass
+            else:
+                raise
 
     @property
     def visible(self) -> bool:

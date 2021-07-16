@@ -2,7 +2,6 @@ import subprocess
 import threading
 
 import pytest
-import pywintypes
 from pynput.mouse import Controller
 
 from systa.events.constants import win_events
@@ -15,10 +14,7 @@ from systa.windows import Window, current_windows
 @pytest.fixture
 def notepad():
     for np in current_windows["Untitled - Notepad"]:
-        try:
-            np.exists = False
-        except pywintypes.error as e:
-            pass
+        np.exists = False
 
     assert wait_for_it(
         lambda: not current_windows["Untitled - Notepad"]
