@@ -192,6 +192,8 @@ class Store:
                 else:
                     logger.error("Error in message loop.  Unexpected win32wait error.")
 
+        except KeyboardInterrupt:
+            logger.info("Closing...")
         finally:
             self.unregister_all_hooks()
 
@@ -227,6 +229,7 @@ class Store:
                     logger.debug("Hooking '%s' to %s.", callback.__name__, event_range)
                     hookable_callback = self.get_hookable(callback)
                     win_event_proc = WIN_EVENT_PROC_TYPE(hookable_callback)
+                    # Keep these from being GC'ed
                     self._ctype_procedure_cache.append(win_event_proc)
                     hook = user32.SetWinEventHook(
                         event_range[0],
