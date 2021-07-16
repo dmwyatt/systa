@@ -348,24 +348,34 @@ places.
 
 .. testcode:: combine-filters
 
-  from systa.events.decorators import filter_by
+  from systa.events.decorators import filter_by, listen_to
   from systa.events.types import EventData
 
-  small_notepad_on_right_monitor = filter_by.all_filters(
-    filter_by.require_title("*Notepad"),
-    filter_by.require_size_is_less_than(200, 200),
-    filter_by.touches_monitors(3, exclusive=True)
+  import requests
+
+  small_editor_on_right_monitor = filter_by.all_filters(
+      # If Notepad _or_ Word...
+      filter_by.any_filter(
+          filter_by.require_title("*Notepad"), filter_by.require_title("*Word")
+      ),
+      # are less than 200x200
+      filter_by.require_size_is_less_than(200, 200),
+
+      # _and_ are on monitor 3
+      filter_by.touches_monitors(3, exclusive=True),
   )
 
-  @small_notepad_on_right_monitor
-  def make_tall_notepad(event_data: EventData):
-    event_data.window.height = 1000
+
+  @small_editor_on_right_monitor
+  @listen_to.location_change
+  def make_tall_editor(event_data: EventData):
+      event_data.window.height = 1000
 
 
-  @small_notepad_on_right_monitor
-  def make_wide_notepad(event_data: EventData):
-    event_data.window.width = 1000
-
+  @small_editor_on_right_monitor
+  @listen_to.location_change
+  def log_small_editor(event_data: EventData):
+      requests.post("https://MY_LOGGING_SERVICE/a_small_editor")
 
 
 examples
