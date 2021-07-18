@@ -5,6 +5,7 @@ from systa.backend.access import (
     close_window,
     get_class_name,
     get_exists,
+    get_foreground_window,
     get_handle,
     get_handles,
     get_is_active,
@@ -185,3 +186,7 @@ def test_get_process_path(notepad):
 
 def test_get_title(notepad):
     assert get_title(notepad.handle) == "Untitled - Notepad"
+
+
+def test_get_foreground_window(notepad):
+    assert get_foreground_window() == notepad.handle

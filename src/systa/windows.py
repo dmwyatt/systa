@@ -3,9 +3,10 @@ from __future__ import annotations
 import abc
 import re
 from collections import defaultdict
+from enum import Enum
 from fnmatch import fnmatchcase
 from functools import cached_property
-from typing import Dict, Iterator, List, Optional, Pattern, Tuple, Union
+from typing import Dict, Final, Iterator, List, Optional, Pattern, Tuple, Union
 
 import pywintypes
 import win32con
@@ -484,7 +485,13 @@ class regex_search(WindowSearchPredicate):
         return bool(self.pattern.match(window.title))
 
 
-WindowLookupType = Union[Window, str, int, WindowSearchPredicate]
+class WindowActiveness(Enum):
+    active = 0
+
+
+ACTIVE_WINDOW: Final = WindowActiveness.active
+
+WindowLookupType = Union[Window, str, int, WindowSearchPredicate, WindowActiveness]
 """The types you can use to lookup windows.
 
 +------------------------------------------------+--------------------------------------------------+
@@ -496,7 +503,9 @@ WindowLookupType = Union[Window, str, int, WindowSearchPredicate]
 +------------------------------------------------+--------------------------------------------------+
 | ``int``                                        | Window with handle exists.                       |
 +------------------------------------------------+--------------------------------------------------+
-| :class:`~systa.windows.WindowSearchPredicate`  | Matches windows with the logic of the predicate  |
+| :class:`~systa.windows.WindowSearchPredicate`  | Matches windows with the logic of the predicate. |
++------------------------------------------------+--------------------------------------------------+
+| :data:`systa.windows.ACTIVE_WINDOW`            | Matches the active window.                       |
 +------------------------------------------------+--------------------------------------------------+
 """
 
@@ -538,6 +547,10 @@ class CurrentWindows:
         for window in self.current_windows:
             by_title[window.title].append(window)
         return by_title
+
+    @classmethod
+    def get_active_window(cls) -> Window:
+        return Window(ACTIVE_WINDOW)
 
     def __contains__(self, item: WindowLookupType) -> bool:
         """Membership checks with :const:`WindowLookupType`.
@@ -586,6 +599,9 @@ class CurrentWindows:
 
         :param: The window lookup you want to use.
         """
+        if item is ACTIVE_WINDOW:
+            return [Window(access.get_foreground_window())]
+
         if isinstance(item, str):
             # a string is treated as an fnmatch pattern
             return [

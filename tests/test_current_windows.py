@@ -5,7 +5,13 @@ import win32con
 import win32gui
 
 from systa.backend.access import MIN_ALL_UNDO
-from systa.windows import Window, current_windows, regex_search
+from systa.windows import (
+    ACTIVE_WINDOW,
+    CurrentWindows,
+    Window,
+    current_windows,
+    regex_search,
+)
 
 
 @pytest.fixture
@@ -78,3 +84,12 @@ def test_getitem_compiled_regex(notepad: Window):
 
 def test_getitem_handle(notepad: Window):
     assert notepad in current_windows[notepad.handle]
+
+
+def test_getitem_active_window(notepad: Window):
+    assert current_windows[ACTIVE_WINDOW] == [notepad]
+
+
+def test_get_active_window(notepad: Window):
+    assert current_windows.get_active_window() == notepad
+    assert CurrentWindows.get_active_window() == notepad

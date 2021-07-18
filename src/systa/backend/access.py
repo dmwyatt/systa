@@ -240,3 +240,7 @@ def get_process_id(handle: int) -> int:
 
 def get_sys_tray_handle() -> int:
     return win32gui.FindWindow(TASKBAR_CLASSNAME, None)
+
+
+def get_foreground_window() -> int:
+    return win32gui.GetForegroundWindow()
