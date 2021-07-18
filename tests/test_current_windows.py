@@ -22,6 +22,7 @@ def undo_minimize_all():
     win32gui.SendMessage(sys_tray_handle, win32con.WM_COMMAND, MIN_ALL_UNDO, 0)
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("undo_minimize_all")
 def test_minimize_all():
     # TODO: Figure out how to actually test that this does anything.  Right now it's
