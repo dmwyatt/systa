@@ -29,7 +29,7 @@ True
 Events
 ------
 The real power of systa springs from its integration with Windows system hooks.  You can
-run code when things happen to windows on the system.
+run code when things happen on the system.
 
 .. code-block:: python
 
