@@ -66,3 +66,17 @@ Event types
   :annotation:
 
 .. autodata:: systa.events.types.EventTypeNamesType
+
+Other types
+-----------
+
+.. py:currentmodule:: systa.types
+
+.. autoclass:: systa.types.Point
+  :members:
+  :special-members: __iter__
+
+.. autoclass:: systa.types.Rect
+  :members:
+  :special-members: __iter__
+
