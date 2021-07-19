@@ -6,6 +6,11 @@ Windows programming gurus.
 
 `Documentation. <https://dmwyatt.github.io/systa/>`_
 
+Install
+-------
+
+``pip install systa``
+
 Basic Usage
 -----------
 
