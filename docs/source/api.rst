@@ -65,8 +65,6 @@ Event types
 .. autodata:: systa.events.types.EventType
   :annotation:
 
-.. autodata:: systa.events.types.EventTypeNamesType
-
 Other types
 -----------
 
@@ -80,3 +78,8 @@ Other types
   :members:
   :special-members: __iter__
 
+Helpers
+-------
+
+.. automodule:: systa.backend.monitors
+   :members:

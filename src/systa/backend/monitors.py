@@ -11,7 +11,7 @@ from systa.types import Point, Rect
 class SystaMonitor:
     """Info about a monitor.
 
-    Lifted and modified from screeninfo_.
+    Lifted and modified from `screeninfo`_.
 
     .. _screeninfo: https://github.com/rr-/screeninfo/blob/ba870d067f8acf5943b58898c7e3199819092731/screeninfo/common.py#L7
     """
@@ -58,8 +58,6 @@ def enumerate_monitors() -> Iterator[SystaMonitor]:
     Get all the monitors on the system.
 
     Slightly modified from screeninfo_ to return work area.
-
-    .. _screeninfo: https://github.com/rr-/screeninfo/blob/ba870d067f8acf5943b58898c7e3199819092731/screeninfo/enumerators/windows.py
     """
     import ctypes
     import ctypes.wintypes
@@ -148,6 +146,7 @@ def enumerate_monitors() -> Iterator[SystaMonitor]:
 
 
 def get_monitor(number: int) -> Optional[SystaMonitor]:
+    """Helper function to get a specific monitor by its number."""
     for monitor in enumerate_monitors():
         if monitor.number == number:
             return monitor

@@ -434,15 +434,30 @@ class Window:
         return windows_monitors
 
     def get_monitor(self, number: int) -> Optional[SystaMonitor]:
+        """Get the specified monitor.
+
+        This method only gets monitors that this window is on.
+
+        To get any monitor regardless if you have an instance of a window on it,
+        see :func:`systa.monitors.get_monitor`.
+
+        :returns: ``None`` if the monitor does not exist or the window is not on it.
+        """
         for screen in self.screens:
             if screen.number == number:
                 return screen
 
     def send_to_monitor(self, number: int) -> bool:
+        """Moves window to the specified monitor.
+
+        Window is sized to fill whole monitor.
+
+        :returns: ``True`` if move successful, ``False`` if not.
+        """
         monitor = get_monitor(number)
         if monitor is None:
             return False
-        self.position = monitor.x, monitor.y
+        self.position = monitor.work_area.origin.x, monitor.work_area.origin.y
         return bool(self.get_monitor(number))
 
 
