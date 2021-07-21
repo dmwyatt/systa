@@ -89,6 +89,7 @@ Guides
 * :doc:`finding_windows`
 * :doc:`manipulating_windows`
 * :doc:`events`
+* :doc:`examples`
 
 
 
@@ -106,3 +107,4 @@ Indices and tables
    manipulating_windows
    events
    api
+   examples
