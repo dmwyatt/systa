@@ -349,7 +349,8 @@ class Window:
         """
         The absolute coordinates of the center of the window.
 
-        Set to a ``(x, y)`` tuple to center window at the provided coords.
+        Set to a ``(x, y)`` tuple  or a :class:`~systa.types.Point` to center window
+        at the provided coords.
         """
         x, y = self.position
         return Point(int(self.width / 2) + x, int(self.height / 2) + y)
@@ -387,7 +388,11 @@ class Window:
 
     @property
     def classname(self) -> str:
-        """Classname of the window."""
+        """Classname of the window.
+
+        See Microsoft's `docs <https://docs.microsoft.com/en-us/windows/win32/winmsg/about-window-classes>`_
+        for more info about window class names.
+        """
         return self.backend.get_class_name(self.handle)
 
     def flash(
