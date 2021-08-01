@@ -47,7 +47,10 @@ def idleness(seconds: float, call_count_limit: int = 1):
     :param seconds: Number of seconds to consider system idle.  Maximum resolution of
         :attr:`systa.events.store.Store.msg_loop_timeout`
     :param call_count_limit: How many times to call the function after idle time has
-        been reached.
+        been reached. The event loop runs every
+        :attr:`systa.events.store.Store.msg_loop_timeout` milliseconds. If we didn't
+        have this parameter every time the event loop ran and the user was still idle,
+        the user's function would be called over and over again.
     """
 
     def _idleness(func: UserEventCallableType):
