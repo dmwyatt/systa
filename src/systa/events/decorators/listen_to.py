@@ -54,7 +54,7 @@ def idleness(seconds: float, call_count_limit: int = 1):
     """
 
     def _idleness(func: UserEventCallableType):
-        return specified_events(IdleCheck(seconds))(func)
+        return specified_events(IdleCheck(seconds, call_count_limit))(func)
 
     return _idleness
 
