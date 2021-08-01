@@ -3,7 +3,7 @@ import inspect
 from pytest_mock import MockerFixture
 
 from systa.events.constants import win_events
-from systa.events.decorators import listen_to
+from systa.events.decorators import filter_by, listen_to
 from systa.events.store import Store, make_func_hookable
 from systa.events.types import EventData
 
@@ -110,11 +110,8 @@ def test_clear_store(cb_store, mocker: MockerFixture):
 
 
 def test_make_func_hookable_has_correct_signature_for_windows_hook():
-    func_called = False
-
     def func(data: EventData):
-        nonlocal func_called
-        func_called = True
+        ...
 
     hookable_func = make_func_hookable(func)
     assert inspect.unwrap(hookable_func) == func
@@ -122,3 +119,75 @@ def test_make_func_hookable_has_correct_signature_for_windows_hook():
     sig = inspect.signature(hookable_func, follow_wrapped=False)
 
     assert len(sig.parameters) == 7
+
+
+def test_can_add_and_run_checkable_event(cb_store):
+    func_called = False
+
+    IDLE_FOR = 1
+
+    @listen_to.idleness(seconds=IDLE_FOR)
+    def func(data: EventData):
+        nonlocal func_called
+        func_called = True
+
+    # We can run the store for less than IDLE_FOR because of the amount of time it
+    # takes to set up tests and run all the other tests. In fact, even if you're
+    # running just this single test, the setup and run takes longer than a second on
+    # my machine. Might need adjusted for other machines?  Keep as low as possible so
+    # that the tests don't take so long to run.
+    cb_store.run(0.8)
+    assert func_called
+
+
+def test_can_add_and_run_checkable_event_no_pass(cb_store):
+    func_called = False
+
+    IDLE_FOR = 1
+
+    @listen_to.idleness(seconds=IDLE_FOR)
+    def func(data: EventData):
+        nonlocal func_called
+        func_called = True
+
+    cb_store.run(0.2)
+
+    # System not idle long enough so func not called.
+    assert not func_called
+
+
+def test_can_stack_checkable_event_with_passing_filters(cb_store):
+    func_called = False
+
+    IDLE_FOR = 1
+
+    @filter_by.sanity(True)
+    @filter_by.sanity(True)
+    @listen_to.idleness(seconds=IDLE_FOR)
+    def func(data: EventData):
+        nonlocal func_called
+        func_called = True
+
+    # We can run the store for less than IDLE_FOR because of the amount of time it
+    # takes to set up tests and run all the other tests. In fact, even if you're
+    # running just this single test, the setup and run takes longer than a second on
+    # my machine. Might need adjusted for other machines?  Keep as low as possible so
+    # that the tests don't take so long to run.
+    cb_store.run(0.8)
+    assert func_called
+
+
+def test_can_stack_checkable_event_with_not_passing_filters(cb_store):
+    func_called = False
+
+    IDLE_FOR = 0.01
+
+    @filter_by.sanity(False)
+    @filter_by.sanity(True)
+    @listen_to.idleness(seconds=IDLE_FOR)
+    def func(data: EventData):
+        nonlocal func_called
+        func_called = True
+
+    cb_store.run(0.2)
+    assert not func_called

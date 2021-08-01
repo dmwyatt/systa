@@ -5,11 +5,10 @@ import ctypes.wintypes
 import inspect
 import logging
 import time
-from _ctypes import CFuncPtr
 from collections import defaultdict
 from functools import wraps
 from itertools import chain
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import pythoncom
 import win32event
@@ -18,11 +17,13 @@ from win32con import WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS
 
 from systa.events.types import (
     CallbackReturn,
+    CheckableEvent,
     EventData,
     EventFilterCallableType,
     EventRangeType,
     EventRangesType,
     EventType,
+    EventsTypes,
     HookType,
     UserEventCallableType,
     WinEventHookCallbackType,
@@ -54,52 +55,60 @@ logger = logging.getLogger(__name__)
 
 class Store:
     msg_loop_timeout = 75
+    """The message loop timeouts out after this many ms and allows processing 
+    before listening again."""
 
     def __init__(self):
         self._running = False
         self._init_store()
 
-    AddUserFuncResultsType = Dict[EventRangeType, bool]
+    AddUserFuncResultsType = Dict[Union[EventRangeType, CheckableEvent], bool]
 
     @typechecked
     def add_user_func(
         self,
         cb: UserEventCallableType,
-        events: Union[EventRangesType, EventRangeType, EventType],
+        events: Union[EventsTypes, CheckableEvent],
     ) -> AddUserFuncResultsType:
         """
-        Add a function to the callback store for hooking to WinEvent's.
+        Add a function to the callback store for hooking.
 
         :param cb: A user function that takes one argument of type
             :py:class:`systa.events.types.EventData`
-        :param events: A single event, a tuple of start/end events, or a sequence of
-            tuples indicating multiple ranges.
+        :param events: A single event, a tuple of start/end events, a sequence of
+            tuples indicating multiple ranges, or a
+            :class:`systa.events.types.CheckableEvent`.
         :return: A dict indicating which event ranges were or were not added.
         """
-        events = coerce_event_types(events)
-        assert all(r[0] <= r[1] for r in events), f"{events} are invalid"
-        logger.debug("Attempting to register %s to %s.", cb, events)
-        results = {}
-        for event_range in events:
-            if self.is_registered_for(cb, event_range):
-                # Prevent duplicate registrations.
-                logger.debug(
-                    "Prevented attempt to duplicate callback registration of '%s'.",
-                    cb.__name__,
-                )
-                results[event_range] = False
-            else:
-                _check_user_callback_type(cb)
+        if isinstance(events, CheckableEvent):
+            self._cb_checkable_events[cb].append(events)
+            return {events: True}
+        else:
+            events = coerce_event_ranges(events)
 
-                self._cb_ranges[cb].append(event_range)
-                results[event_range] = True
-        return results
+            assert all(r[0] <= r[1] for r in events), f"{events} are invalid"
+            logger.debug("Attempting to register %s to %s.", cb, events)
+            results = {}
+            for event_range in events:
+                if self.is_registered_for(cb, event_range):
+                    # Prevent duplicate registrations.
+                    logger.debug(
+                        "Prevented attempt to duplicate callback registration of '%s'.",
+                        cb.__name__,
+                    )
+                    results[event_range] = False
+                else:
+                    _check_user_callback_type(cb)
+
+                    self._cb_ranges[cb].append(event_range)
+                    results[event_range] = True
+            return results
 
     def update_callable(
         self, cb: UserEventCallableType, new_cb: EventFilterCallableType
     ) -> None:
         """
-        Updates the callable that gets called by Windows.
+        Updates the callable that gets called by fired events.
 
         Registration and filtering functions (like
         :func:`systa.events.decorators.filter_by.make_filter` or anything in
@@ -121,13 +130,20 @@ class Store:
         ] = {}
 
         # Map user function to the event ranges it is interested in. When we run the
-        # store, we register the values in _decorated_callbacks to the ranges in here.
+        # store, we register the values in self._derived_callbacks to the ranges in
+        # here.
         self._cb_ranges: Dict[
             UserEventCallableType, List[EventRangeType]
         ] = defaultdict(list)
 
+        # Map user function to any CheckableEvents.
+        self._cb_checkable_events: Dict[
+            UserEventCallableType, List[CheckableEvent]
+        ] = defaultdict(list)
+
         # Need to keep a reference to these so they don't get GC'ed.
-        self._ctype_procedure_cache: List[CFuncPtr] = []
+        # TODO: Figure out the type of these things.
+        self._ctype_procedure_cache: List[Any] = []
 
         # Store all the hooks for each user function
         self._callback_hooks_handles: Dict[
@@ -147,17 +163,21 @@ class Store:
     def is_registered_for(self, cb: UserEventCallableType, event_range: EventRangeType):
         return event_range in self._cb_ranges.get(cb, [])
 
-    def hooks(self):
+    def hooks(self) -> Iterable[int]:
+        """Iterates over the hook handles."""
         return chain.from_iterable(self._callback_hooks_handles.values())
 
     def get_hookable(self, cb: UserEventCallableType) -> WinEventHookCallbackType:
-        return make_func_hookable(self._derived_callback.get(cb, cb))
+        """Gets the hookable version of the user's callback."""
+        return make_func_hookable(self.get_derived_callable(cb))
+
+    def get_derived_callable(self, cb: UserEventCallableType) -> UserEventCallableType:
+        """Returns the wrapped version of user's callback."""
+        return self._derived_callback.get(cb, cb)
 
     def msg_loop(self, stop_in: Optional[float] = None):
         logger.info("Starting message loop...")
 
-        # if stop_in is not None:
-        #     threading.Thread(target=self._stop, args=(stop_in,), daemon=True).start()
         started_at = time.time()
         try:
             # https://www.oreilly.com/library/view/python-cookbook/0596001673/ch06s10.html
@@ -188,7 +208,11 @@ class Store:
                         logger.exception("Error in message loop. (%s)", e)
                         break
                 elif rc == win32event.WAIT_TIMEOUT:
-                    continue
+                    for cb, events in self._cb_checkable_events.items():
+                        for event in events:
+                            if event.check():
+                                derived = self.get_derived_callable(cb)
+                                derived(EventData(context=event.result()))
                 else:
                     logger.error("Error in message loop.  Unexpected win32wait error.")
 
@@ -286,6 +310,9 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     """
     Creates a function with a signature compatible with :py:data:`WIN_EVENT_PROC_TYPE`
 
+    This is where the :class:`~systa.events.types.EventData` that gets passed into
+    user functions gets created for events that are fired by Window's WinEvents.
+
     :param func: The function we want to compatible-ize.
     """
 
@@ -319,7 +346,7 @@ def make_func_hookable(func: UserEventCallableType) -> WinEventHookCallbackType:
     return _hook_cb
 
 
-def coerce_event_types(
+def coerce_event_ranges(
     events: Union[EventRangesType, EventRangeType, EventType]
 ) -> EventRangesType:
     if isinstance(events, int):

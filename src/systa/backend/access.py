@@ -244,3 +244,18 @@ def get_sys_tray_handle() -> int:
 
 def get_foreground_window() -> int:
     return win32gui.GetForegroundWindow()
+
+
+def get_last_input_time():
+    return win32api.GetLastInputInfo()
+
+
+def get_ms_since_system_start():
+    # TODO: Need to use GetTickCount64 so we're not limited to 49.7 days. Though,
+    #  note that apparently hybrid sleep messes this up.  Hrmph...
+    return win32api.GetTickCount()
+
+
+def get_idle_time() -> float:
+    """Returns number of seconds system has been idle"""
+    return (get_ms_since_system_start() - get_last_input_time()) / 1000.0

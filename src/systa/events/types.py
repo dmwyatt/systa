@@ -1,8 +1,20 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pprint import pformat
-from typing import Callable, Literal, Optional, Sequence, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Literal,
+    Optional,
+    Protocol,
+    Sequence,
+    Tuple,
+    TypeVar,
+    Union,
+    runtime_checkable,
+)
 
 from systa.windows import Window
 
@@ -26,15 +38,29 @@ class CallbackReturn:
 
 @dataclass
 class EventData:
-    """The data structure returned to the user's function."""
+    """The data structure returned to the user's function.
 
-    window: Optional[Window]
-    """A :class:`systa.windows.Window` instance associated with the event."""
-    event_info: CallbackReturn
-    """The raw data provided to us by Windows when the event fired."""
+    :param window: A :class:`systa.windows.Window` instance associated with the event.
+    :param event_info: The raw data provided to us by Windows when the event fired.
+    :param context: A general purpose dict for transferring info between users of
+        this data.
+    """
+
+    window: Optional[Window] = None
+    event_info: Optional[CallbackReturn] = None
+    context: Optional[Dict[Any, Any]] = field(default_factory=dict)
+
+    def is_empty_data(self):
+        return (
+            self.window is None and self.event_info is None and len(self.context) == 0
+        )
 
     def pformat(self, **kwargs):
         return pformat(asdict(self), **kwargs)
+
+    @classmethod
+    def get_empty(cls) -> "EventData":
+        return cls()
 
 
 WinEventHookCallbackType = Callable[[int, int, int, int, int, int, int], None]
@@ -379,6 +405,18 @@ EventType = Literal[
     EventUiaPropIdEndType,
 ]
 """Literal values used to select events."""
+
+CheckableEventResultType = TypeVar("CheckableEventResultType")
+
+
+@runtime_checkable
+class CheckableEvent(Protocol[CheckableEventResultType]):
+    def check(self) -> bool:
+        ...
+
+    def result(self, data: Optional[EventData] = None) -> CheckableEventResultType:
+        ...
+
 
 EventRangeType = Tuple[EventType, EventType]
 """Type indicating beginning and ending of a range of WinEvent's.

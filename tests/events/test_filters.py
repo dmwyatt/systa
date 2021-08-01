@@ -1,4 +1,3 @@
-from systa.backend.monitors import enumerate_monitors
 from systa.events.constants import win_events
 from systa.events.decorators import filter_by
 from systa.events.types import EventData
@@ -309,18 +308,25 @@ def test_require_window_no_pass(event_data):
     assert not func_ran
 
 
-def test_touches_monitors(event_data):
-    # TODO: This test isn't good. What if testing system has only one monitor? What
-    #  if window already on monitor? What if system has no monitors?
+def test_idle_time_gte_passes(event_data):
     func_ran = False
 
-    system_monitors = [m.number for m in enumerate_monitors()]
-
-    @filter_by.touches_monitors(system_monitors[0])
+    @filter_by.idle_time_gte(0.0001)
     def f(data: EventData):
         nonlocal func_ran
         func_ran = True
 
-    event_data.window.send_to_monitor(system_monitors[0])
     f(event_data)
     assert func_ran
+
+
+def test_idle_time_gte_not_passes(event_data):
+    func_ran = False
+
+    @filter_by.idle_time_gte(10)
+    def f(data: EventData):
+        nonlocal func_ran
+        func_ran = True
+
+    f(event_data)
+    assert not func_ran

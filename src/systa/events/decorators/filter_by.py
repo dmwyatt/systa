@@ -6,6 +6,7 @@ from typing import Callable, Iterable, Literal, Optional, Tuple, overload
 
 import pywintypes
 
+from systa.backend.access import get_idle_time
 from systa.events.constants import win_events
 from systa.events.store import callback_store
 from systa.events.types import EventData, EventFilterCallableType, EventType
@@ -64,12 +65,12 @@ def _make_filter(
         class _tester(EventTesterBase):
             def event_test(self, event_data: EventData) -> bool:
                 if (
-                    require_existing_window
-                    and event_data.window
-                    and not event_data.window.exists
-                ) or (
-                    exclude_sys_windows
-                    and not apply_filter(exclude_system_windows, event_data)
+                    (require_existing_window and not event_data.window)
+                    or (require_existing_window and not event_data.window.exists)
+                    or (
+                        exclude_sys_windows
+                        and not apply_filter(exclude_system_windows, event_data)
+                    )
                 ):
                     return False
 
@@ -126,7 +127,7 @@ def make_filter(
         you try to do something with it, we'll automatically handle the error for
         you.  Note that if you need to do some sort of cleanup action in your
         function, you want to set this option to ``False`` and handle the error
-        yourself.  Defaults to ``True``..
+        yourself.  Defaults to ``True``.
     """
     if test_func is None:
         return partial(
@@ -147,7 +148,7 @@ def make_filter(
 @make_filter
 def require_titled_window(data: EventData):
     """Filters out windows that do not have a title."""
-    return data.window and data.window.title
+    return bool(data.window.title)
 
 
 @make_filter
@@ -157,10 +158,10 @@ def exclude_system_windows(data: EventData):
     There's a lot of windows like "OleMainThreadWndName" or "Default IME" that you
     likely you don't care about.  Use this filter to exclude them.
     """
-    return (
-        data.window
-        and data.window.title
-        and not win_events.is_windows_internal_title(data.window.title)
+    if not data.window:
+        return True
+    return data.window.title and not win_events.is_windows_internal_title(
+        data.window.title
     )
 
 
@@ -191,25 +192,25 @@ def require_title(title: str, case_sensitive=True):
     @make_filter
     def _include_only_titled(data: EventData):
         check = fnmatchcase if case_sensitive else fnmatch
-        return data.window and check(data.window.title, title)
+        return check(data.window.title, title)
 
     return _include_only_titled
 
 
 @overload
 def require_size_is_less_than(
-    x: int = None,
-    y: int = None,
+    width: int = None,
+    height: int = None,
     area: Literal[None] = None,
 ):
-    # case providing x and y
+    # case providing width and height
     ...
 
 
 @overload
 def require_size_is_less_than(
-    x: Literal[None] = None,
-    y: Literal[None] = None,
+    width: Literal[None] = None,
+    height: Literal[None] = None,
     area: int = None,
 ):
     # case providing area
@@ -217,14 +218,15 @@ def require_size_is_less_than(
 
 
 def require_size_is_less_than(
-    x: int = None,
-    y: int = None,
+    width: int = None,
+    height: int = None,
     area: int = None,
 ):
     """
-    Include only windows of x, y dimensions or area less than provided.
+    Include only windows of width, height dimensions or area less than provided.
 
-    If area is provided, x and y are ignored and are not needed.  You can just do:
+    If area is provided, width and height are ignored and are not needed.  You can
+    just do:
 
     .. code-block:: python
 
@@ -233,19 +235,20 @@ def require_size_is_less_than(
             ...
 
     :param area: Total area in pixels.
-    :param x: Width
-    :param y: Height
+    :param width: Width
+    :param height: Height
     """
     if area is None:
-        assert x is not None and y is not None
+        assert (
+            width is not None and height is not None
+        ), "If not providing an area, you must provide width and height in pixels."
 
     @make_filter
     def _size_is_less_than(data: EventData):
-        if data.window:
-            if area:
-                return (data.window.width * data.window.height) < area
-            elif x and y:
-                return data.window.width < x and data.window.height < y
+        if area:
+            return (data.window.width * data.window.height) < area
+        elif width and height:
+            return data.window.width < width and data.window.height < height
 
     return _size_is_less_than
 
@@ -284,8 +287,6 @@ def require_origin_within(rect: Rect):
 
     @make_filter
     def _require_origin_within(data: EventData):
-        if not data.window:
-            return False
         return rect.contains_point(data.window.position)
 
     return _require_origin_within
@@ -303,7 +304,7 @@ def exclude_window_events(window_events: Iterable[Tuple[str, EventType]]):
     @make_filter
     def _exclude_window_events(data: EventData):
         for window_title, event in window_events:
-            if data.window and data.window.title is not None:
+            if data.window.title is not None:
                 if data.event_info.event == event and fnmatchcase(
                     data.window.title, window_title
                 ):
@@ -335,8 +336,6 @@ def touches_monitors(*monitor_numbers: int, exclusive: bool = False):
 
     @make_filter
     def _touches_monitors(data: EventData):
-        if not data.window:
-            return False
         screens = data.window.screens
 
         if exclusive:
@@ -345,6 +344,19 @@ def touches_monitors(*monitor_numbers: int, exclusive: bool = False):
         return set(monitor_numbers) <= set(screen.number for screen in screens)
 
     return _touches_monitors
+
+
+def idle_time_gte(seconds: float):
+    """System has been idle for at least X seconds.
+
+    :param seconds: Minimum number of seconds we require system to be idle for.
+    """
+
+    @make_filter
+    def _idle_for(data: EventData):
+        return get_idle_time() >= seconds
+
+    return _idle_for
 
 
 def apply_filter(f: FilterFunctionType, data: EventData):
@@ -359,3 +371,20 @@ def apply_filter(f: FilterFunctionType, data: EventData):
     True
     """
     return unwrap(f)(data)
+
+
+def sanity(return_val: bool, output: Optional[str] = None):
+    """A filter for testing stuff!
+
+    :param return_val: This value will be returned when the filter is evaluated.
+    :param output: If provided, this value will be printed each time the filter is
+    evaluated.
+    """
+
+    @make_filter(require_existing_window=False)
+    def _sanity(data: EventData):
+        if output:
+            print(output)
+        return return_val
+
+    return _sanity

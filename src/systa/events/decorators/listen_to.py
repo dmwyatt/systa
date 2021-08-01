@@ -4,8 +4,10 @@ from functools import wraps
 from inspect import unwrap
 
 from systa.events.constants import win_events
-from systa.events.store import callback_store, coerce_event_types
+from systa.events.events import IdleCheck
+from systa.events.store import callback_store, coerce_event_ranges
 from systa.events.types import (
+    CheckableEvent,
     EventData,
     EventsTypes,
     UserEventCallableType,
@@ -21,17 +23,37 @@ class specified_events:
         """
         :param events: The event(s) to listen to.
         """
+        self.ranges = None
+        self.checkable_event = None
 
-        self.ranges = coerce_event_types(events)
+        if isinstance(events, CheckableEvent):
+            self.checkable_event = events
+        else:
+            self.ranges = coerce_event_ranges(events)
 
     def __call__(self, func: UserEventCallableType) -> UserEventCallableType:
-        callback_store.add_user_func(unwrap(func), self.ranges)
+        callback_store.add_user_func(unwrap(func), self.checkable_event or self.ranges)
 
         @wraps(func)
         def wrapper(data: EventData):
             return func(data)
 
         return wrapper
+
+
+def idleness(seconds: float, call_count_limit: int = 1):
+    """System has been idle for so many seconds.
+
+    :param seconds: Number of seconds to consider system idle.  Maximum resolution of
+        :attr:`systa.events.store.Store.msg_loop_timeout`
+    :param call_count_limit: How many times to call the function after idle time has
+        been reached.
+    """
+
+    def _idleness(func: UserEventCallableType):
+        return specified_events(IdleCheck(seconds))(func)
+
+    return _idleness
 
 
 def create(func: UserEventCallableType):
@@ -70,7 +92,7 @@ def existence_change(func: UserEventCallableType):
 def restore(func: UserEventCallableType):
     """Window was restored from minimization.
 
-    ... seealso:: :func:`minimize`
+    .. seealso:: :func:`minimize`
     """
     return specified_events(win_events.EVENT_SYSTEM_MINIMIZEEND)(func)
 
@@ -78,7 +100,7 @@ def restore(func: UserEventCallableType):
 def minimize(func: UserEventCallableType):
     """Window was minimized
 
-    ... seealso:: :func:`restore`
+    .. seealso:: :func:`restore`
     """
     return specified_events(win_events.EVENT_SYSTEM_MINIMIZESTART)(func)
 
