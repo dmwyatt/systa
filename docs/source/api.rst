@@ -24,6 +24,8 @@ See :doc:`finding_windows` for a guide.
 
 .. autoclass:: regex_search
 
+.. autoclass:: classname_search
+
 Controlling windows
 -------------------
 

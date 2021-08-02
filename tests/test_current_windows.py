@@ -59,7 +59,7 @@ def test_containment_handle(notepad: Window):
     assert notepad.handle in current_windows
 
 
-def test_containment_predicate(notepad: Window):
+def test_containment_regex_search_predicate(notepad: Window):
     assert regex_search(".* - Notepad") in current_windows
 
 
@@ -75,7 +75,7 @@ def test_getitem_window_instance(notepad: Window):
     assert notepad in current_windows[notepad]
 
 
-def test_getitem_predicate(notepad: Window):
+def test_getitem_regex_search_predicate(notepad: Window):
     assert notepad in current_windows[regex_search(".* - Note.ad")]
 
 

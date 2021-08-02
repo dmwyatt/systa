@@ -4,7 +4,7 @@ import abc
 import re
 from collections import defaultdict
 from enum import Enum
-from fnmatch import fnmatchcase
+from fnmatch import fnmatch, fnmatchcase
 from functools import cached_property
 from typing import Dict, Final, Iterator, List, Optional, Pattern, Tuple, Union
 
@@ -486,6 +486,38 @@ class WindowSearchPredicate(abc.ABC):
 
     def __call__(self, window: Window) -> bool:
         return self.predicate(window)
+
+
+class classname_search(WindowSearchPredicate):
+    """Search windows with a classname."""
+
+    def __init__(self, search: str | Pattern, case_sensitive: bool = True) -> None:
+        """
+
+        :param search: The classname to look for.  Can be one of:
+
+            * str: Interpreted as an :func:`~fnmatch.fnmatch` style wildcard lookup.
+            * re.pattern: A regex match against window classname.
+
+        :param case_sensitive: Whether the match has to be case sensitive or not.
+            Defaults to ``True``.
+        """
+        if isinstance(search, str):
+            matcher = fnmatchcase if case_sensitive else fnmatch
+            self.matcher = lambda x: matcher(x, search)
+        else:
+            compiled_re = search
+
+            if not case_sensitive and not compiled_re.flags & re.IGNORECASE:
+                # user wants case insensitive matching but didn't provide
+                # re.IGNORECASE on their regex.  Let's fix that for them.
+                compiled_re = re.compile(
+                    compiled_re.pattern, compiled_re.flags | re.IGNORECASE
+                )
+            self.matcher = lambda x: bool(compiled_re.match(x))
+
+    def predicate(self, window: Window) -> bool:
+        return self.matcher(window.classname)
 
 
 class regex_search(WindowSearchPredicate):

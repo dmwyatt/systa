@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import re
 import subprocess
+from dataclasses import dataclass
+from typing import Pattern
 
 import pytest
 from pynput.mouse import Controller
@@ -11,6 +15,7 @@ from systa.utils import wait_for_it
 from systa.windows import (
     Window,
     WindowRelativeMouseController,
+    classname_search,
     current_windows,
     regex_search,
 )
@@ -29,8 +34,12 @@ def test_create_with_handle(notepad: Window):
     assert isinstance(Window(notepad.handle), Window)
 
 
-def test_create_with_predicate(notepad: Window):
+def test_create_with_regex_search_predicate(notepad: Window):
     assert isinstance(Window(regex_search(".* - N.tepad")), Window)
+
+
+def test_create_with_classname_search_predicate(notepad: Window):
+    assert isinstance(Window(classname_search("N?tepad")), Window)
 
 
 def test_str(notepad: Window):
@@ -264,3 +273,57 @@ def test_send_to_monitor(notepad: Window):
 
     for monitor_number in monitor_numbers:
         assert notepad.send_to_monitor(monitor_number)
+
+
+def test_classname_search_predicate():
+    class fake_window:
+        classname = "Window Title"
+
+    assert classname_search("Window Title")(fake_window)
+
+
+def test_classname_search_predicate_case_sensitivity():
+    class fake_window:
+        classname = "Window Title"
+
+    assert classname_search("window title", case_sensitive=False)(fake_window)
+
+
+@dataclass
+class PredicateData:
+    search: str | Pattern
+    expected: bool
+    classname: str = "Window Classname"
+    case_sensitive: bool = True
+
+
+predicate_data = [
+    PredicateData(search="Window Classname", expected=True),
+    PredicateData(search="Window classname", expected=False),
+    PredicateData(search="window classname", expected=True, case_sensitive=False),
+    PredicateData(search="Window Classname", expected=True, case_sensitive=False),
+    PredicateData(search="W?ndow Class*", expected=True),
+    PredicateData(search="w?ndow class*", expected=False),
+    PredicateData(search="w?ndow class*", expected=True, case_sensitive=False),
+    PredicateData(search="*", expected=True, case_sensitive=False),
+    PredicateData(search="*", expected=True),
+    PredicateData(search=re.compile(".*"), expected=True),
+    PredicateData(
+        search=re.compile(r"^W.ndow Classname$"), expected=True, case_sensitive=False
+    ),
+    PredicateData(search=re.compile(r"^W.ndow Classname$"), expected=True),
+    PredicateData(
+        search=re.compile(r"^W.ndow classname$"), expected=True, case_sensitive=False
+    ),
+]
+
+
+@pytest.mark.parametrize("data", predicate_data)
+def test_classname_search(data: PredicateData):
+    class fake_window:
+        classname = data.classname
+
+    assert (
+        classname_search(data.search, case_sensitive=data.case_sensitive)(fake_window)
+        == data.expected
+    )
