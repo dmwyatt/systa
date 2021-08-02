@@ -337,9 +337,10 @@ filtering into your own code.
       pass
     # do whatever you want here
 
+.. _combining-decorators:
 
-Combining decorators
-^^^^^^^^^^^^^^^^^^^^
+Combining ``filter_by`` decorators
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Combine multiple filters into one with :func:`~systa.events.filter_by.all_filters` or
 :func:`~systa.events.filter_by.any_filter` and use the resulting decorator in multiple
@@ -375,3 +376,50 @@ places.
   @listen_to.location_change
   def log_small_editor(event_data: EventData):
       requests.post("https://MY_LOGGING_SERVICE/a_small_editor")
+
+
+Combining multiple ``listen_to`` decorators
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+You can also combine multiple `listen_to` decorators with :func:`systa.utils.composed`.
+
+.. testsetup:: combine-listen-to-decorators
+
+  import threading
+  import random
+  from systa.windows import Window
+  from systa.events.store import callback_store
+  from systa.utils import wait_for_it
+  from systa.events.store import callback_store
+
+
+  def move_notepad():
+      wait_for_it(callback_store.is_running)
+      # this will make the window fire some events
+      np = Window("Untitled - Notepad")
+      pos = np.position
+      np.position = (0, 0)
+      np.position = (250, 250)
+
+  np = threading.Thread(target=move_notepad, daemon=True)
+  np.start()
+
+.. testcode:: combine-listen-to-decorators
+
+  from systa.events.decorators import filter_by, listen_to
+  from systa.events.store import callback_store
+  from systa.events.types import EventData
+  from systa.utils import composed
+
+  our_listener = composed(listen_to.location_change, listen_to.restore)
+
+  @filter_by.require_title("Untitled - Notepad")
+  @our_listener
+  def notepad_moved(data: EventData) -> None:
+    print("Notepad moved!")
+
+  callback_store.run(.6)
+
+.. testoutput:: combine-listen-to-decorators
+  :hide:
+
+  Notepad moved!...

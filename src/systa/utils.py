@@ -48,3 +48,26 @@ def wait_for_it(condition: Callable[..., bool], max_wait=5) -> bool:
     while not condition() and (time.time() - start) <= max_wait:
         time.sleep(0.1)
     return bool(condition())
+
+
+def composed(*decs):
+    """Combine multiple decorators into one.
+
+    .. code-block::
+
+        from systa.utils import composed
+        from systa.events import listen_to
+
+        our_listener = composed(listen_to.destroy, listen_to.restore, listen_to.location_change)
+
+        @our_listener
+        def our_func(data: EventData):
+            ...
+    """
+
+    def deco(f):
+        for dec in reversed(decs):
+            f = dec(f)
+        return f
+
+    return deco

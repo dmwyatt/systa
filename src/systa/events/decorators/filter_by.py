@@ -378,7 +378,7 @@ def sanity(return_val: bool, output: Optional[str] = None):
 
     :param return_val: This value will be returned when the filter is evaluated.
     :param output: If provided, this value will be printed each time the filter is
-    evaluated.
+        evaluated.
     """
 
     @make_filter(require_existing_window=False)

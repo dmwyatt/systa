@@ -83,3 +83,5 @@ Helpers
 
 .. automodule:: systa.backend.monitors
    :members:
+
+.. autofunction:: systa.utils.composed
