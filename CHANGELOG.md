@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 ### Added
  - Additional API documentation
+ - Combine multiple `listen_to` decorators
+ - Use system idleness as a function trigger
+ - Use window classname as a search predicate
 
 ## [0.1.1] - 2021-07-19
 ### Added
