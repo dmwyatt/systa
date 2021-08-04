@@ -48,6 +48,6 @@ run code when things happen on the system.
 
 The above code prints a message when:
 
-1. A window is opened ``OR`` a window is restored from a minimized state.
-2. ``AND`` the window's title ends with the string ``Notepad``.
-3. ``AND`` the window's size is less than 200x200.
+1. A window is opened *OR* a window is restored from a minimized state.
+2. *AND* the window's title ends with the string ``Notepad``.
+3. *AND* the window's size is less than 200x200.
