@@ -29,7 +29,7 @@ jobs:
           poetry install --no-root
 
       - name: Test docs
-        # I think this means all versions of docs ends up getting tested as long as all
+        # I think all versions of docs ends up getting tested as long as all
         # versions are tagged off of main.  In other words, we don't need to run
         # doctest for each version when we're building all the versions below
         run: |

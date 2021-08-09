@@ -72,6 +72,7 @@ html_sidebars = {
         "search-field.html",
         "sbt-sidebar-nav.html",
         "versions-nav.html",
+        "changelog-link.html",
         "sbt-sidebar-footer.html",
     ]
 }
