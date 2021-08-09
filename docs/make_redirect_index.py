@@ -10,7 +10,7 @@ def make_html(url: str) -> str:
     <meta http-equiv="refresh" content="0; url='{url}'" />
   </head>
   <body>
-    <p>Please follow <a href="{url}">this link</a>.</p>
+    <p>Redirecting to docs. Click <a href="{url}">this link</a> if redirect does not happen.
   </body>
 </html>
 """
