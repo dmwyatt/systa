@@ -85,7 +85,6 @@ def get_latest_version():
     try:
         return [v for v in results.stdout.decode("utf8").split("\n") if v][-1]
     except IndexError:
-        print(f"{results=}")
         return None
 
 
