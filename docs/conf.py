@@ -13,8 +13,6 @@
 import os
 import sys
 
-import commonmark
-
 sys.path.insert(0, os.path.abspath("../"))
 sys.path.insert(0, os.path.abspath("../src"))
 # sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src")))
@@ -40,6 +38,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.intersphinx",
+    "sphinx_multiversion",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -67,6 +66,29 @@ html_theme_options = {
     "path_to_docs": "docs/source",
     "home_page_in_toc": True,
 }
+
+html_sidebars = {
+    "**": [
+        "search-field.html",
+        "sbt-sidebar-nav.html",
+        "versions-nav.html",
+        "sbt-sidebar-footer.html",
+    ]
+}
+
+
+def get_latest_version():
+    import subprocess
+
+    results = subprocess.run("git tag -l --sort=version:refname", capture_output=True)
+    return results.stdout.decode("utf8").split("\n")[0]
+
+
+smv_latest_version = get_latest_version()
+smv_remote_whitelist = None
+smv_released_pattern = r"^tags/v?\d.*$"
+smv_branch_whitelist = r"^main$|^dev$"
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -115,16 +137,3 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pynput": ("https://pynput.readthedocs.io/en/latest", None),
 }
-
-
-def docstring(app, what, name, obj, options, lines):
-    if len(lines) > 1 and lines[0] == "@&ismd":
-        md = "\n".join(lines[1:])
-        ast = commonmark.Parser().parse(md)
-        rst = commonmark.ReStructuredTextRenderer().render(ast)
-        lines.clear()
-        lines += rst.splitlines()
-
-
-def setup(app):
-    app.connect("autodoc-process-docstring", docstring)

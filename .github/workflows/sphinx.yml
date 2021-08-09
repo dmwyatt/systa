@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v2
         with:
@@ -23,17 +25,22 @@ jobs:
       - uses: abatilo/actions-poetry@v2.0.0
 
       - name: Install dependencies
-        run: poetry install --no-root
+        run: |
+          poetry install --no-root
 
       - name: Test docs
+        # I think this means all versions of docs ends up getting tested as long as all
+        # versions are tagged off of main.  In other words, we don't need to run
+        # doctest for each version when we're building all the versions below
         run: |
           cd docs
-          poetry run sphinx-build -M doctest source build -c .\
+          poetry run sphinx-build -M doctest source html -c .\
 
       - name: Build docs
         run: |
           cd docs
-          poetry run sphinx-build -M html source build -c .\
+          ./fullmake.bat
+          poetry run python make_redirect_index.py
           New-Item build/html/.nojekyll
 
       - name: Check GitHub Pages status
