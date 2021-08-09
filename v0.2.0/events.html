@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events &#8212; systa 0.0.1 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The API" href="api.html" />
+    <link rel="prev" title="Doing Stuff to Windows" href="manipulating_windows.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
+   A Window for windows on Windows™.
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="finding_windows.html">
+   Finding Windows
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="manipulating_windows.html">
+   Doing Stuff to Windows
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Events
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   The API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="examples.html">
+   Examples
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav>
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Releases
+  </h3>
+  <ul>
+      <li><a href="events.html">
+         <i class="fas fa-caret-right"></i> &nbsp
+         v0.2.0</a>
+      </li>
+      <li><a href="../v0.1.1/events.html">
+         v0.1.1</a>
+      </li>
+  </ul>
+
+
+
+
+
+
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Dev Releases
+  </h3>
+  <ul>
+      <li><a href="../main/events.html">
+          main</a>
+      </li>
+  </ul>
+
+
+
+<h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;">
+  <a href="https://github.com/dmwyatt/systa/blob/main/CHANGELOG.md">Changelog</a>
+</h3> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/events.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dmwyatt/systa"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/dmwyatt/systa/issues/new?title=Issue%20on%20page%20%2Fevents.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/dmwyatt/systa/edit/dev/docs/source/events.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#listening">
+   Listening
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#other-events">
+   Other events
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#filtering">
+   Filtering
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ignore-events-that-aren-t-for-a-specific-window">
+     Ignore events that aren’t for a specific window
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#combine-as-many-filters-as-you-want">
+     Combine as many filters as you want
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#combine-filters-with-any-filter">
+     Combine filters with any_filter
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#my-god-it-s-full-of-decorators">
+   My god, it’s full of decorators
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#when-you-have-just-a-few-events-to-listen-to">
+     When you have just a few events to listen to
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#combining-filter-by-decorators">
+     Combining
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       filter_by
+      </span>
+     </code>
+     decorators
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#combining-multiple-listen-to-decorators">
+     Combining multiple
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       listen_to
+      </span>
+     </code>
+     decorators
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="events">
+<h1>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h1>
+<p>With the event-driven API, the user’s code can respond to events on the
+system. For example, when a window appears, code to resize it can run
+automatically.</p>
+<div class="section" id="listening">
+<h2>Listening<a class="headerlink" href="#listening" title="Permalink to this headline">¶</a></h2>
+<p>Each user function <em>requires</em> registration with a function from the
+<a class="reference internal" href="api.html#module-systa.events.decorators.listen_to" title="systa.events.decorators.listen_to"><code class="xref py py-mod docutils literal notranslate"><span class="pre">listen_to</span></code></a> module to listen to a range of events called
+<a class="reference external" href="https://docs.microsoft.com/en-us/windows/win32/winauto/winevents-infrastructure">WinEvents</a>
+. We call the user’s function with a single argument providing an
+<a class="reference internal" href="api.html#systa.events.types.EventData" title="systa.events.types.EventData"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventData</span></code></a> dataclass containing information about the event and the window. The
+function can then do <em>stuff</em> with the data we provide it.</p>
+<div class="highlight-python3 notranslate" id="basic-listen-to"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">any_event</span> <span class="c1"># often not a good idea, see next example</span>
+<span class="k">def</span> <span class="nf">user_function</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span> <span class="ow">and</span> <span class="s2">&quot;Notepad&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;It&#39;s a Notepad event! (</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ideally, you won’t listen to every event.  There are a <em>lot</em> of events fired on a modern
+Windows system, and it consumes OS resources to call your functions.  Luckily, we can
+listen to only the events we care about.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+<span class="kn">from</span> <span class="nn">systa.events.constants</span> <span class="kn">import</span> <span class="n">win_events</span>
+
+<span class="c1"># Only listens to location-changed events</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">user_function</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">event_info</span><span class="o">.</span><span class="n">event</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span> <span class="ow">and</span> <span class="s2">&quot;Notepad&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Notepad moved!&quot;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are many more event decorators you can use in the
+<a class="reference internal" href="api.html#module-systa.events.decorators.listen_to" title="systa.events.decorators.listen_to"><code class="xref py py-mod docutils literal notranslate"><span class="pre">listen_to</span></code></a> module.</p>
+</div>
+</div>
+<div class="section" id="other-events">
+<h2>Other events<a class="headerlink" href="#other-events" title="Permalink to this headline">¶</a></h2>
+<p>If you know what you’re doing you can use the the
+<a class="reference internal" href="api.html#systa.events.decorators.listen_to.specified_events" title="systa.events.decorators.listen_to.specified_events"><code class="xref py py-func docutils literal notranslate"><span class="pre">specified_events()</span></code></a> decorator to specify the exact
+events you want to listen to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">systa.events.constants</span> <span class="kn">import</span> <span class="n">win_events</span>
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+
+
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">specified_events</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">win_events</span><span class="o">.</span><span class="n">EVENT_OBJECT_CONTENTSCROLLED</span><span class="p">,</span> <span class="n">win_events</span><span class="o">.</span><span class="n">EVENT_OBJECT_FOCUS</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">the_user_func</span><span class="p">(</span><span class="n">event_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;POST the window title  every time content is scrolled or an object receives focus.&quot;&quot;&quot;</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;http://myservice/events&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;window&quot;</span><span class="p">:</span> <span class="n">event_data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">title</span><span class="p">})</span>
+
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">listen_to</span></code> decorators should always be specified <em>before</em> <code class="docutils literal notranslate"><span class="pre">filter_by</span></code>
+decorators.</p>
+</div>
+</div>
+<div class="section" id="filtering">
+<h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<p>Listening to specific events will probably still give us too many events.  For example,
+you might just be interested in running your code when Notepad is moved to a new
+location.  However, Windows will call your code whenever <em>any</em> window is moved.</p>
+<p>One option to handle this is branching in your function as in the
+above examples wherein we check if the window title has the word “Notepad”.</p>
+<p>Or, you can get fancy and use some decorators from
+<a class="reference internal" href="api.html#module-systa.events.decorators.filter_by" title="systa.events.decorators.filter_by"><code class="xref py py-mod docutils literal notranslate"><span class="pre">filter_by</span></code></a>:</p>
+<div class="section" id="ignore-events-that-aren-t-for-a-specific-window">
+<h3>Ignore events that aren’t for a specific window<a class="headerlink" href="#ignore-events-that-aren-t-for-a-specific-window" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;Untitled - Notepad&quot;</span><span class="p">)</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">notepad_moved</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Notepad moved!&quot;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The above is equivalent to the <a class="reference internal" href="#basic-listen-to"><span class="std std-ref">code above</span></a>
+where we check if Notepad moved.</p>
+</div>
+</div>
+<div class="section" id="combine-as-many-filters-as-you-want">
+<h3>Combine as many filters as you want<a class="headerlink" href="#combine-as-many-filters-as-you-want" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+<span class="kn">from</span> <span class="nn">systa.types</span> <span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Rect</span>
+
+<span class="n">origin</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_origin_within</span><span class="p">(</span><span class="n">Rect</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;Untitled - Notepad&quot;</span><span class="p">)</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">notepad_moved</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Notepad moved to </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">position</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If your filters aren’t behaving as you expect, remember that
+decorators are evaluated from the bottom up and the first one that doesn’t pass
+prevents the rest of them from running. In other words, <em>all</em> filters must pass for
+your code to be called. You can use the
+<a class="reference internal" href="#combine-filters-with-any-filter"><span class="std std-ref">any_filter decorator</span></a> to change this
+behavior.</p>
+</div>
+</div>
+<div class="section" id="combine-filters-with-any-filter">
+<h3>Combine filters with any_filter<a class="headerlink" href="#combine-filters-with-any-filter" title="Permalink to this headline">¶</a></h3>
+<p>Combine filters with the <a class="reference internal" href="api.html#systa.events.decorators.filter_by.any_filter" title="systa.events.decorators.filter_by.any_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">any_filter()</span></code></a> decorator
+to make it so that any single filter passing will run your function.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">any_filter</span><span class="p">(</span>
+    <span class="n">filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;*Notepad&quot;</span><span class="p">),</span>
+    <span class="n">filter_by</span><span class="o">.</span><span class="n">require_size_is_less_than</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">move_or_sizing_ended</span>
+<span class="k">def</span> <span class="nf">some_func</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Notepad resized or small window moved.&#39;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">1.6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="my-god-it-s-full-of-decorators">
+<h2>My god, it’s full of decorators<a class="headerlink" href="#my-god-it-s-full-of-decorators" title="Permalink to this headline">¶</a></h2>
+<p>If you have a lot of filtering or events to capture, your code can get pretty ugly and
+hard to reason about as the decorators stack up.  Decorators only aid readability to a
+point, then they can begin to hurt readability.</p>
+<p>Some potential solutions follow.</p>
+<div class="section" id="when-you-have-just-a-few-events-to-listen-to">
+<h3>When you have just a few events to listen to<a class="headerlink" href="#when-you-have-just-a-few-events-to-listen-to" title="Permalink to this headline">¶</a></h3>
+<p>When you have a lot of filtering, but just one or a few events you can move the
+filtering into your own code.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">capture_mouse</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="p">:</span>
+    <span class="k">return</span>
+
+  <span class="k">if</span> <span class="s2">&quot;Chrome&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+    <span class="c1"># do stuff in here</span>
+    <span class="k">pass</span>
+  <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">active</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;MozillaWindowClass&quot;</span><span class="p">:</span>
+    <span class="c1"># do something else here</span>
+    <span class="k">pass</span>
+  <span class="c1"># do whatever you want here</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="combining-filter-by-decorators">
+<span id="combining-decorators"></span><h3>Combining <code class="docutils literal notranslate"><span class="pre">filter_by</span></code> decorators<a class="headerlink" href="#combining-filter-by-decorators" title="Permalink to this headline">¶</a></h3>
+<p>Combine multiple filters into one with <code class="xref py py-func docutils literal notranslate"><span class="pre">all_filters()</span></code> or
+<code class="xref py py-func docutils literal notranslate"><span class="pre">any_filter()</span></code> and use the resulting decorator in multiple
+places.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">small_editor_on_right_monitor</span> <span class="o">=</span> <span class="n">filter_by</span><span class="o">.</span><span class="n">all_filters</span><span class="p">(</span>
+    <span class="c1"># If Notepad _or_ Word...</span>
+    <span class="n">filter_by</span><span class="o">.</span><span class="n">any_filter</span><span class="p">(</span>
+        <span class="n">filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;*Notepad&quot;</span><span class="p">),</span> <span class="n">filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;*Word&quot;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="c1"># are less than 200x200</span>
+    <span class="n">filter_by</span><span class="o">.</span><span class="n">require_size_is_less_than</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+
+    <span class="c1"># _and_ are on monitor 3</span>
+    <span class="n">filter_by</span><span class="o">.</span><span class="n">touches_monitors</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<span class="nd">@small_editor_on_right_monitor</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">make_tall_editor</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="n">event_data</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<span class="nd">@small_editor_on_right_monitor</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">location_change</span>
+<span class="k">def</span> <span class="nf">log_small_editor</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;https://MY_LOGGING_SERVICE/a_small_editor&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="combining-multiple-listen-to-decorators">
+<h3>Combining multiple <code class="docutils literal notranslate"><span class="pre">listen_to</span></code> decorators<a class="headerlink" href="#combining-multiple-listen-to-decorators" title="Permalink to this headline">¶</a></h3>
+<p>You can also combine multiple <cite>listen_to</cite> decorators with <a class="reference internal" href="api.html#systa.utils.composed" title="systa.utils.composed"><code class="xref py py-func docutils literal notranslate"><span class="pre">systa.utils.composed()</span></code></a>.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+<span class="kn">from</span> <span class="nn">systa.utils</span> <span class="kn">import</span> <span class="n">composed</span>
+
+<span class="n">our_listener</span> <span class="o">=</span> <span class="n">composed</span><span class="p">(</span><span class="n">listen_to</span><span class="o">.</span><span class="n">location_change</span><span class="p">,</span> <span class="n">listen_to</span><span class="o">.</span><span class="n">restore</span><span class="p">)</span>
+
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_title</span><span class="p">(</span><span class="s2">&quot;Untitled - Notepad&quot;</span><span class="p">)</span>
+<span class="nd">@our_listener</span>
+<span class="k">def</span> <span class="nf">notepad_moved</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Notepad moved!&quot;</span><span class="p">)</span>
+
+<span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mf">.6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="manipulating_windows.html" title="previous page">Doing Stuff to Windows</a>
+    <a class='right-next' id="next-link" href="api.html" title="next page">The API</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Dustin Wyatt<br/>
+        
+            &copy; Copyright 2021, Dustin Wyatt.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
