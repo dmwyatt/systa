@@ -81,7 +81,7 @@ def get_latest_version():
     import subprocess
 
     results = subprocess.run("git tag -l --sort=version:refname", capture_output=True)
-    return results.stdout.decode("utf8").split("\n")[0]
+    return [v for v in results.stdout.decode("utf8").split("\n") if v][-1]
 
 
 smv_latest_version = get_latest_version()
