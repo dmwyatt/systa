@@ -17,7 +17,7 @@ Basic Usage
 
 Wildcards
 ---------
-You can use UNIX-style wildcard matching on window titles.
+You can use UNIX-style (via :func:`~fnmatch.fnmatch`) wildcard matching on window titles.
 
 +------------+-----------------------------------+
 | Pattern    | Meaning                           |

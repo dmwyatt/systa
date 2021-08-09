@@ -168,7 +168,7 @@ def exclude_system_windows(data: EventData):
 def require_title(title: str, case_sensitive=True):
     """Filters on window title.
 
-    Accepts wildcards in the style of Unix shell-style wildcards.
+    Accepts wildcards in the style of Unix shell-style wildcards (via :func:`~fnmatch.fnmatch`).
 
     I.e. ``@filter_by.title("*Notepad")`` will match any window title that ends
     in "Notepad".
