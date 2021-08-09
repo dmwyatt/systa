@@ -1,0 +1,46 @@
+{% if current_version and latest_version and current_version != latest_version %}
+
+  <p>
+    <strong>
+      {% if current_version.is_released %}
+        You're reading an old version of this documentation.
+        If you want up-to-date information, please have a look at
+        <a href="{{ vpathto(latest_version.name) }}">{{ latest_version.name }}</a>.
+      {% else %}
+        You're reading the documentation for a development version.
+        For the latest released version, please have a look at
+        <a href="{{ vpathto(latest_version.name) }}">{{ latest_version.name }}</a>.
+      {% endif %}
+    </strong>
+  </p>
+
+{% endif %}
+
+
+{% if versions and versions.releases %}
+  <h3>{{ _('Releases') }}</h3>
+  <ul>
+    {%- for item in versions.releases %}
+      <li><a href="{{ item.url }}">
+        {% if current_version == item %} <i class="fas fa-caret-right"></i> &nbsp
+        {% endif %} {{ item.name }}</a>
+      </li>
+    {%- endfor %}
+  </ul>
+
+{% endif %}
+
+
+{% if versions and versions.in_development %}
+
+  <h3>{{ _('Dev Releases') }}</h3>
+  <ul>
+    {%- for item in versions.in_development %}
+      <li><a href="{{ item.url }}">
+        {% if current_version == item %} <i class="fas fa-caret-right"></i> &nbsp
+        {% endif %}  {{ item.name }}</a>
+      </li>
+    {%- endfor %}
+  </ul>
+
+{% endif %}

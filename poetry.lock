@@ -589,7 +589,7 @@ type_comments = ["typed-ast (>=1.4.0)"]
 
 [[package]]
 name = "sphinx-book-theme"
-version = "0.1.1"
+version = "0.1.2"
 description = "Jupyter Book: Create an online book with Jupyter Notebooks"
 category = "dev"
 optional = false
@@ -608,6 +608,17 @@ code_style = ["pre-commit (>=2.7.0,<2.8.0)"]
 live-dev = ["sphinx-autobuild", "web-compile (>=0.2.1,<0.3.0)"]
 sphinx = ["folium", "numpy", "matplotlib", "ipywidgets", "pandas", "nbclient", "myst-nb (>=0.11.1,<0.12.0)", "sphinx-togglebutton (>=0.2.1)", "sphinx-copybutton", "plotly", "sphinxcontrib-bibtex (>=2.2,<3.0)", "sphinx-thebe", "ablog (>=0.10.13,<0.11.0)", "sphinxext-opengraph"]
 testing = ["myst-nb (>=0.11.1,<0.12.0)", "sphinx-thebe", "coverage", "pytest (>=6.0.1,<6.1.0)", "pytest-cov", "pytest-regressions (>=2.0.1,<2.1.0)"]
+
+[[package]]
+name = "sphinx-multiversion"
+version = "0.2.4"
+description = "Add support for multiple versions to sphinx"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+sphinx = ">=2.1"
 
 [[package]]
 name = "sphinx-prompt"
@@ -770,7 +781,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "86c9d299a650144a10817c93762effc653e3d02912188e92c3ce39525225d0c5"
+content-hash = "90e041b4a6f52f2e71dea2e57ebff033332b2bc0b059ef1739e8620a2ba9dfc7"
 
 [metadata.files]
 alabaster = [
@@ -1065,8 +1076,12 @@ sphinx-autodoc-typehints = [
     {file = "sphinx_autodoc_typehints-1.12.0-py3-none-any.whl", hash = "sha256:5e81776ec422dd168d688ab60f034fccfafbcd94329e9537712c93003bddc04a"},
 ]
 sphinx-book-theme = [
-    {file = "sphinx-book-theme-0.1.1.tar.gz", hash = "sha256:0b182939df1711b5af74b26af74884a12f7de75a0dc6b24bdeb28d715c4935da"},
-    {file = "sphinx_book_theme-0.1.1-py3-none-any.whl", hash = "sha256:4af4a37be7fe7d5f4d989416c0ea46476201aaaa513cd8faf341cb691eef0735"},
+    {file = "sphinx-book-theme-0.1.2.tar.gz", hash = "sha256:17dbae3da8acfefcbaad726d2303db6a4708d25f7f7644ebe4d913fb74339570"},
+    {file = "sphinx_book_theme-0.1.2-py3-none-any.whl", hash = "sha256:78818780fe7cf849459696923b6732885daae59541fb06633ed3ba8054b15cee"},
+]
+sphinx-multiversion = [
+    {file = "sphinx-multiversion-0.2.4.tar.gz", hash = "sha256:5cd1ca9ecb5eed63cb8d6ce5e9c438ca13af4fa98e7eb6f376be541dd4990bcb"},
+    {file = "sphinx_multiversion-0.2.4-py3-none-any.whl", hash = "sha256:dec29f2a5890ad68157a790112edc0eb63140e70f9df0a363743c6258fbeb478"},
 ]
 sphinx-prompt = [
     {file = "sphinx-prompt-1.4.0.tar.gz", hash = "sha256:70c8e66d1f36def1e295ed961c7562bbf8fc697eea5191b92b41e4784c264ef5"},
