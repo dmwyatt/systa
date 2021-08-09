@@ -86,7 +86,7 @@ def get_latest_version():
 
 smv_latest_version = get_latest_version()
 smv_remote_whitelist = None
-smv_released_pattern = r"^tags/v?\d.*$"
+smv_released_pattern = r"^refs/tags/v?\d.*$"
 smv_branch_whitelist = r"^main$|^dev$"
 
 
