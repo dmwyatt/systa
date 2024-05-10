@@ -1,0 +1,1340 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The API &#8212; systa 0.0.1 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Events" href="events.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
+   A Window for windows on Windows™.
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="finding_windows.html">
+   Finding Windows
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="manipulating_windows.html">
+   Doing Stuff to Windows
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="events.html">
+   Events
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   The API
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav>
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Releases
+  </h3>
+  <ul>
+      <li><a href="../v0.2.0/api.html">
+         v0.2.0</a>
+      </li>
+      <li><a href="api.html">
+         <i class="fas fa-caret-right"></i> &nbsp
+         v0.1.1</a>
+      </li>
+  </ul>
+
+
+
+
+
+
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Dev Releases
+  </h3>
+  <ul>
+      <li><a href="../main/api.html">
+          main</a>
+      </li>
+  </ul>
+
+
+
+
+
+  
+    <div class="admonition warning">
+      <p>You're reading an old version of this documentation.
+         If you want up-to-date information, please have a look at
+        <a href="../v0.2.0/api.html">v0.2.0</a>.</p>
+    </div>
+
+  
+
+<h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;">
+  <a href="https://github.com/dmwyatt/systa/blob/main/CHANGELOG.md">Changelog</a>
+</h3> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/api.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dmwyatt/systa"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/dmwyatt/systa/issues/new?title=Issue%20on%20page%20%2Fapi.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/dmwyatt/systa/edit/dev/docs/source/api.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#finding-windows">
+   Finding windows
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#controlling-windows">
+   Controlling windows
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#events">
+   Events
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#module-systa.events.decorators.listen_to">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       listen_to
+      </span>
+     </code>
+     decorators
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#module-systa.events.decorators.filter_by">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       filter_by
+      </span>
+     </code>
+     decorators
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#event-types">
+     Event types
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="the-api">
+<h1>The API<a class="headerlink" href="#the-api" title="Permalink to this headline">¶</a></h1>
+<p>Here we document all of the useful parts of the API.</p>
+<div class="section" id="finding-windows">
+<h2>Finding windows<a class="headerlink" href="#finding-windows" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="finding_windows.html"><span class="doc">Finding Windows</span></a> for a guide.</p>
+<dl class="py data">
+<dt id="systa.windows.current_windows">
+<code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">current_windows</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;systa.windows.CurrentWindows</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#systa.windows.current_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>A representation of all windows on the system.</p>
+<p>An instance of <a class="reference internal" href="#systa.windows.CurrentWindows" title="systa.windows.CurrentWindows"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurrentWindows</span></code></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Prefer this over your own instantiation of <code class="docutils literal notranslate"><span class="pre">CurrentWindows</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.windows.CurrentWindows">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">CurrentWindows</span></code><a class="headerlink" href="#systa.windows.CurrentWindows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent all windows on a system as a dict-like object.</p>
+<p>Behaves similar to  <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.defaultdict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.defaultdict</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">list</span></code></a> default
+factory. This means that if there are no matching windows, you’ll get an empty
+list. Otherwise you’ll get a list of at least one <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> instance.</p>
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.__contains__">
+<code class="sig-name descname"><span class="pre">__contains__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.CurrentWindows.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Membership checks with <a class="reference internal" href="#systa.windows.WindowLookupType" title="systa.windows.WindowLookupType"><code class="xref py py-const docutils literal notranslate"><span class="pre">WindowLookupType</span></code></a>.</p>
+<p>Using exact title:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">current_windows</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;Untitled - Notepad&quot;</span> <span class="ow">in</span> <span class="n">current_windows</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Using <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> instance:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="s2">&quot;Untitled - Notepad&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span> <span class="ow">in</span> <span class="n">current_windows</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Using handle:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">handle</span> <span class="ow">in</span> <span class="n">current_windows</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Using search predicate:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">regex_search</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regex_search</span><span class="p">(</span><span class="s2">&quot;.* - Notepad&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">current_windows</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>The window lookup you want to use.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>item</strong> (<em>systa.windows.WindowLookupType</em>) – </p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.__getitem__">
+<code class="sig-name descname"><span class="pre">__getitem__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.CurrentWindows.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a>.</p>
+<p>See <a class="reference internal" href="#systa.windows.CurrentWindows.__contains__" title="systa.windows.CurrentWindows.__contains__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__contains__()</span></code></a> for the types of values you can
+use to look up windows.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">current_windows</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_windows</span><span class="p">[</span><span class="s1">&#39;Untitled - Notepad&#39;</span><span class="p">]</span>
+<span class="go">[Window(handle=..., title=&quot;Untitled - Notepad&quot;)]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">regex_search</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_windows</span><span class="p">[</span><span class="n">regex_search</span><span class="p">(</span><span class="s2">&quot;.* - Notepad&quot;</span><span class="p">)]</span>
+<span class="go">[Window(handle=..., title=&quot;Untitled - Notepad&quot;)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>The window lookup you want to use.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>item</strong> (<em>systa.windows.WindowLookupType</em>) – </p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window">systa.windows.Window</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.current_handles">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">current_handles</span></code><a class="headerlink" href="#systa.windows.CurrentWindows.current_handles" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary mapping window handles to their corresponding Window</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.current_titles">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">current_titles</span></code><a class="headerlink" href="#systa.windows.CurrentWindows.current_titles" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary mapping title to lists of windows having that title.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.current_windows">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">current_windows</span></code><a class="headerlink" href="#systa.windows.CurrentWindows.current_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over all current windows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.CurrentWindows.minimize_all">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">minimize_all</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.CurrentWindows.minimize_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimizes all windows.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.windows.WindowSearchPredicate">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">WindowSearchPredicate</span></code><a class="headerlink" href="#systa.windows.WindowSearchPredicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from this class to make custom window searching logic.</p>
+<p>At the minimum, you just inherit and override the predicate method with your
+custom logic.</p>
+<dl class="py method">
+<dt id="systa.windows.WindowSearchPredicate.predicate">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">predicate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.WindowSearchPredicate.predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do logic on the window object to determine if we want to match it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>window</strong> (<a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><em>systa.windows.Window</em></a>) – The <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> we’re checking.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the window matches, <code class="docutils literal notranslate"><span class="pre">False</span></code> if does not.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt id="systa.windows.WindowLookupType">
+<code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">WindowLookupType</span></code><a class="headerlink" href="#systa.windows.WindowLookupType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The types you can use to lookup windows.</p>
+<table class="table">
+<colgroup>
+<col style="width: 49%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Match method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a></p></td>
+<td><p>Compares handle to current windows handles</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Wildcard-accepting title match.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Window with handle exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#systa.windows.WindowSearchPredicate" title="systa.windows.WindowSearchPredicate"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowSearchPredicate</span></code></a></p></td>
+<td><p>Matches windows with the logic of the predicate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-data docutils literal notranslate"><span class="pre">systa.windows.ACTIVE_WINDOW</span></code></p></td>
+<td><p>Matches the active window.</p></td>
+</tr>
+</tbody>
+</table>
+<p>alias of Union[systa.windows.Window, str, int, systa.windows.WindowSearchPredicate, systa.windows.WindowActiveness]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.windows.regex_search">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">regex_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.regex_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search windows with a regex. Provide a string or a compiled regex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pattern</strong> (<em>Union</em><em>[</em><em>Pattern</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="controlling-windows">
+<h2>Controlling windows<a class="headerlink" href="#controlling-windows" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="systa.windows.Window">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">Window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main class for getting info from and manipulating windows.</p>
+<p>Each window can be represented by this class.  Note that, just because you have
+an instance of this class does not mean the window still exists!  You can use the
+<cite>exists</cite> property to determine if the window is still around.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref</strong> (<em>WindowLookupType</em>) – The handle to the window.  This is the one source of truth
+linking this object to a real window.</p></li>
+<li><p><strong>title</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – <p>If you know the current title at time of creating this object,
+pass it in so we don’t do time-consuming queries to get the window title
+later.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally you can ignore this parameter.  It’s mostly useful when
+doing batch operations with dozens of windows.</p>
+</div>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="systa.windows.Window.__eq__">
+<code class="sig-name descname"><span class="pre">__eq__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Window equality is determined by the window’s handle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><em>systa.windows.Window</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.absolute_center_coords">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">absolute_center_coords</span></code><a class="headerlink" href="#systa.windows.Window.absolute_center_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The absolute coordinates of the center of the window.</p>
+<p>Set to a <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple to center window at the provided coords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.active">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">active</span></code><a class="headerlink" href="#systa.windows.Window.active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window is active.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the window is active and if <code class="docutils literal notranslate"><span class="pre">False</span></code>, the window is
+not active.</p>
+<p>Setting to <code class="docutils literal notranslate"><span class="pre">False</span></code> deactivates the window by activating the desktop
+“window”.  Of course, setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> activates the window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.bring_mouse_to">
+<code class="sig-name descname"><span class="pre">bring_mouse_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window.bring_mouse_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves mouse into window area.  Does not activate window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>win_x</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – Specify the X position for the mouse.  If not provided, centers
+the mouse on the X-axis of the window.</p></li>
+<li><p><strong>win_y</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – Specify the Y position for the mouse.  If not provided, centers
+the mouse on the Y-axis of the window.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.bring_to_mouse">
+<code class="sig-name descname"><span class="pre">bring_to_mouse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window.bring_to_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bring window to mouse’s position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then move so that center of window is at
+mouse’s position, otherwise it’s the top left corner.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.classname">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">classname</span></code><a class="headerlink" href="#systa.windows.Window.classname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classname of the window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.enabled">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">enabled</span></code><a class="headerlink" href="#systa.windows.Window.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window is enabled.</p>
+<p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the window can accept user input. If set to
+<code class="docutils literal notranslate"><span class="pre">False</span></code> the window will not accept user input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.exists">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">exists</span></code><a class="headerlink" href="#systa.windows.Window.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window exists.</p>
+<p>There is no real-time, live  correspondence between a <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> object
+and a real Microsoft Windows window.  If you want to check if the window
+still exists, this will tell you.</p>
+<p>Because we’re crazy you can also set this to <code class="docutils literal notranslate"><span class="pre">False</span></code> to close
+a window.</p>
+<p>Setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> has no effect.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.flash">
+<code class="sig-name descname"><span class="pre">flash</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window.flash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flashes a window to get your attention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>times</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The number of times to flash. Defaults to 4.</p></li>
+<li><p><strong>interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The flash rate in milliseconds. Defaults to 750ms</p></li>
+<li><p><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – <p>One or more of the <code class="docutils literal notranslate"><span class="pre">win32con.FLASHW_*</span></code> flags.  Combine with
+the <code class="docutils literal notranslate"><span class="pre">|</span></code> operator. Defaults to <code class="docutils literal notranslate"><span class="pre">win32con.FLASHW_ALL</span> <span class="pre">|</span> <span class="pre">win32con.FLASHW_TIMERNOFG</span></code>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 84%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Constant</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_ALL</span></code></p></td>
+<td><p>Flash both the window caption and taskbar button. This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_CAPTION</span></code></p></td>
+<td><p>Flash the window caption.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_STOP</span></code></p></td>
+<td><p>Stop flashing. The system restores the window to its original state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_TIMER</span></code></p></td>
+<td><p>Flash continuously, until the FLASHW_STOP flag is set.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_TIMERNOFG</span></code></p></td>
+<td><p>Flash continuously until the window comes to the foreground.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FLASHW_TRAY</span></code></p></td>
+<td><p>Flash the taskbar button.</p></td>
+</tr>
+</tbody>
+</table>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.height">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">height</span></code><a class="headerlink" href="#systa.windows.Window.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls the window’s height in pixels.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.maximized">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">maximized</span></code><a class="headerlink" href="#systa.windows.Window.maximized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window is maximized.</p>
+<p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the window is maximized. If set to <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+the window is restored.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.minimized">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">minimized</span></code><a class="headerlink" href="#systa.windows.Window.minimized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window is minimized.</p>
+<p>IF set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the window is minimized. If set to <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+the window is restored.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.mouse">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">mouse</span></code><a class="headerlink" href="#systa.windows.Window.mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a modified <a class="reference internal" href="#systa.windows.WindowRelativeMouseController" title="systa.windows.WindowRelativeMouseController"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowRelativeMouseController</span></code></a> that operates
+relative to the windows coordinates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.pid">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">pid</span></code><a class="headerlink" href="#systa.windows.Window.pid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#systa.windows.Window.process_id" title="systa.windows.Window.process_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_id</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.position">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">position</span></code><a class="headerlink" href="#systa.windows.Window.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls the windows origin coordinate X, Y position.</p>
+<p>If set to a tuple containing two ints or a <code class="xref py py-class docutils literal notranslate"><span class="pre">Point</span></code>, the window is
+instantaneously moved to those coordinates.</p>
+<p>If set to a <code class="xref py py-class docutils literal notranslate"><span class="pre">Rect</span></code>, the window is moved and sized accordingly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.process_id">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">process_id</span></code><a class="headerlink" href="#systa.windows.Window.process_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the PID of the window’s process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.process_path">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">process_path</span></code><a class="headerlink" href="#systa.windows.Window.process_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Full path to the process that this window belongs to.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.relative_center_coords">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">relative_center_coords</span></code><a class="headerlink" href="#systa.windows.Window.relative_center_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The coordinates of the window’s center.</p>
+<p>This is relative to the window’s origin point.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.title">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">title</span></code><a class="headerlink" href="#systa.windows.Window.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>The title of the window.</p>
+<p>Note that, unlike most other window attributes, we  cache the title to save
+time-consuming requests for the title.</p>
+<p>Just re-instantiate if you want to see if title has changed.</p>
+<p>Check for window title change:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">systa.windows</span> <span class="kn">import</span> <span class="n">current_windows</span><span class="p">,</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">old_instance</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_instance</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">old_instance</span><span class="o">.</span><span class="n">handle</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or we can do it this way:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_instance</span> <span class="o">=</span> <span class="n">current_windows</span><span class="p">[</span><span class="n">old_instance</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We do this because during bulk operations like getting all windows, we often
+also already have the title.  When we’re doing operations on large
+collections of this class it’s very time consuming to constantly be
+re-retrieving the title, and since the title does not often change, and it is
+commonly used, it seems best to just cache it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.visible">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">visible</span></code><a class="headerlink" href="#systa.windows.Window.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls if the window is visible.</p>
+<p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code> sets the window to be visible. If set to
+<code class="docutils literal notranslate"><span class="pre">False</span></code> sets the window to be hidden.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This concept of visibility does not have to do with the window
+being covered by other windows. See <a class="reference external" href="https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-features#window-visibility">here</a> for more info.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.wait_for_window">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">wait_for_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lookup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.Window.wait_for_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits for a lookup to return a window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lookup</strong> (<em>WindowLookupType</em>) – The lookup to use to find a window.</p></li>
+<li><p><strong>max_wait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Wait for up to this many seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Window for the lookup.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If the window is not found within <code class="docutils literal notranslate"><span class="pre">max_wait</span></code> seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="systa.windows.Window.width">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">width</span></code><a class="headerlink" href="#systa.windows.Window.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports and controls the windows width in pixels.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.windows.WindowRelativeMouseController">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.windows.</span></code><code class="sig-name descname"><span class="pre">WindowRelativeMouseController</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.windows.WindowRelativeMouseController" title="Permalink to this definition">¶</a></dt>
+<dd><p>A version of <a class="reference external" href="https://pynput.readthedocs.io/en/latest/mouse.html#pynput.mouse.Controller" title="(in pynput v1.7.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynput.mouse.Controller</span></code></a> operating  relative to window.</p>
+<p>See the <a class="reference external" href="https://pynput.readthedocs.io/en/latest/mouse.html">pynput docs</a> for
+more information. The only difference is that moves and positioning are relative
+to the <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>window</strong> (<a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><em>Window</em></a>) – The <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> we’re operating relative to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>The user’s function will be called with one argument whose value is an instance of the
+<code class="docutils literal notranslate"><span class="pre">EventData</span></code> <a class="reference external" href="https://docs.python.org/3/library/dataclasses.html#dataclasses.dataclass" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">dataclass()</span></code></a>.</p>
+<div class="section" id="module-systa.events.decorators.listen_to">
+<span id="listen-to-decorators"></span><h3><code class="docutils literal notranslate"><span class="pre">listen_to</span></code> decorators<a class="headerlink" href="#module-systa.events.decorators.listen_to" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.any_event">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">any_event</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.any_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any event.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally, you’ll want to save system resources and use a more
+discerning set of events.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.capture_mouse">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">capture_mouse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.capture_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has captured the mouse.</p>
+<p>Basically, this happens when you click in  a window.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.lost_mouse_capture" title="systa.events.decorators.listen_to.lost_mouse_capture"><code class="xref py py-func docutils literal notranslate"><span class="pre">lost_mouse_capture()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.create">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has been created.</p>
+<p>Ok, I lied, it’s when all sorts of objects, including windows have been created.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.destroy" title="systa.events.decorators.listen_to.destroy"><code class="xref py py-func docutils literal notranslate"><span class="pre">destroy()</span></code></a>, <a class="reference internal" href="#systa.events.decorators.listen_to.existence_change" title="systa.events.decorators.listen_to.existence_change"><code class="xref py py-func docutils literal notranslate"><span class="pre">existence_change()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.destroy">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">destroy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has been closed.</p>
+<p>Ok, another lie.  It could be other types of objects…not just windows.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.create" title="systa.events.decorators.listen_to.create"><code class="xref py py-func docutils literal notranslate"><span class="pre">create()</span></code></a>, <a class="reference internal" href="#systa.events.decorators.listen_to.existence_change" title="systa.events.decorators.listen_to.existence_change"><code class="xref py py-func docutils literal notranslate"><span class="pre">existence_change()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.existence_change">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">existence_change</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.existence_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has been created or destroyed.</p>
+<p>Ok, I should stop so many lies.  You won’t be surprised to hear that we’re not
+just talking about windows…</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.create" title="systa.events.decorators.listen_to.create"><code class="xref py py-func docutils literal notranslate"><span class="pre">create()</span></code></a>, <a class="reference internal" href="#systa.events.decorators.listen_to.destroy" title="systa.events.decorators.listen_to.destroy"><code class="xref py py-func docutils literal notranslate"><span class="pre">destroy()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.location_change">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">location_change</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.location_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object has changed location, shape, or size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.lost_mouse_capture">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">lost_mouse_capture</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.lost_mouse_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has lost the mouse capture.</p>
+<p>This is the window that lost mouse capture when you click somewhere else.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.capture_mouse" title="systa.events.decorators.listen_to.capture_mouse"><code class="xref py py-func docutils literal notranslate"><span class="pre">capture_mouse()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.maximize">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">maximize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>There isn’t a maximize event! Wrapper of <a class="reference internal" href="#systa.events.decorators.listen_to.location_change" title="systa.events.decorators.listen_to.location_change"><code class="xref py py-func docutils literal notranslate"><span class="pre">location_change()</span></code></a>.</p>
+<p>Best we can do is listen to <a class="reference internal" href="#systa.events.decorators.listen_to.location_change" title="systa.events.decorators.listen_to.location_change"><code class="xref py py-func docutils literal notranslate"><span class="pre">location_change()</span></code></a> and then check the window
+state with <a class="reference internal" href="#systa.windows.Window.maximized" title="systa.windows.Window.maximized"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">Window.maximized</span></code></a>. It’s up to the user to check
+the maximized state with <code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by.is_maximized()</span></code> or manually with the
+provided <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.minimize">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">minimize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Window was minimized</p>
+<p>… seealso:: <a class="reference internal" href="#systa.events.decorators.listen_to.restore" title="systa.events.decorators.listen_to.restore"><code class="xref py py-func docutils literal notranslate"><span class="pre">restore()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.move_or_sizing_ended">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">move_or_sizing_ended</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.move_or_sizing_ended" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window has been resized.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.move_or_sizing_started" title="systa.events.decorators.listen_to.move_or_sizing_started"><code class="xref py py-func docutils literal notranslate"><span class="pre">move_or_sizing_started()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.move_or_sizing_started">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">move_or_sizing_started</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.move_or_sizing_started" title="Permalink to this definition">¶</a></dt>
+<dd><p>A window is getting resized.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#systa.events.decorators.listen_to.move_or_sizing_ended" title="systa.events.decorators.listen_to.move_or_sizing_ended"><code class="xref py py-func docutils literal notranslate"><span class="pre">move_or_sizing_ended()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.listen_to.restore">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.restore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Window was restored from minimization.</p>
+<p>… seealso:: <a class="reference internal" href="#systa.events.decorators.listen_to.minimize" title="systa.events.decorators.listen_to.minimize"><code class="xref py py-func docutils literal notranslate"><span class="pre">minimize()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><em>None</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.events.decorators.listen_to.specified_events">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.events.decorators.listen_to.</span></code><code class="sig-name descname"><span class="pre">specified_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.listen_to.specified_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to register a function to listen to the specified  events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>events</strong> (<em>EventsTypes</em>) – The event(s) to listen to.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-systa.events.decorators.filter_by">
+<span id="filter-by-decorators"></span><h3><code class="docutils literal notranslate"><span class="pre">filter_by</span></code> decorators<a class="headerlink" href="#module-systa.events.decorators.filter_by" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="systa.events.decorators.filter_by.EventTesterBase">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">EventTesterBase</span></code><a class="headerlink" href="#systa.events.decorators.filter_by.EventTesterBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>By subclassing this your event tests get registered.</p>
+<p>For most use cases you can just use the <a class="reference internal" href="#systa.events.decorators.filter_by.make_filter" title="systa.events.decorators.filter_by.make_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_filter()</span></code></a> decorator instead of
+subclassing this class.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.all_filters">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">all_filters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.all_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of filters, pass if all of them pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filters</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – Provide all the filters you want to check the event with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.any_filter">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">any_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.any_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of filters, pass if any of them pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filters</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – Provide all the filters you want to check the event with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.apply_filter">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">apply_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.apply_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a filter as a simple boolean test function.</p>
+<p>If you want to use one of the filters in the
+<a class="reference internal" href="#module-systa.events.decorators.filter_by" title="systa.events.decorators.filter_by"><code class="xref py py-mod docutils literal notranslate"><span class="pre">filter_by</span></code></a> module as a simple boolean test of a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">EventData</span></code> object, you can use this function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;</span>
+<span class="go">&gt;&gt; apply_filter(require_size_is_less_than, your_data_object)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – </p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.exclude_system_windows">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">exclude_system_windows</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.exclude_system_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters out common, probably uninteresting window titles.</p>
+<p>There’s a lot of windows like “OleMainThreadWndName” or “Default IME” that you
+likely you don’t care about.  Use this filter to exclude them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.exclude_window_events">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">exclude_window_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.exclude_window_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of title/event pairs, excludes those events from those windows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>window_events</strong> (<em>Iterable</em><em>[</em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>Literal</em><em>[</em><em>Literal</em><em>[</em><em>40960</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>45055</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>1</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>2147483647</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32786</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32791</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32789</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32768</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32785</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32781</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32769</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32801</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32802</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32803</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32804</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32805</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32806</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>33023</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32773</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32784</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32771</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32800</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32808</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32807</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32809</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32787</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32793</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32779</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32780</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32783</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32772</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32774</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32775</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32776</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32777</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32770</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32778</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32816</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32788</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32792</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32782</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>257</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>511</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>2</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32790</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>9</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>8</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>13</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>12</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>32</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>17</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>16</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>15</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>14</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>255</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>3</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>7</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>6</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>5</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>4</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>23</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>22</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>11</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>10</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>19</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>18</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>1</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>21</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>20</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>19968</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>20223</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>29952</em><em>]</em><em>, </em><em>Literal</em><em>[</em><em>30207</em><em>]</em><em>]</em><em>]</em><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.is_maximized">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">is_maximized</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.is_maximized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters out windows that are not maximized</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.make_filter">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">make_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_sys_windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_existing_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capture_invalid_window_handle_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.make_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to make a function into a filter on an event’s data.</p>
+<p>Using the default values for the arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@make_filter</span>
+<span class="k">def</span> <span class="nf">some_func</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">eventData</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Changing argument values:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@make_filter</span><span class="p">(</span><span class="n">capture_invalid_window_handle_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">some_other_func</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_func</strong> – The decorated function.</p></li>
+<li><p><strong>exclude_sys_windows</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will use built-in heuristics to filter
+out events for windows used by Windows internally. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>require_existing_window</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will filter out events for windows
+that no longer exist. Note that this <em>doesn’t</em> guarantee that the window
+doesn’t disappear between the time your function starts and you want to do
+something with the window in your function. It <em>does</em> guarantees your function
+won’t get called if the window disappears between the time the event happens and
+Windows calls our code…which is what seems to be the most likely case.
+Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>capture_invalid_window_handle_error</strong> – If a window disappears by the time
+you try to do something with it, we’ll automatically handle the error for
+you.  Note that if you need to do some sort of cleanup action in your
+function, you want to set this option to <code class="docutils literal notranslate"><span class="pre">False</span></code> and handle the error
+yourself.  Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>..</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Callable[[Callable[[<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData">systa.events.types.EventData</a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a>]], Callable[[<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData">systa.events.types.EventData</a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.require_origin_within">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">require_origin_within</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.require_origin_within" title="Permalink to this definition">¶</a></dt>
+<dd><p>Require window’s origin (upper left corner) to be within rectangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rect</strong> (<em>systa.types.Rect</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.require_size_is_less_than">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">require_size_is_less_than</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.require_size_is_less_than" title="Permalink to this definition">¶</a></dt>
+<dd><p>Include only windows of x, y dimensions or area less than provided.</p>
+<p>If area is provided, x and y are ignored and are not needed.  You can just do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_size_is_less_than</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="mi">250000</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>area</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – Total area in pixels.</p></li>
+<li><p><strong>x</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – Width</p></li>
+<li><p><strong>y</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – Height</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.require_title">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">require_title</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.require_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters on window title.</p>
+<p>Accepts wildcards in the style of Unix shell-style wildcards.</p>
+<p>I.e. <code class="docutils literal notranslate"><span class="pre">&#64;filter_by.title(&quot;*Notepad&quot;)</span></code> will match any window title that ends
+in “Notepad”.</p>
+<table class="table">
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Pattern</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+<td><p>matches everything</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">?</span></code></p></td>
+<td><p>matches any single character</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[seq]</span></code></p></td>
+<td><p>matches any character in seq</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[!seq]</span></code></p></td>
+<td><p>matches any character not in seq</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The title to match.</p></li>
+<li><p><strong>case_sensitive</strong> – If <code class="docutils literal notranslate"><span class="pre">False</span></code> will be case insensitive. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.require_titled_window">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">require_titled_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.require_titled_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters out windows that do not have a title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.require_window">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">require_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.require_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exclude events that do not have a window.</p>
+<p>Most likely you won’t need this since the default <a class="reference internal" href="#systa.events.decorators.filter_by.make_filter" title="systa.events.decorators.filter_by.make_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_filter()</span></code></a> decorator
+already does this check, but this is provided for cases when not using that
+decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#systa.events.types.EventData" title="systa.events.types.EventData"><em>systa.events.types.EventData</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="systa.events.decorators.filter_by.touches_monitors">
+<code class="sig-prename descclassname"><span class="pre">systa.events.decorators.filter_by.</span></code><code class="sig-name descname"><span class="pre">touches_monitors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">monitor_numbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclusive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.decorators.filter_by.touches_monitors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Window touches at least all the provided monitors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exclusive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> require window to be <em>only</em> on those monitors,
+otherwise window can be on other monitors in addition to <code class="docutils literal notranslate"><span class="pre">monitor_numbers</span></code>.</p></li>
+<li><p><strong>monitor_numbers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Provide the number of each monitor you want to check.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="event-types">
+<h3>Event types<a class="headerlink" href="#event-types" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="systa.events.types.EventData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.events.types.</span></code><code class="sig-name descname"><span class="pre">EventData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.types.EventData" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data structure returned to the user’s function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><em>systa.windows.Window</em></a><em>]</em>) – </p></li>
+<li><p><strong>event_info</strong> (<a class="reference internal" href="#systa.events.types.CallbackReturn" title="systa.events.types.CallbackReturn"><em>systa.events.types.CallbackReturn</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="systa.events.types.EventData.event_info">
+<code class="sig-name descname"><span class="pre">event_info</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="#systa.events.types.CallbackReturn" title="systa.events.types.CallbackReturn"><span class="pre">systa.events.types.CallbackReturn</span></a></em><a class="headerlink" href="#systa.events.types.EventData.event_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>The raw data provided to us by Windows when the event fired.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="systa.events.types.EventData.window">
+<code class="sig-name descname"><span class="pre">window</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><span class="pre">systa.windows.Window</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#systa.events.types.EventData.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#systa.windows.Window" title="systa.windows.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">systa.windows.Window</span></code></a> instance associated with the event.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="systa.events.types.CallbackReturn">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">systa.events.types.</span></code><code class="sig-name descname"><span class="pre">CallbackReturn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">child_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_ms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#systa.events.types.CallbackReturn" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data given to us by Windows when it calls our callback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hook_handle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – </p></li>
+<li><p><strong>event</strong> (<em>systa.events.types.EventType</em>) – </p></li>
+<li><p><strong>event_name</strong> (<em>systa.events.types.EventTypeNamesType</em>) – </p></li>
+<li><p><strong>window_handle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – </p></li>
+<li><p><strong>object_id</strong> (<em>systa.events.types.ObjIdType</em>) – </p></li>
+<li><p><strong>child_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – </p></li>
+<li><p><strong>thread</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – </p></li>
+<li><p><strong>time_ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt id="systa.events.types.EventType">
+<code class="sig-prename descclassname"><span class="pre">systa.events.types.</span></code><code class="sig-name descname"><span class="pre">EventType</span></code><a class="headerlink" href="#systa.events.types.EventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Literal values used to select events.</p>
+<p>alias of Literal[Literal[40960], Literal[45055], Literal[1], Literal[2147483647], Literal[32786], Literal[32791], Literal[32789], Literal[32768], Literal[32785], Literal[32781], Literal[32769], Literal[32801], Literal[32802], Literal[32803], Literal[32804], Literal[32805], Literal[32806], Literal[33023], Literal[32773], Literal[32784], Literal[32771], Literal[32800], Literal[32808], Literal[32807], Literal[32809], Literal[32787], Literal[32793], Literal[32779], Literal[32780], Literal[32783], Literal[32772], Literal[32774], Literal[32775], Literal[32776], Literal[32777], Literal[32770], Literal[32778], Literal[32816], Literal[32788], Literal[32792], Literal[32782], Literal[257], Literal[511], Literal[2], Literal[32790], Literal[9], Literal[8], Literal[13], Literal[12], Literal[32], Literal[17], Literal[16], Literal[15], Literal[14], Literal[255], Literal[3], Literal[7], Literal[6], Literal[5], Literal[4], Literal[23], Literal[22], Literal[11], Literal[10], Literal[19], Literal[18], Literal[1], Literal[21], Literal[20], Literal[19968], Literal[20223], Literal[29952], Literal[30207]]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="systa.events.types.EventTypeNamesType">
+<code class="sig-prename descclassname"><span class="pre">systa.events.types.</span></code><code class="sig-name descname"><span class="pre">EventTypeNamesType</span></code><a class="headerlink" href="#systa.events.types.EventTypeNamesType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The central part of internal API.</p>
+<p>This represents a generic version of type ‘origin’ with type arguments ‘params’.
+There are two kind of these aliases: user defined and special. The special ones
+are wrappers around builtin collections and ABCs in collections.abc. These must
+have ‘name’ always set. If ‘inst’ is False, then the alias can’t be instantiated,
+this is used by e.g. typing.List and typing.Dict.</p>
+<p>alias of Literal[EVENT_OBJECT_ACCELERATORCHANGE, EVENT_OBJECT_CLOAKED, EVENT_OBJECT_CONTENTSCROLLED, EVENT_OBJECT_CREATE, EVENT_OBJECT_DEFACTIONCHANGE, EVENT_OBJECT_DESCRIPTIONCHANGE, EVENT_OBJECT_DESTROY, EVENT_OBJECT_DRAGSTART, EVENT_OBJECT_DRAGCANCEL, EVENT_OBJECT_DRAGCOMPLETE, EVENT_OBJECT_DRAGENTER, EVENT_OBJECT_DRAGLEAVE, EVENT_OBJECT_DRAGDROPPED, EVENT_OBJECT_END, EVENT_OBJECT_FOCUS, EVENT_OBJECT_HELPCHANGE, EVENT_OBJECT_HIDE, EVENT_OBJECT_HOSTEDOBJECTSINVALIDATED, EVENT_OBJECT_IME_HIDE, EVENT_OBJECT_IME_SHOW, EVENT_OBJECT_IME_CHANGE, EVENT_OBJECT_INVOKED, EVENT_OBJECT_LIVEREGIONCHANGED, EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_PARENTCHANGE, EVENT_OBJECT_REORDER, EVENT_OBJECT_SELECTION, EVENT_OBJECT_SELECTIONADD, EVENT_OBJECT_SELECTIONREMOVE, EVENT_OBJECT_SELECTIONWITHIN, EVENT_OBJECT_SHOW, EVENT_OBJECT_STATECHANGE, EVENT_OBJECT_TEXTEDIT_CONVERSIONTARGETCHANGED, EVENT_OBJECT_TEXTSELECTIONCHANGED, EVENT_OBJECT_UNCLOAKED, EVENT_OBJECT_VALUECHANGE, EVENT_OEM_DEFINED_START, EVENT_OEM_DEFINED_END, EVENT_SYSTEM_ALERT, EVENT_SYSTEM_ARRANGMENTPREVIEW, EVENT_SYSTEM_CAPTUREEND, EVENT_SYSTEM_CAPTURESTART, EVENT_SYSTEM_CONTEXTHELPEND, EVENT_SYSTEM_CONTEXTHELPSTART, EVENT_SYSTEM_DESKTOPSWITCH, EVENT_SYSTEM_DIALOGEND, EVENT_SYSTEM_DIALOGSTART, EVENT_SYSTEM_DRAGDROPEND, EVENT_SYSTEM_DRAGDROPSTART, EVENT_SYSTEM_END, EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_MENUPOPUPEND, EVENT_SYSTEM_MENUPOPUPSTART, EVENT_SYSTEM_MENUEND, EVENT_SYSTEM_MENUSTART, EVENT_SYSTEM_MINIMIZEEND, EVENT_SYSTEM_MINIMIZESTART, EVENT_SYSTEM_MOVESIZEEND, EVENT_SYSTEM_MOVESIZESTART, EVENT_SYSTEM_SCROLLINGEND, EVENT_SYSTEM_SCROLLINGSTART, EVENT_SYSTEM_SOUND, EVENT_SYSTEM_SWITCHEND, EVENT_SYSTEM_SWITCHSTART, EVENT_UIA_EVENTID_START, EVENT_UIA_EVENTID_END, EVENT_UIA_PROPID_START, EVENT_UIA_PROPID_END]</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="events.html" title="previous page">Events</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Dustin Wyatt<br/>
+        
+            &copy; Copyright 2021, Dustin Wyatt.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

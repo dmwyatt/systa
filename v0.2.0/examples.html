@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examples &#8212; systa 0.0.1 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="The API" href="api.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
+   A Window for windows on Windows™.
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="finding_windows.html">
+   Finding Windows
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="manipulating_windows.html">
+   Doing Stuff to Windows
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="events.html">
+   Events
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   The API
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Examples
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav>
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Releases
+  </h3>
+  <ul>
+      <li><a href="examples.html">
+         <i class="fas fa-caret-right"></i> &nbsp
+         v0.2.0</a>
+      </li>
+      <li><a href="../v0.1.1/index.html">
+         v0.1.1</a>
+      </li>
+  </ul>
+
+
+
+
+
+
+  <h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;"
+  >
+    Dev Releases
+  </h3>
+  <ul>
+      <li><a href="../main/examples.html">
+          main</a>
+      </li>
+  </ul>
+
+
+
+<h3 style="
+    font-size: var(--pst-sidebar-caption-font-size);
+    text-transform: uppercase;
+    font-weight: 700;">
+  <a href="https://github.com/dmwyatt/systa/blob/main/CHANGELOG.md">Changelog</a>
+</h3> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/examples.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dmwyatt/systa"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/dmwyatt/systa/issues/new?title=Issue%20on%20page%20%2Fexamples.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/dmwyatt/systa/edit/dev/docs/source/examples.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tiled-monitor">
+   Tiled Monitor
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tiled-monitor">
+<h2>Tiled Monitor<a class="headerlink" href="#tiled-monitor" title="Permalink to this headline">¶</a></h2>
+<p>Here we change monitor #3 to always tile any window moved onto it.</p>
+<video
+  draggable="false"
+  playsinline=""
+  autoplay=""
+  loop=""
+  class="align-left"
+  style="width: 550px; height: 309px;"
+>
+  <source type="video/mp4" src="https://i.imgur.com/MHtMxZq.mp4">
+</video><p>Things to note in this example:</p>
+<ul class="simple">
+<li><p>The instance of <a class="reference internal" href="api.html#systa.backend.monitors.SystaMonitor" title="systa.backend.monitors.SystaMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SystaMonitor</span></code></a> that you can get
+from a window.</p></li>
+<li><p>The <a class="reference internal" href="api.html#systa.types.Rect" title="systa.types.Rect"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rect</span></code></a> instance we get from the monitor and window objects
+are used to calculate overlap area.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This example &quot;sucks&quot; a window to the upper or lower half of monitor number 3 if a</span>
+<span class="sd">window is moved or resized in such a manner to make it &quot;touch&quot; monitor number 3.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span>
+
+<span class="kn">from</span> <span class="nn">systa.events.decorators</span> <span class="kn">import</span> <span class="n">filter_by</span><span class="p">,</span> <span class="n">listen_to</span>
+<span class="kn">from</span> <span class="nn">systa.events.store</span> <span class="kn">import</span> <span class="n">callback_store</span>
+<span class="kn">from</span> <span class="nn">systa.events.types</span> <span class="kn">import</span> <span class="n">EventData</span>
+
+<span class="n">MONITOR_OF_INTEREST</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">touches_monitors</span><span class="p">(</span><span class="n">MONITOR_OF_INTEREST</span><span class="p">)</span>
+<span class="nd">@filter_by</span><span class="o">.</span><span class="n">require_titled_window</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">restore</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">create</span>
+<span class="nd">@listen_to</span><span class="o">.</span><span class="n">move_or_sizing_ended</span>
+<span class="k">def</span> <span class="nf">tile_monitor</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">EventData</span><span class="p">):</span>
+    <span class="c1"># We know we&#39;ve got a window because most @filter_by decorators don&#39;t pass if</span>
+    <span class="c1"># there is not a window object. (Not all events have an associated window).</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">event_data</span><span class="o">.</span><span class="n">window</span>
+
+    <span class="c1"># get the monitor object</span>
+    <span class="n">monitor</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">(</span><span class="n">MONITOR_OF_INTEREST</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">monitor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Window was moved off of the monitor too quickly for us to react to.</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Get amounts window overlaps top half and bottom half of monitor area</span>
+    <span class="n">upper_overlap</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">work_area</span><span class="o">.</span><span class="n">upper_rect</span><span class="o">.</span><span class="n">intersection_rect</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">rectangle</span><span class="p">)</span>
+    <span class="n">lower_overlap</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">work_area</span><span class="o">.</span><span class="n">lower_rect</span><span class="o">.</span><span class="n">intersection_rect</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">rectangle</span><span class="p">)</span>
+
+    <span class="c1"># Choose whether to move window to top half or bottom half</span>
+    <span class="k">if</span> <span class="n">upper_overlap</span><span class="o">.</span><span class="n">area</span> <span class="o">&gt;=</span> <span class="n">lower_overlap</span><span class="o">.</span><span class="n">area</span><span class="p">:</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">rectangle</span><span class="o">.</span><span class="n">upper_rect</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">rectangle</span><span class="o">.</span><span class="n">lower_rect</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">callback_store</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="api.html" title="previous page">The API</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Dustin Wyatt<br/>
+        
+            &copy; Copyright 2021, Dustin Wyatt.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
